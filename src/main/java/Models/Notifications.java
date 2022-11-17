@@ -1,3 +1,5 @@
+package Models;
+
 public class Notifications {
     int type;
     public Notifications(int type){
