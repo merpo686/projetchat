@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 
 public class ActiveUserManager {
+    User U;
+    ArrayList<User> listActiveUsers;
     public ActiveUserManager(User U){
-        this.User = U;
-        ArrayList<User> listActiveUsers = new ArrayList<User>();
+        this.U = U;
+        this.listActiveUsers = new ArrayList<User>();
     }
     void addListActiveUser(User U){
         listActiveUsers.add(U);
@@ -14,5 +16,9 @@ public class ActiveUserManager {
 
     void removeListActiveUser(User U){
         listActiveUsers.remove(U);
+    }
+
+    ArrayList<User> getListActiveUser(){
+        return this.listActiveUsers;
     }
 }
