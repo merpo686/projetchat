@@ -12,7 +12,7 @@ public class UserManager {
         this.NM=new NetworkManager(5000);
     }
     public void Connect(){
-        String pseudochoosed=null;
+        String pseudochoosed;
         pseudochoosed=Ask_Pseudo();
         Notif notifpseudo = new Notif(3,pseudochoosed); //type3 = notif sert à r pour l'instant
         NM.NotifyPseudo(notifpseudo);
