@@ -1,7 +1,13 @@
 package Managers;
+import Models.User;
+
 
 public class ActiveUserManager {
-    public updateListActiveUser(int type){
+    public ActiveUserManager(U : User){
+        this.User = User;
+    }
+    public updateListActiveUser(U : User ){
 
     }
+    return 0;
 }
