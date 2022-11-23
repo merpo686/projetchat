@@ -7,6 +7,4 @@ public class NetworkManager {
     public NetworkManager(int port){
         this.Port=port;
     }
-    public void NotifyPseudo(Notif notif){
-    }
 }
