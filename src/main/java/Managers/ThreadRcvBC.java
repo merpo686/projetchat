@@ -1,35 +1,31 @@
 package Managers;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Socket;
+import java.net.SocketException;
 
-public class ThreadRcvBC implements Runnable {
-    Socket socket;
-    DatagramPacket packet;
+public class ThreadRcvBC {
+    UserManager um;
 
-    public void ThreadRdvBC() {
-        this.packet = new DatagramSocket();
-        this.socket = null;
+    public ThreadRcvBC(UserManager um) {
+        this.um = um;
     }
 
-    public class Server implements Runnable{
-        public void run() {
-            while (true) {
-                //on receive avec un port qqonque donc j'ai pas mis de port dans le parametre receive
-                packet.receive(socket);
-                new Thread((Runnable) new Ack(socket, packet)).start();
-            }
-        }
-    }
+    public void Receive() throws IOException {
+        byte[] data = new byte[1024];
+        String rcvData;
+        DatagramSocket socket = new DatagramSocket();
+        DatagramPacket rcvNotif = new DatagramPacket(data, data.length);
+        //on recoit la notif
+        socket.receive(rcvNotif);
 
-    public class Ack(){
-
-        public Ack(Socket socket, DatagramPacket packet){
-            this.socket = socket;
-            this.packet = packet;
-        }
-
-        public void run(){
-
+        if (rcvNotif.getLength() == 0) {
+            System.out.println("Read zero bytes");
+        } else {
+            rcvData = new String(rcvNotif.getData());
+            System.out.println(rcvData);
         }
     }
 }
