@@ -22,10 +22,10 @@ public class UserManager {
         System.out.println(UserManager.user_self.get_IP());
         while (pseudo_Incorrect) {
             this.Connect();
-            System.out.println("Sending Pseudos to others");
+            System.out.println("[UserManager] Sending Pseudos to others");
             Thread.sleep(5000);
             if (responsePseudo){
-                System.out.println("no response, or pseudo ok");
+                System.out.println("[UserManager] no response, or pseudo ok");
                 pseudo_Incorrect =false;
                 user_self.Set_Pseudo(Pseudochoosed);
                 ActiveUserManager.addListActiveUser(user_self);
@@ -38,7 +38,7 @@ public class UserManager {
         ThreadManager.Send_BC(notifpseudo);
     }
     private String Ask_Pseudo(){
-        System.out.println("Please enter a pseudo");
+        System.out.println("[UserManager] Please enter a pseudo");
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }

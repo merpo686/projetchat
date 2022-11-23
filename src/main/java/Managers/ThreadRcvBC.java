@@ -22,7 +22,7 @@ public class ThreadRcvBC implements Runnable {
             //we receive the model (either notification or validation)
             while (true) { //the thread will be in a receiving state constantly
                 try {
-                    System.out.println("Waiting for Broadcast");
+                    System.out.println("[ThreadRcvBC] Waiting for Broadcast");
                     socket.receive(rcvNotif);
                 }
                 catch (IOException e){
@@ -30,10 +30,10 @@ public class ThreadRcvBC implements Runnable {
                 }
 
                 if (rcvNotif.getLength() == 0) {
-                    System.out.println("Read zero bytes");
+                    System.out.println("[ThreadRcvBC] Read zero bytes");
                 }
                 else if (rcvNotif.getAddress()==UserManager.user_self.get_IP()){
-                    System.out.println("Broadcasted to myself");
+                    System.out.println("[ThreadRcvBC] Broadcasted to myself");
                 }
                 else{
                     rcvData = new String(rcvNotif.getData());
@@ -48,7 +48,7 @@ public class ThreadRcvBC implements Runnable {
                         NM.Receive_BC(this.valid);
                     }
                     else{
-                        System.out.println("Error there are 3 or more separate fields in the broadcast message");
+                        System.out.println("[ThreadRcvBC] Error there are 3 or more separate fields in the broadcast message");
                     }
                 }
             }

@@ -37,7 +37,7 @@ public class ThreadSendBC implements Runnable {
             data = this.notif.get_Pseudo();
             byte [] pseudoData = data.getBytes();
             try {
-                System.out.println("Sending "+data+" in SendThread");
+                System.out.println("[ThreadSendBC] Sending "+data+" in SendThread");
                 socket.setBroadcast(true);
                 DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length, InetAddress.getByName("255.255.255.255"), numSocket);
                 socket.send(sendNotif);
