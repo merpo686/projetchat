@@ -21,7 +21,12 @@ public class ThreadRcvBC implements Runnable {
             DatagramPacket rcvNotif = new DatagramPacket(data, data.length);
             //we receive the model (either notification or validation)
             while (true) { //the thread will be in a receiving state constantly
-                socket.receive(rcvNotif);
+                try {
+                    socket.receive(rcvNotif);
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
 
                 if (rcvNotif.getLength() == 0) {
                     System.out.println("Read zero bytes");
