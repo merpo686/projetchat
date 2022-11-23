@@ -1,7 +1,7 @@
 import Managers.UserManager;
 
 public class User {
-    public static void main(){
+    public static void main(String[] args){
         try {
             UserManager Um= new UserManager();
         }

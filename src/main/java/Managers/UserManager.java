@@ -19,7 +19,7 @@ public class UserManager {
         ThreadManager TM = new ThreadManager(NM);
         while (pseudo_Incorrect) {
             this.Connect();
-            wait(1);
+            Thread.sleep(1);
             if (responsePseudo){
                 pseudo_Incorrect =false;
                 user_self.Set_Pseudo(Pseudochoosed);
