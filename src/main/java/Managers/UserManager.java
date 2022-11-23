@@ -1,37 +1,43 @@
 package Managers;
 
 import Models.*;
+import java.net.*;
 import Managers.*;
 
+import javax.management.Notification;
 import java.util.Scanner;
 
 public class UserManager {
-    private String Pseudo;
-    private NetworkManager NM;
-    private ThreadManager TM;
+    public static User user_self;
     private String Pseudochoosed;
-    public UserManager(String Pseudo){
-        this.Pseudo="";
-        this.NM=new NetworkManager(this.Pseudo,this);
-        this.TM=new ThreadManager(this.NM);
-        this.Connect();
+    private Boolean responsePseudo;
+    public UserManager() throws InterruptedException,UnknownHostException{
+        user_self= new User(InetAddress.getLocalHost().getHostAddress(),4567);
+        boolean pseudo_Incorrect = true;
+        responsePseudo=false;
+        NetworkManager NM = new NetworkManager(this);
+        ThreadManager TM = new ThreadManager(NM);
+        while (pseudo_Incorrect) {
+            this.Connect();
+            wait(1);
+            if (!(responsePseudo)){
+                pseudo_Incorrect =false;
+                user_self.Set_Pseudo(Pseudochoosed);
+            }
+        }
     }
-    public void Connect(){
+    public void Connect() throws UnknownHostException{
         String Pseudochoosed=Ask_Pseudo();
-        Notif notifpseudo = new Notif(3,Pseudochoosed); //type3 = notif sert à r pour l'instant
+        Notifications notifpseudo = new Notifications(user_self,Pseudochoosed);
         ThreadManager.Send_BC(notifpseudo);
     }
     private String Ask_Pseudo(){
         Scanner sc = new Scanner(System.in);
-        String ps = sc.nextLine();
-        return ps;
+        return sc.nextLine();
     }
     public void Process_Pseudo_Response(Validation valid){
-        if (valid.get_Valid()){
-            this.Pseudo=this.Pseudochoosed;
-        }
-        else {
-           this.Connect();
+        if (!(valid.get_Valid())){
+            this.responsePseudo=true;
         }
     }
 }

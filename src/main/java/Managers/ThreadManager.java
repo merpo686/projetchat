@@ -12,7 +12,8 @@ public class ThreadManager {
         Recv_BC= new ThreadRcvBC(NM);
         Send_BC= new ThreadSendBC();
     }
-    static public void Send_BC(Notif notif){
+    static public void Send_BC(Notifications notif){
         T_Send_BC.send(notif);
     }
+
 }

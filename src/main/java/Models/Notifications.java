@@ -1,11 +1,11 @@
 package Models;
-
+import Models.*;
 public class Notifications {
-    int type;
-    public Notifications(int type){
-        this.type=type;
+    private User user;
+    public Notifications(User user,String Pseudo){
+        this.user= user;
+        this.user.Set_Pseudo(Pseudo);
     }
-    public int get_type(){
-        return this.type;
-    }
+    public String get_Pseudo(){return this.user.get_Pseudo();}
+    public User get_User(){return this.user;}
 }

@@ -1,10 +1,10 @@
 package Models;
 
 public class User {
-    private int IP;
+    private String IP;
     private int port;
     private String Pseudo;
-    public User(int IP, int port){
+    public User(String IP, int port){
         this.IP=IP;
         this.port=port;
     }
@@ -14,7 +14,7 @@ public class User {
     public String get_Pseudo(){
         return this.Pseudo;
     }
-    public int get_IP(){
+    public String get_IP(){
         return this.IP;
     }
     public int get_Port(){

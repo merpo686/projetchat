@@ -3,18 +3,17 @@ package Managers;
 import Models.*;
 
 public class NetworkManager {
-    String Pseudo;
     UserManager UM;
-    public NetworkManager(String Pseudo, UserManager UM){
-        this.Pseudo=Pseudo;
+    public NetworkManager( UserManager UM){
         this.UM=UM;
     }
-    public void Receive_BC(Notif notif){
+    public void Receive_BC(Notifications notif){
         if (ActiveUserManager.IsinActiveListUser(notif.get_Pseudo())){
-            ThreadSendBC.send(new Validation(2,this.Pseudo,false));
+            ThreadSendBC.send(new Validation(UserManager.user_self,false));
         }
         else {
-            ThreadSendBC.send(new Validation(2,this.Pseudo,true));
+            ThreadSendBC.send(new Validation(UserManager.user_self,true));
+            ActiveUserManager.addListActiveUser(notif.get_User());
         }
     }
     public void Receive_BC(Validation valid){
