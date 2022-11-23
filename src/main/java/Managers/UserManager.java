@@ -2,6 +2,7 @@ package Managers;
 
 import Models.*;
 import java.net.*;
+import java.io.*;
 import Managers.*;
 
 import javax.management.Notification;
@@ -20,7 +21,7 @@ public class UserManager {
         while (pseudo_Incorrect) {
             this.Connect();
             System.out.println("Sending Pseudos to others");
-            wait(1);
+            Thread.sleep(1);
             if (responsePseudo){
                 System.out.println("no response, or pseudo ok");
                 pseudo_Incorrect =false;
