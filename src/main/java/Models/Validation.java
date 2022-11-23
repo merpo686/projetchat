@@ -8,4 +8,10 @@ public class Validation extends Notifications{
         this.Pseudo=Pseudo;
         this.Valid=Valid;
     }
+    public boolean get_Valid(){
+        return this.Valid;
+    }
+    public String getPseudo(){
+        return this.Pseudo;
+    }
 }

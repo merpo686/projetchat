@@ -10,11 +10,11 @@ public class ActiveUserManager {
         this.U = U;
         this.listActiveUsers = new ArrayList<User>();
     }
-    void addListActiveUser(User U){
+    public void addListActiveUser(User U){
         listActiveUsers.add(U);
     }
 
-    void removeListActiveUser(User U){
+    public void removeListActiveUser(User U){
         listActiveUsers.remove(U);
     }
 
