@@ -4,7 +4,7 @@ import Models.*;
 import java.net.InetAddress;
 
 public class Notifications {
-    private User user;
+    private final User user;
     public Notifications(User user,String Pseudo){
         this.user= user;
         this.user.Set_Pseudo(Pseudo);

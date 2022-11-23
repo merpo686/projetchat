@@ -3,8 +3,8 @@ package Models;
 import java.net.InetAddress;
 
 public class User {
-    private InetAddress IP;
-    private int port;
+    private final InetAddress IP;
+    private final int port;
     private String Pseudo;
     public User(InetAddress IP, int port){
         this.IP=IP;

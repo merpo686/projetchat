@@ -32,6 +32,7 @@ public class UserManager {
         ThreadManager.Send_BC(notifpseudo);
     }
     private String Ask_Pseudo(){
+        System.out.println("Please enter a pseudo");
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }
