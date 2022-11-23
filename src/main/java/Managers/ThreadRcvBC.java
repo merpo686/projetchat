@@ -20,7 +20,7 @@ public class ThreadRcvBC implements Runnable {
             DatagramSocket socket = new DatagramSocket();
             DatagramPacket rcvNotif = new DatagramPacket(data, data.length);
             //we receive the model (either notification or validation)
-            while (true) {
+            while (true) { //the thread will be in a receiving state constantly
                 socket.receive(rcvNotif);
 
                 if (rcvNotif.getLength() == 0) {
@@ -28,12 +28,16 @@ public class ThreadRcvBC implements Runnable {
                 } else {
                     rcvData = new String(rcvNotif.getData());
                     System.out.println(rcvData);
-                    //we need to check if notification or validation... we split the string that we received in 2, if we only have 1 element then
-                    if (rcvData=="true"||rcvData=="false"){
-                        this.valid=new Validation(new User(rcvNotif.getAddress(),socket.getPort()),"",Boolean.parseBoolean(rcvData));
+                    //we need to check if notification or validation... we split the string that we received with "-" as a delimiter. If we only have 1 element then that means it's a notification because it does not contain the boolean, if we have 2 elements that means it's a validation
+                    String[] splitString = rcvData.split("-");
+                    if(splitString.length==1){
+                        this.notif=new Notifications(new User(rcvNotif.getAddress(),socket.getPort()),splitString[0]);
                     }
-                    else {
-                        this.notif=new Notifications(new User(rcvNotif.getAddress(),socket.getPort()),rcvData);
+                    else if(splitString.length==2){
+                        this.valid=new Validation(new User(rcvNotif.getAddress(),socket.getPort()),splitString[0],Boolean.parseBoolean(splitString[1]));
+                    }
+                    else{
+                        System.out.println("Error there are 3 or more separate fields in the broadcast message");
                     }
                 }
             }
