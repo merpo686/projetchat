@@ -32,9 +32,11 @@ public class ThreadRcvBC implements Runnable {
                     String[] splitString = rcvData.split("-");
                     if(splitString.length==1){
                         this.notif=new Notifications(new User(rcvNotif.getAddress(),socket.getPort()),splitString[0]);
+                        NM.Receive_BC(this.notif);
                     }
                     else if(splitString.length==2){
                         this.valid=new Validation(new User(rcvNotif.getAddress(),socket.getPort()),splitString[0],Boolean.parseBoolean(splitString[1]));
+                        NM.Receive_BC(this.valid);
                     }
                     else{
                         System.out.println("Error there are 3 or more separate fields in the broadcast message");
