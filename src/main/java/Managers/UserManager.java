@@ -20,15 +20,8 @@ public class UserManager {
         ThreadManager TM = new ThreadManager(NM);
         while (pseudo_Incorrect) {
             this.Connect();
-<<<<<<< HEAD
-=======
             System.out.println("Sending Pseudos to others");
-<<<<<<< HEAD
             Thread.sleep(5000);
-=======
->>>>>>> 04c7077aeb476914f91fdfe66e930ee28dca301e
-            Thread.sleep(1);
->>>>>>> 73086359ee7cd70752715e3494db00c68c7e3a50
             if (responsePseudo){
                 System.out.println("no response, or pseudo ok");
                 pseudo_Incorrect =false;
