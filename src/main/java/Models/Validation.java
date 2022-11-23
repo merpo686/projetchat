@@ -1,17 +1,12 @@
 package Models;
 
 public class Validation extends Notifications{
-    String Pseudo;
     Boolean Valid;
-    public Validation(int type, String Pseudo, boolean Valid){
-        super(type);
-        this.Pseudo=Pseudo;
+    public Validation( User user, boolean Valid){
+        super(user);
         this.Valid=Valid;
     }
     public boolean get_Valid(){
         return this.Valid;
-    }
-    public String getPseudo(){
-        return this.Pseudo;
     }
 }
