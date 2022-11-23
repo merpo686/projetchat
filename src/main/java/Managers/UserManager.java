@@ -2,6 +2,7 @@ package Managers;
 
 import Models.*;
 import java.net.*;
+import java.io.*;
 import Managers.*;
 
 import javax.management.Notification;
@@ -19,11 +20,17 @@ public class UserManager {
         ThreadManager TM = new ThreadManager(NM);
         while (pseudo_Incorrect) {
             this.Connect();
+<<<<<<< HEAD
+=======
+            System.out.println("Sending Pseudos to others");
+>>>>>>> 04c7077aeb476914f91fdfe66e930ee28dca301e
             Thread.sleep(1);
             if (responsePseudo){
+                System.out.println("no response, or pseudo ok");
                 pseudo_Incorrect =false;
                 user_self.Set_Pseudo(Pseudochoosed);
             }
+            System.out.println("Pseudo incorrect, ask again.");
         }
     }
     public void Connect() throws UnknownHostException,SocketException{

@@ -30,6 +30,7 @@ public class ThreadSendBC implements Runnable {
         }
         byte [] pseudoData = data.getBytes();
         try {
+            System.out.println("Sending "+data+" in SendThread");
             socket.setBroadcast(true);
             DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length, InetAddress.getByName("255.255.255.255"), numSocket);
             socket.send(sendNotif);

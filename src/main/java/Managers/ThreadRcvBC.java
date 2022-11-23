@@ -27,6 +27,7 @@ public class ThreadRcvBC implements Runnable {
                     System.out.println("Read zero bytes");
                 } else {
                     rcvData = new String(rcvNotif.getData());
+                    System.out.println("Received "+rcvData+" in RCVThread");
                     System.out.println(rcvData);
                     //we need to check if notification or validation... we split the string that we received with "-" as a delimiter. If we only have 1 element then that means it's a notification because it does not contain the boolean, if we have 2 elements that means it's a validation
                     String[] splitString = rcvData.split("-");
