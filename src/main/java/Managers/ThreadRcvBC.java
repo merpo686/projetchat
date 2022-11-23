@@ -19,7 +19,7 @@ public class ThreadRcvBC implements Runnable {
             String rcvData;
             DatagramSocket socket = new DatagramSocket();
             DatagramPacket rcvNotif = new DatagramPacket(data, data.length);
-            //on recoit la notif
+            //we receive the model (either notification or validation)
             while (true) {
                 socket.receive(rcvNotif);
 
@@ -28,8 +28,12 @@ public class ThreadRcvBC implements Runnable {
                 } else {
                     rcvData = new String(rcvNotif.getData());
                     System.out.println(rcvData);
+                    //we need to check if notification or validation... we split the string that we received in 2, if we only have 1 element then
                     if (rcvData=="true"||rcvData=="false"){
                         this.valid=new Validation(new User(rcvNotif.getAddress(),socket.getPort()),"",Boolean.parseBoolean(rcvData));
+                    }
+                    else {
+                        this.notif=new Notifications(new User(rcvNotif.getAddress(),socket.getPort()),rcvData);
                     }
                 }
             }

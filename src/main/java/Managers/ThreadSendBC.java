@@ -8,10 +8,10 @@ public class ThreadSendBC implements Runnable {
     DatagramSocket socket;
     Validation val;
     int numSocket;
-    public void ThreadSendBC(Validation val, int numSocket) throws SocketException {
+    public void ThreadSendBC(Validation val) throws SocketException {
         this.socket = new DatagramSocket();
         this.val = val;
-        this.numSocket = numSocket;
+        this.numSocket=val.get_numPort();
     }
 
     public void run() {
