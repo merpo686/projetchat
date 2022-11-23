@@ -12,6 +12,7 @@ public class UserManager {
     public static User user_self;
     private String Pseudochoosed;
     private Boolean responsePseudo;
+    public static ActiveUserManager AUM = new ActiveUserManager();
     public UserManager() throws InterruptedException,UnknownHostException,SocketException{
         user_self= new User(InetAddress.getLocalHost(),4567);
         boolean pseudo_Incorrect = true;
@@ -26,6 +27,7 @@ public class UserManager {
                 System.out.println("no response, or pseudo ok");
                 pseudo_Incorrect =false;
                 user_self.Set_Pseudo(Pseudochoosed);
+                ActiveUserManager.addListActiveUser(user_self);
             }
         }
     }

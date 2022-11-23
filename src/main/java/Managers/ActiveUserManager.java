@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class ActiveUserManager {
     static ArrayList<User> listActiveUsers;
-    public ActiveUserManager(User U){
+    public ActiveUserManager(){
         listActiveUsers = new ArrayList<User>();
     }
     public static void addListActiveUser(User U){
@@ -21,10 +21,15 @@ public class ActiveUserManager {
     }
 
     public static boolean IsinActiveListUser(String Pseudo){
-        for (User user: listActiveUsers){
-            if (user.get_Pseudo().equals(Pseudo)){
-                return true;
+        try {
+            for (User user: listActiveUsers){
+                if (user.get_Pseudo().equals(Pseudo)){
+                    return true;
+                }
             }
+        }
+        catch (NullPointerException e){
+            return false;
         }
         return false;
     }

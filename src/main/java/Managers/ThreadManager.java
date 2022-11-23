@@ -10,6 +10,7 @@ public class ThreadManager {
     public ThreadManager(NetworkManager NM){
         this.NM=NM;
         this.T_Recv_BC= new ThreadRcvBC(NM);
+        System.out.println("Construction de TM");
         new Thread(this.T_Recv_BC).start();
     }
     static public void Send_BC(Notifications notif) throws SocketException {

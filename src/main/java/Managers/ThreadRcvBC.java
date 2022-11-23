@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.net.*;
 
 public class ThreadRcvBC implements Runnable {
-    NetworkManager NM;
-    Validation valid;
-    Notifications notif;
+    private NetworkManager NM;
+    private Validation valid;
+    private Notifications notif;
     public ThreadRcvBC(NetworkManager NM) {
         this.NM = NM;
     }
@@ -17,11 +17,12 @@ public class ThreadRcvBC implements Runnable {
         try {
             byte[] data = new byte[1024];
             String rcvData;
-            DatagramSocket socket = new DatagramSocket();
+            DatagramSocket socket = new DatagramSocket(4567);
             DatagramPacket rcvNotif = new DatagramPacket(data, data.length);
             //we receive the model (either notification or validation)
             while (true) { //the thread will be in a receiving state constantly
                 try {
+                    System.out.println("Waiting for Broadcast");
                     socket.receive(rcvNotif);
                 }
                 catch (IOException e){
