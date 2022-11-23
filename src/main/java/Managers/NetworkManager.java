@@ -11,10 +11,10 @@ public class NetworkManager {
     }
     public void Receive_BC(Notifications notif) throws SocketException {
         if (ActiveUserManager.IsinActiveListUser(notif.get_Pseudo())){
-            ThreadManager.Send_BC(new Validation(UserManager.user_self, UserManager.user_self.get_Pseudo(),false));
+            ThreadManager.Send_BC(new Validation(notif.get_User(), UserManager.user_self.get_Pseudo(),false));
         }
         else {
-            ThreadManager.Send_BC(new Validation(UserManager.user_self,UserManager.user_self.get_Pseudo(),true));
+            ThreadManager.Send_BC(new Validation(notif.get_User(),UserManager.user_self.get_Pseudo(),true));
             ActiveUserManager.addListActiveUser(notif.get_User());
         }
     }

@@ -19,6 +19,7 @@ public class UserManager {
         responsePseudo=true;
         NetworkManager NM = new NetworkManager(this);
         ThreadManager TM = new ThreadManager(NM);
+        System.out.println(UserManager.user_self.get_IP());
         while (pseudo_Incorrect) {
             this.Connect();
             System.out.println("Sending Pseudos to others");
