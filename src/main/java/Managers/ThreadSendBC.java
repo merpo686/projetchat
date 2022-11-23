@@ -1,8 +1,7 @@
 package Managers;
 
-import Models.Validation;
-
-import java.io.IOException;
+import Models.*;
+import java.io.*;
 import java.net.*;
 
 public class ThreadSendBC implements Runnable {

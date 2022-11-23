@@ -9,8 +9,8 @@ public class ThreadManager {
     NetworkManager NM;
     public ThreadManager(NetworkManager NM){
         this.NM=NM;
-        Recv_BC= new ThreadRcvBC(NM);
-        Send_BC= new ThreadSendBC();
+        this.T_Recv_BC= new ThreadRcvBC(NM);
+        this.T_Send_BC= new ThreadSendBC();
     }
     static public void Send_BC(Notifications notif){
         T_Send_BC.send(notif);
