@@ -5,17 +5,30 @@ import java.io.*;
 import java.net.*;
 
 public class ThreadSendBC implements Runnable {
-    DatagramSocket socket;
-    Validation val;
+    private DatagramSocket socket;
+    private Validation valid;
+    private Notifications notif;
     int numSocket;
-    public void ThreadSendBC(Validation val) throws SocketException {
+    public ThreadSendBC(Validation valid) throws SocketException {
         this.socket = new DatagramSocket();
-        this.val = val;
-        this.numSocket=val.get_numPort();
+        this.valid = valid;
+        this.numSocket=valid.get_numPort();
+    }
+    public ThreadSendBC(Notifications notif) throws SocketException {
+        this.socket = new DatagramSocket();
+        this.notif=notif;
+        this.numSocket=notif.get_numPort();
     }
 
     public void run() {
-        byte [] pseudoData = val.getPseudo().getBytes();
+        String data;
+        if (this.notif==null) {
+            data = this.valid.get_Pseudo() + "-" + String.valueOf(this.valid.get_Valid());
+        }
+        else {
+            data = this.notif.get_Pseudo();
+        }
+        byte [] pseudoData = data.getBytes();
         try {
             socket.setBroadcast(true);
             DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length, InetAddress.getByName("255.255.255.255"), numSocket);

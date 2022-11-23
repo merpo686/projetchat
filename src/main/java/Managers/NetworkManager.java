@@ -2,12 +2,14 @@ package Managers;
 import Managers.*;
 import Models.*;
 
+import java.net.SocketException;
+
 public class NetworkManager {
     UserManager UM;
     public NetworkManager( UserManager UM){
         this.UM=UM;
     }
-    public void Receive_BC(Notifications notif){
+    public void Receive_BC(Notifications notif) throws SocketException {
         if (ActiveUserManager.IsinActiveListUser(notif.get_Pseudo())){
             ThreadManager.Send_BC(new Validation(UserManager.user_self, UserManager.user_self.get_Pseudo(),false));
         }

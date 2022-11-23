@@ -1,6 +1,7 @@
 package Managers;
 import Models.*;
 
+import java.net.SocketException;
 import java.util.ArrayList;
 
 public class ThreadManager {
@@ -11,10 +12,10 @@ public class ThreadManager {
         this.T_Recv_BC= new ThreadRcvBC(NM);
         new Thread(this.T_Recv_BC).start();
     }
-    static public void Send_BC(Notifications notif){
+    static public void Send_BC(Notifications notif) throws SocketException {
         new Thread(new ThreadSendBC(notif)).start();
     }
-    static public void Send_BC(Validation valid){
+    static public void Send_BC(Validation valid) throws SocketException{
         new Thread(new ThreadSendBC(valid)).start();
     }
 }

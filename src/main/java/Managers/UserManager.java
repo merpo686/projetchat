@@ -11,7 +11,7 @@ public class UserManager {
     public static User user_self;
     private String Pseudochoosed;
     private Boolean responsePseudo;
-    public UserManager() throws InterruptedException,UnknownHostException{
+    public UserManager() throws InterruptedException,UnknownHostException,SocketException{
         user_self= new User(InetAddress.getLocalHost(),4567);
         boolean pseudo_Incorrect = true;
         responsePseudo=true;
@@ -26,7 +26,7 @@ public class UserManager {
             }
         }
     }
-    public void Connect() throws UnknownHostException{
+    public void Connect() throws UnknownHostException,SocketException{
         String Pseudochoosed=Ask_Pseudo();
         Notifications notifpseudo = new Notifications(user_self,Pseudochoosed);
         ThreadManager.Send_BC(notifpseudo);
