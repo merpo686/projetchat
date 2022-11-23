@@ -14,13 +14,13 @@ public class UserManager {
     public UserManager() throws InterruptedException,UnknownHostException{
         user_self= new User(InetAddress.getLocalHost(),4567);
         boolean pseudo_Incorrect = true;
-        responsePseudo=false;
+        responsePseudo=true;
         NetworkManager NM = new NetworkManager(this);
         ThreadManager TM = new ThreadManager(NM);
         while (pseudo_Incorrect) {
             this.Connect();
             wait(1);
-            if (!(responsePseudo)){
+            if (responsePseudo){
                 pseudo_Incorrect =false;
                 user_self.Set_Pseudo(Pseudochoosed);
             }
@@ -37,7 +37,7 @@ public class UserManager {
     }
     public void Process_Pseudo_Response(Validation valid){
         if (!(valid.get_Valid())){
-            this.responsePseudo=true;
+            this.responsePseudo=false;
         }
     }
 }
