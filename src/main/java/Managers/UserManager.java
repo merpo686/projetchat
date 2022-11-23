@@ -21,13 +21,12 @@ public class UserManager {
         while (pseudo_Incorrect) {
             this.Connect();
             System.out.println("Sending Pseudos to others");
-            Thread.sleep(1);
+            Thread.sleep(5000);
             if (responsePseudo){
                 System.out.println("no response, or pseudo ok");
                 pseudo_Incorrect =false;
                 user_self.Set_Pseudo(Pseudochoosed);
             }
-            System.out.println("Pseudo incorrect, ask again.");
         }
     }
     public void Connect() throws UnknownHostException,SocketException{
