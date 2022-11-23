@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 
 public class ActiveUserManager {
-    User U;
-    ArrayList<User> listActiveUsers;
+    private User U;
+    static ArrayList<User> listActiveUsers;
     public ActiveUserManager(User U){
         this.U = U;
         this.listActiveUsers = new ArrayList<User>();
@@ -20,5 +20,14 @@ public class ActiveUserManager {
 
     ArrayList<User> getListActiveUser(){
         return this.listActiveUsers;
+    }
+
+    public static boolean IsinActiveListUser(String Pseudo){
+        for (User user: listActiveUsers){
+            if (user.get_Pseudo()==Pseudo){
+                return true;
+            }
+        }
+        return false;
     }
 }

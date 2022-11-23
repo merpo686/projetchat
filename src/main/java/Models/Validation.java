@@ -1,5 +1,5 @@
 package Models;
-
+//2
 public class Validation extends Notifications{
     String Pseudo;
     Boolean Valid;

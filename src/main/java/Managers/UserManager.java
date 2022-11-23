@@ -11,8 +11,9 @@ public class UserManager {
     private ThreadManager TM;
     private String Pseudochoosed;
     public UserManager(String Pseudo){
-        this.NM=new NetworkManager(5000);
-        this.TM=new ThreadManager(this);
+        this.Pseudo="";
+        this.NM=new NetworkManager(this.Pseudo,this);
+        this.TM=new ThreadManager(this.NM);
         this.Connect();
     }
     public void Connect(){
@@ -26,7 +27,7 @@ public class UserManager {
         return ps;
     }
     public void Process_Pseudo_Response(Validation valid){
-        if (valid.get_Valid==true){
+        if (valid.get_Valid()){
             this.Pseudo=this.Pseudochoosed;
         }
         else {
