@@ -12,7 +12,7 @@ public class UserManager {
     private String Pseudochoosed;
     private Boolean responsePseudo;
     public UserManager() throws InterruptedException,UnknownHostException{
-        user_self= new User(InetAddress.getLocalHost().getHostAddress(),4567);
+        user_self= new User(InetAddress.getLocalHost(),4567);
         boolean pseudo_Incorrect = true;
         responsePseudo=false;
         NetworkManager NM = new NetworkManager(this);

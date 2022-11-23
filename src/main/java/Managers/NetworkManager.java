@@ -1,5 +1,5 @@
 package Managers;
-
+import Managers.*;
 import Models.*;
 
 public class NetworkManager {
@@ -9,10 +9,10 @@ public class NetworkManager {
     }
     public void Receive_BC(Notifications notif){
         if (ActiveUserManager.IsinActiveListUser(notif.get_Pseudo())){
-            ThreadSendBC.send(new Validation(UserManager.user_self, UserManager.user_self.get_Pseudo(),false));
+            ThreadManager.Send_BC(new Validation(UserManager.user_self, UserManager.user_self.get_Pseudo(),false));
         }
         else {
-            ThreadSendBC.send(new Validation(UserManager.user_self,UserManager.user_self.get_Pseudo(),true));
+            ThreadManager.Send_BC(new Validation(UserManager.user_self,UserManager.user_self.get_Pseudo(),true));
             ActiveUserManager.addListActiveUser(notif.get_User());
         }
     }
