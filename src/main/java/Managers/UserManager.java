@@ -43,7 +43,8 @@ public class UserManager {
         return sc.nextLine();
     }
     public void Process_Pseudo_Response(Validation valid){
-        if (!(valid.get_Valid())){
+        if (valid.get_Valid()){
+            System.out.println("C'est pas valide");
             this.responsePseudo=false;
         }
     }
