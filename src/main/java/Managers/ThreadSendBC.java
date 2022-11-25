@@ -27,7 +27,7 @@ public class ThreadSendBC implements Runnable {
             byte [] pseudoData = data.getBytes();
             try {
                 DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
-                        InetAddress.getByName(String.valueOf(valid.get_IP())), numSocket);
+                        InetAddress.getByName(String.valueOf(valid.get_Hostname())), numSocket);
                 socket.send(sendNotif);
                 socket.close();
             } catch (IOException e) {
