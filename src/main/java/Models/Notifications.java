@@ -12,5 +12,5 @@ public class Notifications {
     public String get_Pseudo(){return this.user.get_Pseudo();}
     public User get_User(){return this.user;}
     public int get_numPort(){return this.user.get_Port();}
-    public String get_Hostname(){return this.user.get_Hostname();}
+    public InetAddress get_IP(){return this.user.get_IP();}
 }

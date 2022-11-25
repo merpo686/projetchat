@@ -14,12 +14,12 @@ public class UserManager {
     private Boolean responsePseudo;
     public static ActiveUserManager AUM = new ActiveUserManager();
     public UserManager() throws InterruptedException,UnknownHostException,SocketException{
-        user_self= new User(InetAddress.getLocalHost().getHostName(), 4567);
+        user_self= new User(InetAddress.getLocalHost(), 4567);
         boolean pseudo_Incorrect = true;
         responsePseudo=true;
         NetworkManager NM = new NetworkManager(this);
         ThreadManager TM = new ThreadManager(NM);
-        System.out.println(UserManager.user_self.get_Hostname());
+        System.out.println(UserManager.user_self.get_IP());
         while (pseudo_Incorrect) {
             this.Connect();
             System.out.println("[UserManager] Sending Pseudos to others");
