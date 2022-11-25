@@ -26,7 +26,8 @@ public class ThreadSendBC implements Runnable {
             data = this.valid.get_Pseudo() + "-" + String.valueOf(this.valid.get_Valid());
             byte [] pseudoData = data.getBytes();
             try {
-                DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length, InetAddress.getByName(String.valueOf(valid.get_IP())), numSocket);
+                DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
+                        InetAddress.getByName(String.valueOf(valid.get_Hostname())), numSocket);
                 socket.send(sendNotif);
                 socket.close();
             } catch (IOException e) {
@@ -39,7 +40,8 @@ public class ThreadSendBC implements Runnable {
             try {
                 System.out.println("[ThreadSendBC] Sending "+data+" in SendThread");
                 socket.setBroadcast(true);
-                DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length, InetAddress.getByName("255.255.255.255"), numSocket);
+                DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
+                        InetAddress.getByName("255.255.255.255"), numSocket);
                 socket.send(sendNotif);
                 socket.close();
             } catch (IOException e) {
