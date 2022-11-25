@@ -24,8 +24,10 @@ public class ThreadRcvBC implements Runnable {
                 try {
                     System.out.println("[ThreadRcvBC] Waiting for Broadcast");
                     socket.receive(rcvNotif);
-                    System.out.println("[ThreadRcvBC]"+rcvNotif.getAddress().getHostAddress());
-                    System.out.println(UserManager.user_self.get_IP());
+                    if(rcvNotif.getAddress().getHostName()){
+                        System.out.println("[ThreadRcvBC]"+rcvNotif.getAddress().getHostName());
+                    }
+                    System.out.println(UserManager.user_self.get_IP().getHostName());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
