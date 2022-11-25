@@ -16,7 +16,7 @@ public class ActiveUserManager {
         listActiveUsers.remove(U);
     }
 
-    ArrayList<User> getListActiveUser(){
+    public ArrayList<User> getListActiveUser(){
         return listActiveUsers;
     }
 
