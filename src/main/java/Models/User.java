@@ -1,13 +1,11 @@
 package Models;
 
-import java.net.InetAddress;
-
 public class User {
-    private final InetAddress IP;
+    private final String hostname;
     private final int port;
     private String Pseudo;
-    public User(InetAddress IP, int port){
-        this.IP=IP;
+    public User(String hostname, int port){
+        this.hostname=hostname;
         this.port=port;
     }
     public void Set_Pseudo(String pseudo){
@@ -16,8 +14,8 @@ public class User {
     public String get_Pseudo(){
         return this.Pseudo;
     }
-    public InetAddress get_IP(){
-        return this.IP;
+    public String get_Hostname(){
+        return this.hostname;
     }
     public int get_Port(){
         return this.port;
