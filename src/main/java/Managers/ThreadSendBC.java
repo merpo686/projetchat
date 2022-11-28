@@ -5,7 +5,7 @@ import java.io.*;
 import java.net.*;
 
 public class ThreadSendBC implements Runnable {
-    private DatagramSocket socket;
+    private final DatagramSocket socket;
     private Validation valid;
     private Notifications notif;
     int numSocket;
@@ -23,7 +23,7 @@ public class ThreadSendBC implements Runnable {
     public void run() {
         String data;
         if (this.notif==null) {
-            data = this.valid.get_Pseudo() + "-" + String.valueOf(this.valid.get_Valid());
+            data = this.valid.get_Pseudo() + "-" + this.valid.get_Valid();
             byte [] pseudoData = data.getBytes();
             try {
                 DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,

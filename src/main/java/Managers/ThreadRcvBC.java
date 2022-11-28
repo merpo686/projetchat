@@ -48,6 +48,8 @@ public class ThreadRcvBC implements Runnable {
                     } else {
                         System.out.println("[ThreadRcvBC] Error there are 3 or more separate fields in the broadcast message");
                     }
+                    this.notif=null;
+                    this.valid=null;
                 }
             }
         } catch (Exception e) {

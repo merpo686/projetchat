@@ -5,11 +5,9 @@ import java.net.InetAddress;
 
 public class Notifications {
     private final User user;
-    public Notifications(User user,String Pseudo){
+    public Notifications(User user){
         this.user= user;
-        this.user.Set_Pseudo(Pseudo);
     }
-    public String get_Pseudo(){return this.user.get_Pseudo();}
     public User get_User(){return this.user;}
     public int get_numPort(){return this.user.get_Port();}
     public String get_Hostname(){return this.user.get_Hostname();}

@@ -4,15 +4,24 @@ import java.util.ArrayList;
 
 
 public class ActiveUserManager {
-    static ArrayList<User> listActiveUsers;
-    public ActiveUserManager(){
+    static ActiveUserManager instance;
+
+    ArrayList<User> listActiveUsers;
+    private ActiveUserManager() {
         listActiveUsers = new ArrayList<User>();
     }
-    public static void addListActiveUser(User U){
+
+    public static ActiveUserManager getInstance() {
+        if (instance == null) {
+            instance = new ActiveUserManager();
+        }
+        return instance;
+    }
+    public void addListActiveUser(User U){
         listActiveUsers.add(U);
     }
 
-    public static void removeListActiveUser(User U){
+    public void removeListActiveUser(User U){
         listActiveUsers.remove(U);
     }
 
@@ -20,7 +29,7 @@ public class ActiveUserManager {
         return listActiveUsers;
     }
 
-    public static boolean IsinActiveListUser(String Pseudo){
+    public boolean IsinActiveListUser(String Pseudo){
         try {
             for (User user: listActiveUsers){
                 if (user.get_Pseudo().equals(Pseudo)){
