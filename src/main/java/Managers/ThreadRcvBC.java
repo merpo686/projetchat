@@ -30,10 +30,8 @@ public class ThreadRcvBC implements Runnable {
                 if (rcvNotif.getLength() == 0) {
                     System.out.println("[ThreadRcvBC] Read zero bytes");
                 } else if (!(rcvNotif.getAddress().getHostName().contains(UserManager.user_self.get_Hostname()))){
-                    System.out.println("On est dans le contains");
                     rcvNotif = new DatagramPacket(data, data.length, rcvNotif.getAddress(), rcvNotif.getPort());
                     rcvData = new String(rcvNotif.getData(), 0, rcvNotif.getLength());
-
                     //we need to check if notification or validation... we split the string that we received with "-" as a delimiter. If we only have 1 element then that means it's a notification because it does not contain the boolean, if we have 2 elements that means it's a validation
                     String[] splitString = rcvData.split("-");
                     for (int i=0; i< splitString.length; i++){

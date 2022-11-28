@@ -16,7 +16,7 @@ public class ThreadManager {
     static public void Send_BC(Notifications notif) throws SocketException {
         new Thread(new ThreadSendBC(notif)).start();
     }
-    static public void Send_BC(Validation valid) throws SocketException{
+    static public void Send_BC(Validation valid) throws SocketException {
         new Thread(new ThreadSendBC(valid)).start();
     }
 }

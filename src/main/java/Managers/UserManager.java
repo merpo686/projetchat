@@ -23,7 +23,7 @@ public class UserManager {
         while (pseudo_Incorrect) {
             this.Connect();
             System.out.println("[UserManager] Sending Pseudos to others");
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             if (responsePseudo){
                 System.out.println("[UserManager] no response, or pseudo ok");
                 pseudo_Incorrect =false;
@@ -33,7 +33,7 @@ public class UserManager {
         }
     }
     public void Connect() throws UnknownHostException,SocketException{
-        String Pseudochoosed=Ask_Pseudo();
+        Pseudochoosed=Ask_Pseudo();
         Notifications notifpseudo = new Notifications(user_self,Pseudochoosed);
         ThreadManager.Send_BC(notifpseudo);
     }
