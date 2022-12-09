@@ -9,22 +9,18 @@ import java.util.Scanner;
 public class NetworkManager {
     public static Boolean Pseudo_Correct=false;
     public static Boolean Response_received=false;
-    public static String Connection() throws SocketException, InterruptedException, UnknownHostException {
-        User user_self = UserMain.getInstance().Get_User();
-        String PseudoChosen = null;
-        while (!Pseudo_Correct) {
-            PseudoChosen= Ask_Pseudo();
-            NetworkManager.Send_Pseudo(user_self, PseudoChosen);
-            Thread.sleep(1000);
-            if (!Response_received){ //we are the first user -> no response
-                Pseudo_Correct=true;
-            }
-        }
-        return PseudoChosen;
+
+    public static void Send_Connection() throws SocketException, UnknownHostException {
+        Connection connect = new Connection(UserMain.getInstance().Get_User(),true);
+        ThreadManager.Send_BC(connect);
+    }
+    public static void Send_Disconnection() throws SocketException, UnknownHostException {
+        Connection connect = new Connection(UserMain.getInstance().Get_User(),false);
+        ThreadManager.Send_BC(connect);
     }
 
-    public static void Send_Pseudo(User user_self, String PseudoChosen) throws SocketException {
-        NotifPseudo notifpseudo = new NotifPseudo(user_self,PseudoChosen);
+    public static void Send_Pseudo( String PseudoChosen) throws SocketException, UnknownHostException {
+        NotifPseudo notifpseudo = new NotifPseudo(UserMain.getInstance().Get_User(),PseudoChosen);
         ThreadManager.Send_BC(notifpseudo);
     }
 
@@ -34,22 +30,18 @@ public class NetworkManager {
         return sc.nextLine();
     }
 
-    public static void Process_Validation(Validation valid){
-        if (valid.get_Valid()){
-            Response_received=true;
-            Pseudo_Correct=true;
+    public static void Process_Connection(Connection connect) throws UnknownHostException, SocketException {
+        //true=connection; false=deconnection
+        if (connect.get_Valid()){
+            ThreadManager.Send_Pseudo_Unicast(new NotifPseudo(connect.get_User(), UserMain.getInstance().Get_Pseudo()));
+        }
+        else {
+            ActiveUserManager.getInstance().removeListActiveUser(connect.get_User());
         }
     }
 
     public static void Process_Notif_Pseudo(NotifPseudo notif) throws SocketException, UnknownHostException {
-        String pseudo = UserMain.getInstance().Get_Pseudo();
-        if (ActiveUserManager.getInstance().IsinActiveListUser(notif.get_Pseudo())){
-            ThreadManager.Send_BC(new Validation(notif.get_User(), pseudo,false));
-        }
-        else {
-            ThreadManager.Send_BC(new Validation(notif.get_User(),pseudo,true));
-            ActiveUserManager.getInstance().addListActiveUser(notif.get_User());
-        }
+        ActiveUserManager.getInstance().addListActiveUser(notif.get_User());
     }
 
 }

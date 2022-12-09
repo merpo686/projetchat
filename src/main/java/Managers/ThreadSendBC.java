@@ -6,13 +6,13 @@ import java.net.*;
 
 public class ThreadSendBC implements Runnable {
     private final DatagramSocket socket;
-    private Validation valid;
+    private Connection connect;
     private NotifPseudo notif;
     int numSocket;
-    public ThreadSendBC(Validation valid) throws SocketException {
+    public ThreadSendBC(Connection connect) throws SocketException {
         this.socket = new DatagramSocket();
-        this.valid = valid;
-        this.numSocket=valid.get_numPort();
+        this.connect=connect;
+        this.numSocket=connect.get_numPort();
     }
     public ThreadSendBC(NotifPseudo notif) throws SocketException {
         this.socket = new DatagramSocket();
@@ -23,30 +23,21 @@ public class ThreadSendBC implements Runnable {
     public void run() {
         String data;
         if (this.notif==null) {
-            data = this.valid.get_Pseudo() + "-" + this.valid.get_Valid();
-            byte [] pseudoData = data.getBytes();
-            try {
-                DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
-                        InetAddress.getByName(String.valueOf(valid.get_Hostname())), numSocket);
-                socket.send(sendNotif);
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            data = "Connection-" + Boolean.toString(this.connect.get_Valid());
         }
         else {
             data = this.notif.get_Pseudo();
-            byte [] pseudoData = data.getBytes();
-            try {
-                System.out.println("[ThreadSendBC] Sending "+data+" in SendThread");
-                socket.setBroadcast(true);
-                DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
-                        InetAddress.getByName("255.255.255.255"), numSocket);
-                socket.send(sendNotif);
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        }
+        byte [] pseudoData = data.getBytes();
+        try {
+            System.out.println("[ThreadSendBC] Sending "+data+" in SendThread");
+            socket.setBroadcast(true);
+            DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
+                    InetAddress.getByName("255.255.255.255"), numSocket);
+            socket.send(sendNotif);
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
