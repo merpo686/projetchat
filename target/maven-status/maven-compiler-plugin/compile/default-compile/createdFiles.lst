@@ -1,9 +1,11 @@
-<<<<<<< HEAD
 Managers/UserMain$NotifHandler.class
 Managers/UserMain.class
+Managers/TCPServer.class
 Managers/UserMain$1.class
-Models/NotifPseudo.class
-=======
+Models/Conversation.class
+Managers/TCPClient.class
+Managers/TCPClientHandler.class
 Models/Connection.class
 Managers/Thread_Send_Pseudo_Unicast.class
->>>>>>> f6bd9f7ff5c582b67f552db85d299ca01fc045a9
+Models/Message.class
+Models/NotifPseudo.class

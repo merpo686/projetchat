@@ -44,9 +44,12 @@ public class UserMain {
                         Connection connect =(Connection) notif;
                         NetworkManager.Process_Connection(connect);
                     }
-                    else {
+                    else if (notif instanceof NotifPseudo) {
                         NotifPseudo notifpseudo = (NotifPseudo)notif;
                         NetworkManager.Process_Notif_Pseudo(notifpseudo);
+                    }
+                    else if (notif instanceof Message) {
+
                     }
                 }
             };
