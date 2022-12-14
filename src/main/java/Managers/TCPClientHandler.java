@@ -17,7 +17,7 @@ public class TCPClientHandler extends Thread {
         while(true){
 
             try {
-                //on recupere les flux de lecture et d'envoie du socket
+                //we recover the input and output streams
                 DataInputStream inputStream = new DataInputStream(numPort.getInputStream());
                 DataOutputStream outputStream = new DataOutputStream(numPort.getOutputStream());
 
