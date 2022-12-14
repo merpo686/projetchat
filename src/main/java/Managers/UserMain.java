@@ -1,5 +1,6 @@
 package Managers;
 
+import Graphics.ChoosePseudoInterface;
 import Models.*;
 
 import java.net.InetAddress;
@@ -60,7 +61,12 @@ public class UserMain {
             NetworkManager.Send_Connection();
             Thread.sleep(1000);
             System.out.println("Pseudo choisis: "+ActiveUserManager.getInstance().toString());
-            String PseudoChosen=NetworkManager.Ask_Pseudo();
+            javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    new ChoosePseudoInterface();
+                }
+            });
+            /*String PseudoChosen=NetworkManager.Ask_Pseudo();
             while (ActiveUserManager.getInstance().IsinActiveListUser(PseudoChosen)){
                 System.out.println("Pseudo déjà choisi");
                 PseudoChosen=NetworkManager.Ask_Pseudo();
@@ -69,7 +75,7 @@ public class UserMain {
             NetworkManager.Send_Pseudo(PseudoChosen);
             Thread.sleep(5000);
             System.out.println("Disconnecting");
-            NetworkManager.Send_Disconnection();
+            NetworkManager.Send_Disconnection();*/
         }
         catch (Exception e){
             System.out.println(e);
