@@ -16,12 +16,12 @@ public class Thread_Send_Pseudo_Unicast implements Runnable {
 
     public Thread_Send_Pseudo_Unicast(NotifPseudo notifPseudo) throws SocketException {
         this.socket = new DatagramSocket();
+        this.notif = notifPseudo;
         this.numSocket = notifPseudo.get_numPort();
     }
 
     public void run() {
         String data;
-        if (this.notif == null) {
             data = this.notif.get_Pseudo();
             byte[] pseudoData = data.getBytes();
             try {
@@ -32,6 +32,5 @@ public class Thread_Send_Pseudo_Unicast implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
     }
 }

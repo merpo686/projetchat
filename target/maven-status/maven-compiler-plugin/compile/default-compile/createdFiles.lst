@@ -1,2 +1,11 @@
+Managers/UserMain$NotifHandler.class
+Managers/UserMain.class
+Managers/TCPServer.class
+Managers/UserMain$1.class
+Models/Conversation.class
+Managers/TCPClient.class
+Managers/TCPClientHandler.class
 Models/Connection.class
 Managers/Thread_Send_Pseudo_Unicast.class
+Models/Message.class
+Models/NotifPseudo.class
