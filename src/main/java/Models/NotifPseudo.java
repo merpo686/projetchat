@@ -7,4 +7,5 @@ public class NotifPseudo extends Notifications{
         this.Pseudo=Pseudo;
     }
     public String get_Pseudo(){return this.Pseudo;}
+    public String toString(){return this.Pseudo;}
 }

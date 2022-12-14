@@ -42,4 +42,5 @@ public class ActiveUserManager {
         }
         return false;
     }
+    public String toString(){return listActiveUsers.toString();}
 }
