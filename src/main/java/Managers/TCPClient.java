@@ -20,8 +20,13 @@ public class TCPClient {
         while(true){
             System.out.println(inputStream.readUTF());
             String toSend = new Scanner(System.in).nextLine();
+            outputStream.writeUTF(toSend);
+            if(toSend.equals("Exit")){
+                System.out.println("Closing...");
+                socket.close();
+                System.out.println("Closed");
+                break;
+            }
         }
-
-
     }
 }

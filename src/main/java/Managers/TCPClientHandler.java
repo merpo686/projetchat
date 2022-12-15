@@ -24,7 +24,12 @@ public class TCPClientHandler extends Thread {
                 outputStream.writeUTF("Please enter the name of the user whom you want to talk to");
                 //getting user
                 String pseudoDest = inputStream.readUTF();
-                userDest = new User(pseudoDest, numPort.getPort());
+                if(ActiveUserManager.getInstance().IsinActiveListUser(pseudoDest)){
+                    userDest = new User(pseudoDest, numPort.getPort());
+                }
+                else{
+                    outputStream.writeUTF("This pseudo does not appear to be in your list of active users");
+                }
 
                 outputStream.writeUTF("Here is the conversation history");
                 outputStream.writeUTF(Conversation.getInstance(userDest).getHistory());
@@ -39,9 +44,10 @@ public class TCPClientHandler extends Thread {
                     break;
                 }
 
+                outputStream.writeUTF("Message sent to "+pseudoDest+" : "+receivedMsg);
                 //storing message sent in list of messages
                 Conversation.getInstance(userDest).addMessage(new Message(userDest, receivedMsg));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

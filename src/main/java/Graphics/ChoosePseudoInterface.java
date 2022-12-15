@@ -93,7 +93,7 @@ public class ChoosePseudoInterface implements ActionListener {
          */
         pane = new JPanel(new GridLayout(2,2));
         pane.add(connection);
-        pane.add(connection_button);
+        pane.add((Component) connection_button);
         pane.setBorder(BorderFactory.createEmptyBorder(
                 30, //top
                 30, //left

@@ -2,7 +2,11 @@ package Managers;
 import Models.*;
 import com.sun.nio.sctp.NotificationHandler;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class ThreadManager {
@@ -23,5 +27,9 @@ public class ThreadManager {
     }
     static public void Send_Pseudo_Unicast(NotifPseudo notifPseudo) throws SocketException {
         new Thread(new Thread_Send_Pseudo_Unicast(notifPseudo)).start();
+    }
+    static public void Start_TCP_Server(int port) throws IOException {
+        //we run the server
+        TCPServer server = new TCPServer(port);
     }
 }
