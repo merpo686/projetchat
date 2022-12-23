@@ -11,53 +11,50 @@ import Managers.UserMain;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.text.NumberFormatter;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
-import java.text.DecimalFormat;
-import java.net.URL;
 
-public class ChoosePseudoInterface implements ActionListener {
-    private static JFrame frame;
-    final JLabel label = new JLabel("Pseudo already taken");
+public class ChoosePseudoInterface extends Container {
     JFormattedTextField connection;
-    JPanel pane;
+    GridBagConstraints cons;
+    JFrame frame;
 
-    public ChoosePseudoInterface(){
-        //Set the look and feel.
-        String lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-        try {
-            UIManager.setLookAndFeel(lookAndFeel);
-        } catch (Exception e) {
-            System.err.println("Couldn't get specified look and feel ("
-                    + lookAndFeel
-                    + "), for some reason.");
-            System.err.println("Using the default look and feel.");
-            e.printStackTrace();
+    //action of the menu
+    //deconnexion button in the menu
+    Action deconnexion_button = new AbstractAction("DECONNEXION") {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            setVisible(false);
+            try {
+                NetworkManager.Send_Disconnection();
+            } catch (SocketException | UnknownHostException e) {
+                e.printStackTrace();
+            }
+            frame.dispose();
         }
-        //Make sure we have nice window decorations.
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        //Create and set up the window.
-        frame = new JFrame("ChatApplication");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(new Dimension(120,40));
-        Component contents = createComponents();
-        frame.getContentPane().add(contents, BorderLayout.CENTER);
+    };
 
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
-    }
+    public ChoosePseudoInterface(JFrame frame){
+        this.frame=frame;
 
-    public Component createComponents() {
+        //GridBagLayout, maybe not the best either but I found it smooth
+        setLayout(new GridBagLayout());
+        cons= new GridBagConstraints();
+
+        //connection button
         Action connection_button = new AbstractAction("CONNECTION"){
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    connection.commitEdit();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 String PseudoChosen= connection.getText();
                 if (ActiveUserManager.getInstance().IsinActiveListUser(PseudoChosen)){
-                    pane.add(label);
-                    frame.repaint();
+                    add(new JLabel("Pseudo already taken: "+PseudoChosen));
+                    repaint();
                 }
                 else {
                     try {
@@ -66,51 +63,66 @@ public class ChoosePseudoInterface implements ActionListener {
                     } catch (UnknownHostException | SocketException unknownHostException) {
                         unknownHostException.printStackTrace();
                     }
-                    frame.setVisible(false);
-                    new activelistuserInterface();
-                    frame.dispose();
+                    setVisible(false);
+                    new ChooseDiscussionInterface(frame);
                 }
             }
         };
-        connection_button.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_ENTER);
-        // https://coderanch.com/t/346109/java/actions-performed
+        //positioning
+        cons.fill = GridBagConstraints.HORIZONTAL;
+        cons.weighty=1.0;
+        cons.gridwidth=2;
+        cons.ipadx=10;
+        cons.ipady=10;
+        cons.gridx=1;
+        cons.gridy=2;
+        add(new JButton(connection_button),cons);
 
+        //input text bar
         connection = new JFormattedTextField();
         connection.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
-        //Set and commit the default temperature.
-        try {
-            connection.setText("Enter Pseudo");
-            connection.commitEdit();
-        } catch(ParseException e) {
-            //Shouldn't get here unless the setText value doesn't agree
-            //with the format set above.
-            e.printStackTrace();
-        }
-        /*
-         * An easy way to put space between a top-level container
-         * and its contents is to put the contents in a JPanel
-         * that has an "empty" border.
-         */
-        pane = new JPanel(new GridLayout(2,2));
-        pane.add(connection);
-        pane.add(connection_button);
-        pane.setBorder(BorderFactory.createEmptyBorder(
-                30, //top
-                30, //left
-                10, //bottom
-                30) //right
-        );
-        return pane;
-    }
+        connection.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode()==KeyEvent.VK_ENTER){
+                    try {
+                        connection.commitEdit();
+                    } catch (ParseException exc) {
+                        exc.printStackTrace();
+                    }
+                    String PseudoChosen= connection.getText();
+                    if (ActiveUserManager.getInstance().IsinActiveListUser(PseudoChosen)){
+                        add(new JLabel("Pseudo already taken: "+PseudoChosen));
+                        repaint();
+                    }
+                    else {
+                        try {
+                            UserMain.getInstance().Set_Pseudo(PseudoChosen);
+                            NetworkManager.Send_Pseudo(PseudoChosen);
+                        } catch (UnknownHostException | SocketException unknownHostException) {
+                            unknownHostException.printStackTrace();
+                        }
+                        setVisible(false);
+                        new ChooseDiscussionInterface(frame);
 
-    public void actionPerformed(ActionEvent e) {
-        // Using getActionCommand() method is a bit of a hack, but for the
-        // sake of this exercise, it serves its purpose.
-        if (e.getActionCommand().equals("CONNECTION")||e.getActionCommand().equals()){
-            //choose pseudo and send it to others; connection.getText();
-            //either pseudo is correct or wrong if wrong -> set label visible pane.add(label);
-            //if true -> pass to other window
+                    }
+                }
+            }
+        });
+        //positioning
+        cons.fill = GridBagConstraints.HORIZONTAL;
+        cons.weighty=1.0;
+        cons.gridwidth=2;
+        cons.gridx=1;
+        cons.gridy=1;
+        add(connection,cons);
 
-        }
+        //menu
+        JMenuBar bar = new JMenuBar();
+        JMenu file = new JMenu("Menu");
+        file.add(deconnexion_button); // adds a menu item called deconnexion_button
+        bar.add(file);
+        frame.setJMenuBar(bar);
+        frame.setContentPane(this);
     }
 }

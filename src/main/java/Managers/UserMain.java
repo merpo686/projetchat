@@ -64,11 +64,8 @@ public class UserMain {
             NetworkManager.Send_Connection();
             Thread.sleep(1000);
             System.out.println("Pseudo choisis: "+ActiveUserManager.getInstance().toString());
-            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    new ChoosePseudoInterface();
-                }
-            });
+            //ChoosePseudoInterface IT= new ChoosePseudoInterface();
+            //IT.setVisible(true);
             /*String PseudoChosen=NetworkManager.Ask_Pseudo();
             while (ActiveUserManager.getInstance().IsinActiveListUser(PseudoChosen)){
                 System.out.println("Pseudo déjà choisi");
