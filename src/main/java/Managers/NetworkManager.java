@@ -2,6 +2,7 @@ package Managers;
 import Managers.*;
 import Models.*;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -42,6 +43,11 @@ public class NetworkManager {
 
     public static void Process_Notif_Pseudo(NotifPseudo notif) throws SocketException, UnknownHostException {
         ActiveUserManager.getInstance().addListActiveUser(notif.get_User());
+    }
+
+    public static void Send_Message_TCP(int port) throws IOException {
+        //we run the client
+        TCPClient client = new TCPClient(port);
     }
 
 }

@@ -104,7 +104,6 @@ public class ChoosePseudoInterface extends Container {
                         }
                         setVisible(false);
                         new ChooseDiscussionInterface(frame);
-
                     }
                 }
             }

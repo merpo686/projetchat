@@ -49,9 +49,6 @@ public class UserMain {
                         NotifPseudo notifpseudo = (NotifPseudo)notif;
                         NetworkManager.Process_Notif_Pseudo(notifpseudo);
                     }
-                    else if (notif instanceof Message) {
-
-                    }
                 }
             };
             //test Set_Pseudo / Get_Pseudo
@@ -66,16 +63,21 @@ public class UserMain {
             System.out.println("Pseudo choisis: "+ActiveUserManager.getInstance().toString());
             //ChoosePseudoInterface IT= new ChoosePseudoInterface();
             //IT.setVisible(true);
-            /*String PseudoChosen=NetworkManager.Ask_Pseudo();
+            String PseudoChosen=NetworkManager.Ask_Pseudo();
+
             while (ActiveUserManager.getInstance().IsinActiveListUser(PseudoChosen)){
-                System.out.println("Pseudo déjà choisi");
+                System.out.println("Pseudo already taken");
                 PseudoChosen=NetworkManager.Ask_Pseudo();
             }
             UserMain.getInstance().Set_Pseudo(PseudoChosen);
             NetworkManager.Send_Pseudo(PseudoChosen);
             Thread.sleep(5000);
+            System.out.println("Connection established");
+            //TCP Message Test
+            ThreadManager.Start_TCP_Server(getInstance().Get_User().get_Port());
+            NetworkManager.Send_Message_TCP(getInstance().Get_User().get_Port());
             System.out.println("Disconnecting");
-            NetworkManager.Send_Disconnection();*/
+            NetworkManager.Send_Disconnection();
         }
         catch (Exception e){
             System.out.println(e);
