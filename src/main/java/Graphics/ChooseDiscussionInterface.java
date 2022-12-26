@@ -20,7 +20,11 @@ public class ChooseDiscussionInterface extends Container {
         public void actionPerformed(ActionEvent actionEvent) {
             removeAll();
             invalidate();
-            refreshDisplay();
+            try {
+                refreshDisplay();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
             revalidate();
         }
     };
@@ -46,14 +50,14 @@ public class ChooseDiscussionInterface extends Container {
         }
     };
 
-    public ChooseDiscussionInterface(JFrame frame){
+    public ChooseDiscussionInterface(JFrame frame) throws UnknownHostException {
         this.frame=frame;
         refreshDisplay();
     }
 
-    public void refreshDisplay(){
-        //ArrayList<User> activeusers= ActiveUserManager.getInstance().getListActiveUser();
-        ArrayList<User> activeusers = new ArrayList<>();
+    public void refreshDisplay() throws UnknownHostException {
+        ArrayList<User> activeusers= ActiveUserManager.getInstance().getListActiveUser();
+        //pour tester l'interface j'ai rajouter des faux gens
         User merlin = new User("localhost",127);
         merlin.Set_Pseudo("merlin");
         activeusers.add(merlin);
@@ -63,6 +67,7 @@ public class ChooseDiscussionInterface extends Container {
         User merlin3 = new User("localhost",127);
         merlin3.Set_Pseudo("merlin3");
         activeusers.add(merlin3);
+        //
 
         //gridlayout, maybe not the best
         setLayout(  new GridLayout(activeusers.size(),1));

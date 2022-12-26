@@ -34,7 +34,11 @@ public class ChatInterface extends Container {
             setVisible(false);
             //close discussion
             frame.setResizable(true);
-            new ChooseDiscussionInterface(frame);
+            try {
+                new ChooseDiscussionInterface(frame);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
         }
     };
 

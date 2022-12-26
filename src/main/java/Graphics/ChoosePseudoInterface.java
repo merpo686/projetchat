@@ -1,9 +1,5 @@
 package Graphics;
 
-/*
- * SwingApplication.java is a 1.4 example that requires
- * no other files.
- */
 import Managers.ActiveUserManager;
 import Managers.NetworkManager;
 import Managers.Self;
@@ -64,7 +60,11 @@ public class ChoosePseudoInterface extends Container {
                         unknownHostException.printStackTrace();
                     }
                     setVisible(false);
-                    new ChooseDiscussionInterface(frame);
+                    try {
+                        new ChooseDiscussionInterface(frame);
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -103,7 +103,11 @@ public class ChoosePseudoInterface extends Container {
                             unknownHostException.printStackTrace();
                         }
                         setVisible(false);
-                        new ChooseDiscussionInterface(frame);
+                        try {
+                            new ChooseDiscussionInterface(frame);
+                        } catch (UnknownHostException unknownHostException) {
+                            unknownHostException.printStackTrace();
+                        }
                     }
                 }
             }
