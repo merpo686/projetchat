@@ -11,7 +11,7 @@ import java.net.SocketException;
 
 public class Thread_Send_Pseudo_Unicast implements Runnable {
     private final DatagramSocket socket;
-    private NotifPseudo notif;
+    private final NotifPseudo notif;
     int numSocket;
 
     public Thread_Send_Pseudo_Unicast(NotifPseudo notifPseudo) throws SocketException {

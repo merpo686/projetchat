@@ -1,5 +1,7 @@
 package Managers;
 import Models.User;
+
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 
@@ -25,8 +27,10 @@ public class ActiveUserManager {
         listActiveUsers.remove(U);
     }
 
-    public ArrayList<User> getListActiveUser(){
-        return listActiveUsers;
+    public ArrayList<User> getListActiveUser() throws UnknownHostException {
+        ArrayList<User> list = new ArrayList<User>(this.listActiveUsers);
+        list.remove(Self.getInstance().get_User());
+        return list;
     }
 
     public boolean IsinActiveListUser(String Pseudo){

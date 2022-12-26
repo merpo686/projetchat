@@ -6,7 +6,7 @@ package Graphics;
  */
 import Managers.ActiveUserManager;
 import Managers.NetworkManager;
-import Managers.UserMain;
+import Managers.Self;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +58,7 @@ public class ChoosePseudoInterface extends Container {
                 }
                 else {
                     try {
-                        UserMain.getInstance().Set_Pseudo(PseudoChosen);
+                        Self.getInstance().set_Pseudo(PseudoChosen);
                         NetworkManager.Send_Pseudo(PseudoChosen);
                     } catch (UnknownHostException | SocketException unknownHostException) {
                         unknownHostException.printStackTrace();
@@ -97,7 +97,7 @@ public class ChoosePseudoInterface extends Container {
                     }
                     else {
                         try {
-                            UserMain.getInstance().Set_Pseudo(PseudoChosen);
+                            Self.getInstance().set_Pseudo(PseudoChosen);
                             NetworkManager.Send_Pseudo(PseudoChosen);
                         } catch (UnknownHostException | SocketException unknownHostException) {
                             unknownHostException.printStackTrace();

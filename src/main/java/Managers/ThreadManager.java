@@ -1,24 +1,22 @@
 package Managers;
 import Models.*;
-import com.sun.nio.sctp.NotificationHandler;
-
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+
 
 public class ThreadManager {
-    public ThreadManager(){
+    public interface NotifHandler {
+        void handler(Notifications notif) throws SocketException, UnknownHostException;
     }
+
     static public void Send_BC(NotifPseudo notif) throws SocketException {
         new Thread(new ThreadSendBC(notif)).start();
     }
     static public void Send_BC(Connection connect) throws SocketException {
         new Thread(new ThreadSendBC(connect)).start();
     }
-    static public ThreadRcvBC Start_RcvThread(UserMain.NotifHandler handler){
+    static public ThreadRcvBC Start_RcvThread(NotifHandler handler){
         ThreadRcvBC T_Recv_BC;
         T_Recv_BC= new ThreadRcvBC(handler);
         T_Recv_BC.setDaemon(true);

@@ -1,20 +1,11 @@
 package Graphics;
-/*
- * SwingApplication.java is a 1.4 example that requires
- * no other files.
- */
 import Managers.*;
 import Models.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.text.NumberFormatter;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.text.DecimalFormat;
-import java.net.URL;
 import java.util.ArrayList;
 
 

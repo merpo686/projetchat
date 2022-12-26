@@ -1,15 +1,15 @@
 package Graphics;
 
 import Managers.NetworkManager;
-import Managers.UserMain;
+import Managers.Self;
 import Models.User;
 
 import java.awt.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Objects;
@@ -120,7 +120,7 @@ public class ChatInterface extends Container {
         jScrollPane1.setViewportView(chatArea);
 
         //discussion_name specify
-        discussion_name.setFont(new Font("Myriad Pro", 1, 30)); // NOI18N
+        discussion_name.setFont(new Font("Myriad Pro", Font.PLAIN, 30)); // NOI18N
         discussion_name.setForeground(InterfaceManager.foreground_color);
         discussion_name.setText(user.get_Pseudo());
 
@@ -149,7 +149,7 @@ public class ChatInterface extends Container {
         frame.setResizable(false);
     }
     private void sendMessage(String message) throws UnknownHostException {
-        chatArea.append("\nME("+ UserMain.getInstance().Get_Pseudo()+") - "+message);
+        chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imageURL = ChatInterface.class.getResource(path);

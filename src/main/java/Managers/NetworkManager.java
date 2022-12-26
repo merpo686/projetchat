@@ -12,16 +12,16 @@ public class NetworkManager {
     public static Boolean Response_received=false;
 
     public static void Send_Connection() throws SocketException, UnknownHostException {
-        Connection connect = new Connection(UserMain.getInstance().Get_User(),true);
+        Connection connect = new Connection(Self.getInstance().get_User(),true);
         ThreadManager.Send_BC(connect);
     }
     public static void Send_Disconnection() throws SocketException, UnknownHostException {
-        Connection connect = new Connection(UserMain.getInstance().Get_User(),false);
+        Connection connect = new Connection(Self.getInstance().get_User(),false);
         ThreadManager.Send_BC(connect);
     }
 
     public static void Send_Pseudo( String PseudoChosen) throws SocketException, UnknownHostException {
-        NotifPseudo notifpseudo = new NotifPseudo(UserMain.getInstance().Get_User(),PseudoChosen);
+        NotifPseudo notifpseudo = new NotifPseudo(Self.getInstance().get_User(),PseudoChosen);
         ThreadManager.Send_BC(notifpseudo);
     }
 
@@ -34,7 +34,7 @@ public class NetworkManager {
     public static void Process_Connection(Connection connect) throws UnknownHostException, SocketException {
         //true=connection; false=deconnection
         if (connect.get_Valid()){
-            ThreadManager.Send_Pseudo_Unicast(new NotifPseudo(connect.get_User(), UserMain.getInstance().Get_Pseudo()));
+            ThreadManager.Send_Pseudo_Unicast(new NotifPseudo(connect.get_User(), Self.getInstance().get_Pseudo()));
         }
         else {
             ActiveUserManager.getInstance().removeListActiveUser(connect.get_User());
