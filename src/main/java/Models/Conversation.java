@@ -7,11 +7,9 @@ import java.util.ArrayList;
 public class Conversation {
     private static ArrayList<Message> listMessages;
     static Conversation instance;
-    private User dest;
 
     public Conversation(User dest){
-        this.dest=dest;
-        this.listMessages = new ArrayList<Message>();
+        listMessages = new ArrayList<Message>();
     }
 
     public static Conversation getInstance(User userDest) {
@@ -22,10 +20,10 @@ public class Conversation {
     }
 
     public void addMessage(Message msg){
-        this.listMessages.add(msg);
+        listMessages.add(msg);
     }
 
     public String getHistory(){
-        return this.listMessages.toString();
+        return listMessages.toString();
     }
 }

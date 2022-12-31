@@ -52,6 +52,9 @@ public class ChooseDiscussionInterface extends Container {
 
     public ChooseDiscussionInterface(JFrame frame) throws UnknownHostException {
         this.frame=frame;
+        InterfaceManager IM=InterfaceManager.getInstance();
+        IM.set_state("ChooseDiscussionInterface");
+        IM.set_user(null);
         refreshDisplay();
     }
 

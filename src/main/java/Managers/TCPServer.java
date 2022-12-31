@@ -5,11 +5,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TCPServer {
-    private ServerSocket socket;
     //constructor
     public TCPServer(int port) throws IOException {
         //creation du server socket
-        this.socket = new ServerSocket(port);
+        ServerSocket socket = new ServerSocket(port);
         //le server tourne a l'infinie s'il n'y a pas d'erreur/exception
         while(true) {
             Socket link = null;
@@ -20,6 +19,7 @@ public class TCPServer {
                 new Thread(new TCPClientHandler(link)).start();
             }
             catch(Exception e){
+                assert link != null;
                 link.close();
                 e.printStackTrace();
             }

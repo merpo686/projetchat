@@ -16,10 +16,10 @@ import java.util.Objects;
 
 import javax.swing.*;
 
-//need a function to get old text and display them
-//need a function to display received texts
-//need to be linked to database and networkmanager
-//update sendmessage to send messages
+//need a function to get old text and display them ok
+//need a function to display received texts ok
+//need to be linked to database and networkmanager ok
+//update sendmessage to send messages ok
 
 public class ChatInterface extends Container {
     JTextArea chatArea;
@@ -67,7 +67,11 @@ public class ChatInterface extends Container {
     public ChatInterface(JFrame frame, User user) {
         this.frame=frame;
         this.user = user;
+        InterfaceManager IM=InterfaceManager.getInstance();
+        IM.set_state("ChatInterface");
+        IM.set_user(user);
         initComponents();
+        //open threads and pass function printreceivedMessage as a handler of received messages to print them
         frame.setContentPane(this);
         frame.setSize(new java.awt.Dimension(510, 470));
     }
@@ -152,19 +156,26 @@ public class ChatInterface extends Container {
         frame.setJMenuBar(bar);
         frame.setResizable(false);
     }
+
+    //handler for received messages
+    public void printreceivedMessage(String message) {
+        chatArea.append(message);
+    }
+
+    //send messages, needs the tcp thread to be opened and to have a function send callable
     private void sendMessage(String message) throws UnknownHostException {
+        /*try NetworkManager.Send_Message_TCP(message,user); //calls the right send
+        catch host disconnected / envoi impossible
+        ->print error message hote injoignable
+         */
         chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
-    protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imageURL = ChatInterface.class.getResource(path);
-
-        if (imageURL == null) {
-            System.err.println("Resource not found: "
-                    + path);
-            return null;
-        } else {
-            return new ImageIcon(imageURL);
-        }
+    private void displayOldmessages() {
+        //DataManager.getInstance();
+        //Conversation conv = DataManager.get_conversation(User u);
+        /*for (Message message: conv.messages){
+            chatArea.append("\n("+message.sender+") - "+message.data);
+        }*/
     }
 
 }

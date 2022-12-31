@@ -65,7 +65,7 @@ public class Main {
         //Create and set up the window.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Display the window.
-        frame.pack();
+
         frame.setMinimumSize(new Dimension(400,300));
         frame.setForeground(InterfaceManager.foreground_color);
         frame.setBackground(InterfaceManager.background_color);

@@ -33,7 +33,9 @@ public class ChoosePseudoInterface extends Container {
 
     public ChoosePseudoInterface(JFrame frame){
         this.frame=frame;
-
+        InterfaceManager IM=InterfaceManager.getInstance();
+        IM.set_state("ChoosePseudoInterface");
+        IM.set_user(null);
         //GridBagLayout, maybe not the best either but I found it smooth
         setLayout(new GridBagLayout());
         cons= new GridBagConstraints();
