@@ -22,6 +22,7 @@ public class InterfaceManager {
     public User get_user(){return user_discussion;}
     public void set_state(String state){this.state=state;}
     public void set_user(User user){this.user_discussion=user;}
+
     public static InterfaceManager getInstance() {
         if (instance == null) {
             instance = new InterfaceManager();

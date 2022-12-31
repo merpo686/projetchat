@@ -2,12 +2,12 @@ package Graphics;
 
 import Managers.NetworkManager;
 import Managers.Self;
+import Models.Message;
 import Models.User;
 
 import java.awt.*;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.net.SocketException;
@@ -16,17 +16,19 @@ import java.util.Objects;
 
 import javax.swing.*;
 
-//need a function to get old text and display them ok
-//need a function to display received texts ok
-//need to be linked to database and networkmanager ok
-//update sendmessage to send messages ok
+//server is running full time
+// when sending message either the tcp thread exists: it finds it in an array of sockets and uses it to send
+// either it doesn't: it connects to the server then sends
+// server opens new thread for each new conversation (new user).
+// the reception thread add received messages to the datamanager. to know if there is new messages,
+// we start a thread which keep track of last received message and check datamanager if there is new one, to append them
 
 public class ChatInterface extends Container {
     JTextArea chatArea;
     JTextField inputArea;
     JFrame frame;
     User user;
-
+    Message lastmessage;
     //menu buttons
     Action change_discussion_button = new AbstractAction("CHANGE DISCUSSION") {
         @Override
@@ -67,11 +69,13 @@ public class ChatInterface extends Container {
     public ChatInterface(JFrame frame, User user) {
         this.frame=frame;
         this.user = user;
+        this.lastmessage=null;
         InterfaceManager IM=InterfaceManager.getInstance();
         IM.set_state("ChatInterface");
         IM.set_user(user);
         initComponents();
-        //open threads and pass function printreceivedMessage as a handler of received messages to print them
+        //displayOldmessages();
+        new Thread(new printreceivedMessage()).start();
         frame.setContentPane(this);
         frame.setSize(new java.awt.Dimension(510, 470));
     }
@@ -110,14 +114,12 @@ public class ChatInterface extends Container {
         send.setOpaque(false);
         send.setContentAreaFilled(false);
         send.setBorderPainted(false);
-        send.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    sendMessage(inputArea.getText());
-                    inputArea.setText("");
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
+        send.addActionListener(evt -> {
+            try {
+                sendMessage(inputArea.getText());
+                inputArea.setText("");
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
             }
         });
 
@@ -157,14 +159,23 @@ public class ChatInterface extends Container {
         frame.setResizable(false);
     }
 
-    //handler for received messages
-    public void printreceivedMessage(String message) {
-        chatArea.append(message);
+    //thread for received messages
+    public class printreceivedMessage extends Thread{
+        public void run(){
+            /*String message;
+            while(true) {
+                Message mess = DataManager.getInstance().getlastMessage();
+                if (lastmessage!=mess) {
+                    lastmessage=mess;
+                    chatArea.append(mess.get_Data());
+                }
+            }*/
+        }
     }
 
     //send messages, needs the tcp thread to be opened and to have a function send callable
     private void sendMessage(String message) throws UnknownHostException {
-        /*try NetworkManager.Send_Message_TCP(message,user); //calls the right send
+        /*try ThreadManager.Send_Message_TCP(message,user); //calls send: find the conversation's tcp thread or creates it
         catch host disconnected / envoi impossible
         ->print error message hote injoignable
          */
@@ -175,6 +186,7 @@ public class ChatInterface extends Container {
         //Conversation conv = DataManager.get_conversation(User u);
         /*for (Message message: conv.messages){
             chatArea.append("\n("+message.sender+") - "+message.data);
+            lastmessage= message;
         }*/
     }
 
