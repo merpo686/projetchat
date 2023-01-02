@@ -16,16 +16,33 @@ public class TCPClient {
         DataInputStream inputStream = new DataInputStream(socket.getInputStream());
         DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 
-        //the client and the client handler exchange data
-        while(true){
+        try (Scanner newScanner = new Scanner(System.in)) {
+            //first the user enters his pseudo, and then enters into the while loop to exchange messages
             System.out.println(inputStream.readUTF());
-            String toSend = new Scanner(System.in).nextLine();
-            outputStream.writeUTF(toSend);
-            if(toSend.equals("Exit")){
+            String sendPseudo = newScanner.nextLine();
+            outputStream.writeUTF(sendPseudo);
+            if(sendPseudo.equals("Exit")){
                 System.out.println("Closing...");
                 socket.close();
                 System.out.println("Closed");
-                break;
+                System.exit(0);
+            }
+            int i=1;
+            //the client exchanges messages with the client handler
+            while(true){
+                String receivedData = inputStream.readUTF();
+                System.out.println(receivedData);
+                if(!((i%2)==0)){ //we implement a modulo method to not have to send anything mandatorily when the server prints an overview of the message sent
+                    String toSend = newScanner.nextLine();
+                    outputStream.writeUTF(toSend);
+                    if(toSend.equals("Exit")){
+                        System.out.println("Closing...");
+                        socket.close();
+                        System.out.println("Closed");
+                        break;
+                    }
+                }
+                i++;
             }
         }
     }
