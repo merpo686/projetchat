@@ -9,6 +9,6 @@ public class Notifications {
         this.user= user;
     }
     public User get_User(){return this.user;}
-    public int get_numPort(){return this.user.get_Port();}
+    public int get_numPort(){return this.user.getPortUDP();}
     public String get_Hostname(){return this.user.get_Hostname();}
 }

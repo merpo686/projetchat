@@ -30,11 +30,6 @@ public class NetworkManager {
         ThreadManager.Send_BC(notifpseudo);
     }
 
-    public static String Ask_Pseudo(){
-        System.out.println("[UserManager] Please enter a pseudo");
-        Scanner sc = new Scanner(System.in);
-        return sc.nextLine();
-    }
 
     public static void Process_Connection(Connection connect) throws UnknownHostException, SocketException {
         //true=connection; false=deconnection
@@ -71,6 +66,7 @@ public class NetworkManager {
                     frame.setBackground(InterfaceManager.background_color);
                     frame.setLocationRelativeTo(null); //center of the screen
                     frame.setVisible(true);
+                    ThreadManager.getInstance().del_active_conversation(connect.get_User());
             }
         }
     }
@@ -81,14 +77,18 @@ public class NetworkManager {
 
     public static void Send_Message_TCP(Message mess) throws IOException {
         TCPClientHandler thread=ThreadManager.getInstance().get_active_conversation(mess.get_receiver());
-        Socket numPort;
+        Socket socket;
         if (thread!=null){
-            numPort=thread.getNumPort();
+            socket=thread.getNumPort();
         }
         else{
-            numPort= new Socket(InetAddress.getLocalHost(),mess.get_receiver().get_Port());
+            socket= new Socket(InetAddress.getLocalHost(),mess.get_receiver().get_PortTCP());
+            thread = new TCPClientHandler(socket,mess.get_receiver());
+            thread.start();
+            ThreadManager.getInstance().add_active_conversation(mess.get_receiver(),thread);
+
         }
-        DataOutputStream outputStream = new DataOutputStream(numPort.getOutputStream());
+        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
         outputStream.writeUTF(mess.get_message());
     }
 

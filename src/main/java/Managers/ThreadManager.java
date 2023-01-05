@@ -28,6 +28,7 @@ public class ThreadManager {
     public void del_active_conversation(User dest){
         //fermer le thread
         TCPClientHandler thread = map_active_conversations.remove(dest);
+        thread.interrupt();
     }
     public TCPClientHandler get_active_conversation(User dest){return map_active_conversations.get(dest);}
 

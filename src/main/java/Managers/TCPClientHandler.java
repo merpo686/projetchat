@@ -8,7 +8,7 @@ import java.net.Socket;
 public class TCPClientHandler extends Thread {
     private final Socket numPort;
     private final User dest;
-
+    DataInputStream inputStream;
 
     public TCPClientHandler(Socket link,User dest){
         this.setDaemon(true);
@@ -20,11 +20,19 @@ public class TCPClientHandler extends Thread {
         return numPort;
     }
 
+    @Override
+    public void interrupt() {
+        super.interrupt();
+        try {
+            inputStream.close(); // Fermeture du flux si l'interruption n'a pas fonctionné.
+        } catch (IOException e) {}
+    }
+
     public void run(){
         while(true){
             try {
                 //we recover the input stream
-                DataInputStream inputStream = new DataInputStream(numPort.getInputStream());
+                inputStream = new DataInputStream(numPort.getInputStream());
                 //getting message
                 String received = inputStream.readUTF();
                 //end of thread
@@ -39,8 +47,15 @@ public class TCPClientHandler extends Thread {
                     Message mess = new Message(dest,Self.getInstance().get_User(), received);
                     //DatabaseManager.getInstance.addMessage(mess,dest.get_hostname);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InterruptedIOException e) { // Si l'interruption a été gérée correctement.
+                Thread.currentThread().interrupt();
+                System.out.println("Interrompu via InterruptedIOException");
+            } catch (IOException e) {
+                if (!isInterrupted()) { // Si l'exception ne vient pas d'une interruption.
+                    e.printStackTrace();
+                } else { // <italique>Thread</italique> interrompu mais <italique>InterruptedIOException</italique> n'était pas gérée pour ce type de flux.
+                    System.out.println("Interrompu");
+                }
             }
         }
     }

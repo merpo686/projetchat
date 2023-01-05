@@ -17,7 +17,7 @@ public class ThreadRcvBC extends Thread {
         try {
             byte[] data = new byte[1024];
             String rcvData;
-            DatagramSocket socket = new DatagramSocket(Self.getInstance().get_User().get_Port());
+            DatagramSocket socket = new DatagramSocket(Self.getInstance().get_User().getPortUDP());
             DatagramPacket rcvNotif = new DatagramPacket(data, data.length);
             //we receive the model (either notification or validation)
             while (true) { //the thread will be in a receiving state constantly
@@ -40,11 +40,11 @@ public class ThreadRcvBC extends Thread {
                     NotifPseudo notif;
                     Connection connect;
                     if (splitString.length == 1) {
-                        notif = new NotifPseudo(new User(rcvNotif.getAddress().getHostName(),Self.getInstance().get_User().get_Port()), splitString[0]);
+                        notif = new NotifPseudo(new User(rcvNotif.getAddress().getHostName(),-1,Self.getInstance().get_User().getPortUDP()), splitString[0]);
                         System.out.println("C'est une notification");
                         this.notifHandler.handler(notif);
                     } else if (splitString.length == 2) {
-                        connect = new Connection(new User(rcvNotif.getAddress().getHostName(), Self.getInstance().get_User().get_Port()), Boolean.parseBoolean(splitString[1]));
+                        connect = new Connection(new User(rcvNotif.getAddress().getHostName(),-1, Self.getInstance().get_User().getPortUDP()), Boolean.parseBoolean(splitString[1]));
                         System.out.println("C'est une connection");
                         this.notifHandler.handler(connect);
                     } else {
