@@ -56,5 +56,4 @@ public class ThreadManager {
         //we run the server
         TCPServer server = new TCPServer();
     }
-
 }

@@ -39,6 +39,7 @@ public class Main {
     public static void Launcher() throws IOException {
         ActiveUserManager AUM = ActiveUserManager.getInstance();
         start_GraphicInterface();
+        NetworkManager.Send_Connection();
         ThreadManager.Start_TCP_Server();
     }
 
