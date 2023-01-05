@@ -1,7 +1,9 @@
 package database;
 import Models.Conversation;
+import Models.Message;
 import org.sqlite.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DatabaseManager {
     private final String DataBaseName;
@@ -42,19 +44,53 @@ public class DatabaseManager {
         }
     }
 
-    public void createTableConversations() throws SQLException {
-        Statement statement = co.createStatement();
-        String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
-                "Id AS Integer NOT NULL AUTO INCREMENT\n" +
-                "Conversation AS Conversation\n" +
-                "PRIMARY KEY(Id))                   ;"; //a tester la requete hein
-        statement.execute(sql);
+    public void createTableConversation() throws SQLException {
+
     }
 
-    public void addConversation(Conversation conv) throws SQLException {
+    public void addConversation(String hostnameConv) throws SQLException {
         Statement statement = co.createStatement();
-        String sql = "INSERT INTO Conversations \n" +
-                "VALUES(Id, Conv);";
+        String sql = "CREATE TABLE IF NOT EXISTS hostnameConv (\n" +
+                "Id AS Integer NOT NULL AUTO INCREMENT\n" +
+                "Date AS Date NOT NULL \n" +
+                "Sender AS String NOT NULL \n" +
+                "Receiver AS String NOT NULL \n" +
+                "StringMessage AS String NOT NULL \n" +
+                "PRIMARY KEY(Id))                   ;"; //a tester la requete hein
+
         statement.executeUpdate(sql);
+    }
+
+    public void addMessage(Message message, String hostnameConv) throws SQLException {
+        String stringMessage = message.get_message();
+        Date date = (Date) message.get_date();
+        String sender = message.get_sender().get_Hostname();
+        String receiver = message.get_receiver().get_Hostname();
+        Statement statement = co.createStatement();
+        String sql = "INSERT INTO hostnameConv \n" +
+                "VALUES(Id, date, sender, receiver, stringMessage);";
+        statement.executeUpdate(sql);
+    }
+
+    public String getLastMessage(String hostnameConv) throws SQLException {
+        Statement statement = co.createStatement();
+        String sql = "SELECT LAST(Message) FROM hostnameConv";
+        ResultSet rs = statement.executeQuery(sql);
+        String lastMessage = rs.getString(4); //we retreive the 4th column of the corresponding row, which represents the last message
+        if(lastMessage == null){
+            System.out.println("You have no existing messages with the designated user"); //il faudrait que ca remonte au user qu'il y ai aucun message
+        }
+        return lastMessage;
+    }
+
+    public ArrayList<String> getAllMessages(String hostnameConv) throws SQLException {
+        Statement statement = co.createStatement();
+        String sql = "SELECT * FROM hostnameConv";
+        ResultSet rs = statement.executeQuery(sql);
+        ArrayList<String> listMessages = (ArrayList<String>) rs.getArray(4); //we retreive the 4th column of the corresponding row, which represents all of the message strings
+        if(listMessages == null){
+            System.out.println("You have no existing messages with the designated user"); //il faudrait que ca remonte au user qu'il y ai aucun message
+        }
+        return listMessages;
     }
 }
