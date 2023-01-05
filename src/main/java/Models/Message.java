@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 
 public class Message {
-    private final Date date;
+    private Date date;
     private final User sender;
     private final User receiver;
     private final String data;
@@ -19,5 +19,8 @@ public class Message {
     public User get_sender(){return sender;}
     public User get_receiver(){return receiver;}
     public Date get_date(){return date;}
+    public void set_date(Date date){
+        this.date=date;
+    }
     public Boolean equals(Message other){return other.get_date()==this.get_date();}
 }
