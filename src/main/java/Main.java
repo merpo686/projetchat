@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 
 public class Main {
 
-    ThreadManager.NotifHandler handler = new ThreadManager.NotifHandler() {
+    static ThreadManager.NotifHandler handler = new ThreadManager.NotifHandler() {
         @Override
         public void handler(Notifications notif) throws SocketException, UnknownHostException {
             if (notif instanceof Connection) {
@@ -39,6 +39,7 @@ public class Main {
     public static void Launcher() throws IOException {
         ActiveUserManager AUM = ActiveUserManager.getInstance();
         start_GraphicInterface();
+        ThreadManager.Start_RcvThread(handler);
         NetworkManager.Send_Connection();
         ThreadManager.Start_TCP_Server();
     }
