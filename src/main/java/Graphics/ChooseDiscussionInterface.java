@@ -1,11 +1,14 @@
 package Graphics;
 import Managers.*;
 import Models.*;
+import database.ConnectionError;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 
@@ -65,7 +68,11 @@ public class ChooseDiscussionInterface extends Container {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     setVisible(false);
-                    new ChatInterface(frame,user);
+                    try {
+                        new ChatInterface(frame,user);
+                    } catch (UnknownHostException | SQLException | ConnectionError e) {
+                        e.printStackTrace();
+                    }
                 }
             };
             add(new JButton(user_button));

@@ -1,23 +1,29 @@
 package database;
-import Models.Conversation;
 import Models.Message;
 import Models.User;
-import org.sqlite.*;
 
 import java.net.UnknownHostException;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class DatabaseManager {
-    private final String DataBaseName;
     private Connection co;
+    static DatabaseManager instance;
 
-    public DatabaseManager(String DataBaseName) {
-        this.DataBaseName = DataBaseName;
+    private DatabaseManager() throws ConnectionError {
+        this.connectDB();
+    }
+
+    public static DatabaseManager getInstance() throws ConnectionError {
+        if (instance == null) {
+            instance = new DatabaseManager();
+        }
+        return instance;
     }
 
     public void connectDB() throws ConnectionError {
-        String url = "jdbc:sqlite:C:/sqlite/db/" + DataBaseName;
+        String databasename = " database";
+        String url = "jdbc:sqlite:C:/sqlite/db/" + databasename;
         //the driver automatically creates a new database when the database does not already exist
         try {
             co = DriverManager.getConnection(url);
@@ -25,7 +31,7 @@ public class DatabaseManager {
             ResultSet rs = meta.getCatalogs();
             while(rs.next()){
                 String catalog = rs.getString(1); //retrieves the second column of the result set corresponding to the catalogs which stores the names of all the databases
-                if(!catalog.equals(DataBaseName)){ //check if the database exists already
+                if(!catalog.equals(databasename)){ //check if the database exists already
                     System.out.println("Creating a new database...");
                 }
             }
@@ -75,15 +81,13 @@ public class DatabaseManager {
         statement.executeUpdate(sql);
     }
 
-    public String getLastMessage(String hostnameConv) throws SQLException {
+    public Message getLastMessage(String hostnameConv) throws SQLException, UnknownHostException {
         Statement statement = co.createStatement();
         String sql = "SELECT LAST(Message) FROM hostnameConv";
         ResultSet rs = statement.executeQuery(sql);
-        String lastMessage = rs.getString(4); //we retreive the 4th column of the corresponding row, which represents the last message
-        if(lastMessage == null){
-            System.out.println("You have no existing messages with the designated user"); //il faudrait que ca remonte au user qu'il y ai aucun message
-        }
-        return lastMessage;
+        Message mess = new Message(new User(rs.getString(0)), new User(rs.getString(1)), rs.getString(3));
+        mess.set_date(rs.getDate(2));
+        return mess;
     }
 
     public ArrayList<Message> getAllMessages(String hostnameConv) throws SQLException, UnknownHostException {
