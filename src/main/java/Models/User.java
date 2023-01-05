@@ -8,6 +8,10 @@ public class User {
         this.hostname=hostname;
         this.port=port;
     }
+    public User(String hostname){
+        this.hostname=hostname;
+        this.port=-1;
+    }
     public void Set_Pseudo(String pseudo){
         this.Pseudo=pseudo;
     }
@@ -22,5 +26,4 @@ public class User {
     }
     public Boolean equals(User other){return this.get_Hostname().equals(other.get_Hostname());}
     public Boolean equals(String hostname){return this.get_Hostname().equals(hostname);}
-
 }

@@ -8,7 +8,10 @@ import java.net.Socket;
 public class TCPClientHandler extends Thread {
     private final Socket numPort;
     private final User dest;
+
+
     public TCPClientHandler(Socket link,User dest){
+        this.setDaemon(true);
         this.numPort = link;
         this.dest=dest;
     }
@@ -34,7 +37,7 @@ public class TCPClientHandler extends Thread {
                 //message
                 else{
                     Message mess = new Message(dest,Self.getInstance().get_User(), received);
-                    //DatabaseManager.getInstance.getConversation(dest).addMessage(mess);
+                    //DatabaseManager.getInstance.addMessage(mess,dest.get_hostname);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

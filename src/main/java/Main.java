@@ -41,6 +41,7 @@ public class Main {
         start_GraphicInterface();
         ThreadManager.Start_TCP_Server();
     }
+
     public static void start_GraphicInterface(){
 
         //create new frame
