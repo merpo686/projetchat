@@ -1,7 +1,10 @@
 package database;
 import Models.Conversation;
 import Models.Message;
+import Models.User;
 import org.sqlite.*;
+
+import java.net.UnknownHostException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -83,11 +86,18 @@ public class DatabaseManager {
         return lastMessage;
     }
 
-    public ArrayList<String> getAllMessages(String hostnameConv) throws SQLException {
+    public ArrayList<Message> getAllMessages(String hostnameConv) throws SQLException, UnknownHostException {
+        ArrayList<Message> listMessages = null;
         Statement statement = co.createStatement();
         String sql = "SELECT * FROM hostnameConv";
         ResultSet rs = statement.executeQuery(sql);
-        ArrayList<String> listMessages = (ArrayList<String>) rs.getArray(4); //we retreive the 4th column of the corresponding row, which represents all of the message strings
+        /*String length = "COUNT * FROM hostnameConv";
+        ResultSet rsLength = statement.executeQuery(sql);*/
+        while(rs.next()) {
+            Message mess = new Message(new User(rs.getString(0)), new User(rs.getString(1)), rs.getString(3));
+            mess.set_date(rs.getDate(2));
+            listMessages.add(mess);
+        }
         if(listMessages == null){
             System.out.println("You have no existing messages with the designated user"); //il faudrait que ca remonte au user qu'il y ai aucun message
         }
