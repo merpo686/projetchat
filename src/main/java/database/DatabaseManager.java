@@ -46,7 +46,7 @@ public class DatabaseManager {
         String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
                 "Id AS Integer NOT NULL AUTO INCREMENT\n" +
                 "Conversation AS Conversation\n" +
-                "PRIMARY KEY(Id));"; //a tester la requete hein
+                "PRIMARY KEY(Id))                   ;"; //a tester la requete hein
         statement.execute(sql);
     }
 
