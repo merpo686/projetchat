@@ -6,15 +6,15 @@ import java.util.ArrayList;
 
 public class Conversation {
     private final ArrayList<Message> listMessages;
-    private final User destination;
-    public Conversation(User dest){
+    private final String hostname;
+    public Conversation(String hostname){
         listMessages = new ArrayList<Message>();
-        this.destination = dest;
+        this.hostname = hostname;
     }
     public void addMessage(Message msg){
         listMessages.add(msg);
     }
-    public User getDestination(){return this.destination;}
+    public String getDestination(){return this.hostname;}
     public String getHistory(){
         return listMessages.toString();
     }
