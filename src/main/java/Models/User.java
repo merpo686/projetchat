@@ -20,4 +20,7 @@ public class User {
     public int get_Port(){
         return this.port;
     }
+    public Boolean equals(User other){return this.get_Hostname().equals(other.get_Hostname());}
+    public Boolean equals(String hostname){return this.get_Hostname().equals(hostname);}
+
 }

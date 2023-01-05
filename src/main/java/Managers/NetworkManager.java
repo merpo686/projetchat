@@ -7,9 +7,9 @@ import Models.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.Scanner;
 
 public class NetworkManager {
@@ -79,9 +79,18 @@ public class NetworkManager {
         ActiveUserManager.getInstance().addListActiveUser(notif.get_User());
     }
 
-    public static void Send_Message_TCP(int port) throws IOException {
-        //we run the client
-        TCPClient client = new TCPClient(port);
+    public static void Send_Message_TCP(Message mess) throws IOException {
+        TCPClientHandler thread=ThreadManager.getInstance().get_active_conversation(mess.get_receiver());
+        Socket numPort;
+        if (thread!=null){
+            numPort=thread.getNumPort();
+        }
+        else{
+            numPort= new Socket(InetAddress.getLocalHost(),mess.get_receiver().get_Port());
+        }
+        DataOutputStream outputStream = new DataOutputStream(numPort.getOutputStream());
+        outputStream.writeUTF(mess.get_message());
+
     }
 
 }

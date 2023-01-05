@@ -1,7 +1,4 @@
-Managers/UserMain$NotifHandler.class
-Managers/UserMain.class
-Managers/UserMain$1.class
 Models/Conversation.class
+Models/NotifPseudo.class
 Models/Connection.class
 Models/Message.class
-Models/NotifPseudo.class
