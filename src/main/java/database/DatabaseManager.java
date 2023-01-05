@@ -4,8 +4,9 @@ import org.sqlite.*;
 import java.sql.*;
 
 public class DatabaseManager {
-    private String DataBaseName;
+    private final String DataBaseName;
     private Connection co;
+
     public DatabaseManager(String DataBaseName) {
         this.DataBaseName = DataBaseName;
     }

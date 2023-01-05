@@ -90,7 +90,6 @@ public class NetworkManager {
         }
         DataOutputStream outputStream = new DataOutputStream(numPort.getOutputStream());
         outputStream.writeUTF(mess.get_message());
-
     }
 
 }
