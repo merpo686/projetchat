@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Objects;
@@ -19,7 +20,7 @@ import javax.swing.*;
 //server is running full time
 // when sending message either the tcp thread exists: it finds it in an array of sockets and uses it to send
 // either it doesn't: it connects to the server then sends
-// server opens new thread for each new conversation (new user).
+// server opens new thread for each new conversation (new dest).
 // the reception thread add received messages to the datamanager. to know if there is new messages,
 // we start a thread which keep track of last received message and check datamanager if there is new one, to append them
 
@@ -27,7 +28,7 @@ public class ChatInterface extends Container {
     JTextArea chatArea;
     JTextField inputArea;
     JFrame frame;
-    User user;
+    User dest;
     Message lastmessage;
     //menu buttons
     Action change_discussion_button = new AbstractAction("CHANGE DISCUSSION") {
@@ -66,13 +67,13 @@ public class ChatInterface extends Container {
         }
     };
 
-    public ChatInterface(JFrame frame, User user) {
+    public ChatInterface(JFrame frame, User dest) {
         this.frame=frame;
-        this.user = user;
+        this.dest = dest;
         this.lastmessage=null;
         InterfaceManager IM=InterfaceManager.getInstance();
         IM.set_state("ChatInterface");
-        IM.set_user(user);
+        IM.set_user(dest);
         initComponents();
         //displayOldmessages();
         new Thread(new printreceivedMessage()).start();
@@ -95,7 +96,7 @@ public class ChatInterface extends Container {
                    if (e.getKeyCode()== KeyEvent.VK_ENTER){
                        try {
                            sendMessage(inputArea.getText());
-                       } catch (UnknownHostException unknownHostException) {
+                       } catch (IOException unknownHostException) {
                            unknownHostException.printStackTrace();
                        }
                        inputArea.setText("");
@@ -118,7 +119,7 @@ public class ChatInterface extends Container {
             try {
                 sendMessage(inputArea.getText());
                 inputArea.setText("");
-            } catch (UnknownHostException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });
@@ -132,7 +133,7 @@ public class ChatInterface extends Container {
         //discussion_name specify
         discussion_name.setFont(new Font("Myriad Pro", Font.PLAIN, 30)); // NOI18N
         discussion_name.setForeground(InterfaceManager.foreground_color);
-        discussion_name.setText(user.get_Pseudo());
+        discussion_name.setText(dest.get_Pseudo());
 
         //add
         add(inputArea);
@@ -162,29 +163,27 @@ public class ChatInterface extends Container {
     //thread for received messages
     public class printreceivedMessage extends Thread{
         public void run(){
-            /*String message;
+            String message;
             while(true) {
-                Message mess = DataManager.getInstance().getlastMessage();
+                /*Message mess = DatabaseManager.getInstance().getConversation(dest).getlastMessage();
                 if (lastmessage!=mess) {
                     lastmessage=mess;
-                    chatArea.append(mess.get_Data());
-                }
-            }*/
+                    chatArea.append(mess.get_message());
+                }*/
+            }
         }
     }
 
     //send messages, needs the tcp thread to be opened and to have a function send callable
-    private void sendMessage(String message) throws UnknownHostException {
-        /*try ThreadManager.Send_Message_TCP(message,user); //calls send: find the conversation's tcp thread or creates it
-        catch host disconnected / envoi impossible
-        ->print error message hote injoignable
-         */
+    private void sendMessage(String message) throws IOException {
+        Message mess= new Message(Self.getInstance().get_User(), dest,message);
+        NetworkManager.Send_Message_TCP(mess); //calls send: find the conversation's tcp thread or creates it
         chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
     private void displayOldmessages() {
         //DataManager.getInstance();
         //Conversation conv = DataManager.get_conversation(User u);
-        /*for (Message message: conv.messages){
+        /*for (Message message: conv.getListMessages){
             chatArea.append("\n("+message.sender+") - "+message.data);
             lastmessage= message;
         }*/

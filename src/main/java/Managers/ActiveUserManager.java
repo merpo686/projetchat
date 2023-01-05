@@ -24,7 +24,7 @@ public class ActiveUserManager {
     }
 
     public void removeListActiveUser(User U){
-        listActiveUsers.remove(U);
+        listActiveUsers.removeIf(u -> u.equals(U));
     }
 
     public ArrayList<User> getListActiveUser() throws UnknownHostException {
@@ -45,6 +45,20 @@ public class ActiveUserManager {
             return false;
         }
         return false;
+    }
+
+    public User get_User(String hostname){
+        try {
+            for (User user: listActiveUsers){
+                if (user.equals(hostname)){
+                    return user;
+                }
+            }
+        }
+        catch (NullPointerException e){
+            return null;
+        }
+        return null;
     }
     public String toString(){return listActiveUsers.toString();}
 }

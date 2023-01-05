@@ -12,7 +12,7 @@ public class Self {
     private String pseudo_Self = null;
     private final User user_self;
     static Self instance;
-    private int port = 4567;
+    private int port;
 
     private Self() throws UnknownHostException {
         user_self = new User(InetAddress.getLocalHost().getHostName(), get_Port());

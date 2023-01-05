@@ -5,25 +5,19 @@ import Managers.ActiveUserManager;
 import java.util.ArrayList;
 
 public class Conversation {
-    private static ArrayList<Message> listMessages;
-    static Conversation instance;
-
+    private final ArrayList<Message> listMessages;
+    private final User destination;
     public Conversation(User dest){
         listMessages = new ArrayList<Message>();
+        this.destination = dest;
     }
-
-    public static Conversation getInstance(User userDest) {
-        if (instance == null) {
-            instance = new Conversation(userDest);
-        }
-        return instance;
-    }
-
     public void addMessage(Message msg){
         listMessages.add(msg);
     }
-
+    public User getDestination(){return this.destination;}
     public String getHistory(){
         return listMessages.toString();
     }
+    public ArrayList<Message> getListMessages(){return listMessages;}
+    public Message getlastMessage(){return listMessages.get(listMessages.size()-1);}
 }

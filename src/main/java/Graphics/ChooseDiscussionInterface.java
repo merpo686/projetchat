@@ -9,8 +9,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 
-//link to list of activ users in refresh (remove the manual test list)
-
 public class ChooseDiscussionInterface extends Container {
     JFrame frame;
 
@@ -28,7 +26,6 @@ public class ChooseDiscussionInterface extends Container {
             revalidate();
         }
     };
-
     Action change_pseudo_button = new AbstractAction("CHANGE PSEUDO") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -36,7 +33,6 @@ public class ChooseDiscussionInterface extends Container {
             new ChoosePseudoInterface(frame);
         }
     };
-
     Action deconnexion_button = new AbstractAction("DECONNEXION") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -60,18 +56,6 @@ public class ChooseDiscussionInterface extends Container {
 
     public void refreshDisplay() throws UnknownHostException {
         ArrayList<User> activeusers= ActiveUserManager.getInstance().getListActiveUser();
-        //pour tester l'interface j'ai rajouter des faux gens
-        User merlin = new User("localhost",127);
-        merlin.Set_Pseudo("merlin");
-        activeusers.add(merlin);
-        User merlin2 = new User("localhost",127);
-        merlin2.Set_Pseudo("merlin2");
-        activeusers.add(merlin2);
-        User merlin3 = new User("localhost",127);
-        merlin3.Set_Pseudo("merlin3");
-        activeusers.add(merlin3);
-        //
-
         //gridlayout, maybe not the best
         setLayout(  new GridLayout(activeusers.size(),1));
 
@@ -86,7 +70,6 @@ public class ChooseDiscussionInterface extends Container {
             };
             add(new JButton(user_button));
         }
-
         //create menu
         JMenuBar bar = new JMenuBar();
         JMenu file = new JMenu("Menu");

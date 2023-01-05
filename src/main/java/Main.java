@@ -39,11 +39,7 @@ public class Main {
     public static void Launcher() throws IOException {
         ActiveUserManager AUM = ActiveUserManager.getInstance();
         start_GraphicInterface();
-
-        //TCP Message Test
-        ThreadManager.Start_TCP_Server(Self.getInstance().get_User().get_Port());
-        NetworkManager.Send_Message_TCP(Self.getInstance().get_User().get_Port());
-
+        ThreadManager.Start_TCP_Server();
     }
     public static void start_GraphicInterface(){
 
