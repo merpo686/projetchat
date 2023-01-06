@@ -1,21 +1,13 @@
 package Managers;
-import Graphics.ChatInterface;
-import Graphics.ChooseDiscussionInterface;
 import Graphics.InterfaceManager;
-import Managers.*;
 import Models.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
-import java.util.Scanner;
 
 public class NetworkManager {
-    public static Boolean Pseudo_Correct=false;
-    public static Boolean Response_received=false;
-
     public static void Send_Connection() throws SocketException, UnknownHostException {
         Connection connect = new Connection(Self.getInstance().getHostname(),true);
         ThreadManager.Send_BC(connect);
@@ -25,11 +17,9 @@ public class NetworkManager {
         ThreadManager.Send_BC(connect);
     }
 
-    public static void Send_Pseudo( String PseudoChosen) throws SocketException, UnknownHostException {
+    public static void Send_Pseudo() throws SocketException, UnknownHostException {
         ThreadManager.Send_BC(new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()));
     }
-
-
     public static void Process_Connection(Connection connect) throws UnknownHostException, SocketException {
         //true=connection; false=deconnection
         if (connect.getValid()){
@@ -38,7 +28,7 @@ public class NetworkManager {
         else {
             ActiveUserManager.getInstance().removeListActiveUser(connect.getHostname());
             if (InterfaceManager.getInstance().get_state().equals("ChatInterface") &&
-                    InterfaceManager.getInstance().get_user().get_Hostname()== connect.getHostname()){
+                    InterfaceManager.getInstance().get_user().get_Hostname().equals(connect.getHostname())){
                     JFrame frame = new JFrame();
                     String lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
                     try {
@@ -70,8 +60,8 @@ public class NetworkManager {
         }
     }
 
-    public static void Process_Notif_Pseudo(User user) throws SocketException, UnknownHostException {
-        ActiveUserManager.getInstance().addListActiveUser(user);
+    public static void Process_Notif_Pseudo(User user) {
+        ActiveUserManager.getInstance().changeListActiveUser(user);
     }
 
     public static void Send_Message_TCP(Message mess) throws IOException {

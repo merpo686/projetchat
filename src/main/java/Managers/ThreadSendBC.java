@@ -14,7 +14,7 @@ public class ThreadSendBC implements Runnable {
         this.connect=connect;
         this.numSocket=Self.portUDP;
     }
-    public ThreadSendBC(User user) throws SocketException, UnknownHostException {
+    public ThreadSendBC(User user) throws SocketException {
         this.socket = new DatagramSocket();
         this.user = user;
         this.numSocket=Self.portUDP;

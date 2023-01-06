@@ -8,10 +8,8 @@ import java.util.*;
 
 public class ThreadManager {
     private final Map<User,TCPClientHandler> map_active_conversations;
-
     static ThreadManager instance;
 
-    ArrayList<User> listActiveUsers;
     private ThreadManager() {
         map_active_conversations = new HashMap<>();
     }
@@ -34,24 +32,22 @@ public class ThreadManager {
         void handler(Object notif) throws SocketException, UnknownHostException;
     }
 
-    static public void Send_BC(User user) throws SocketException, UnknownHostException {
+    static public void Send_BC(User user) throws SocketException {
         new Thread(new ThreadSendBC(user)).start();
     }
     static public void Send_BC(Connection connect) throws SocketException {
         new Thread(new ThreadSendBC(connect)).start();
     }
-    static public ThreadRcvBC Start_RcvThread(NotifHandler handler){
+    static public void Start_RcvThread(NotifHandler handler){
         ThreadRcvBC T_Recv_BC;
         T_Recv_BC= new ThreadRcvBC(handler);
         T_Recv_BC.setDaemon(true);
         T_Recv_BC.start();
-        return T_Recv_BC;
     }
     static public void Send_Pseudo_Unicast(String hostname) throws SocketException, UnknownHostException {
         new Thread(new Thread_Send_Pseudo_Unicast(hostname)).start();
     }
     static public void Start_TCP_Server() throws IOException {
-        //we run the server
         TCPServer server = new TCPServer();
     }
 }

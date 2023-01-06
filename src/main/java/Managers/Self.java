@@ -1,7 +1,4 @@
 package Managers;
-
-import Models.*;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -11,7 +8,7 @@ public class Self {
     static Self instance;
     static final int portTCP=12341;
     static final int portUDP=12340;
-    private static String hostname;
+    private final String hostname;
     private Self() throws UnknownHostException {
         hostname = InetAddress.getLocalHost().getHostName();
     }

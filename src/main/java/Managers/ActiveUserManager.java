@@ -10,7 +10,7 @@ public class ActiveUserManager {
 
     ArrayList<User> listActiveUsers;
     private ActiveUserManager() {
-        listActiveUsers = new ArrayList<User>();
+        listActiveUsers = new ArrayList<>();
     }
 
     public static ActiveUserManager getInstance() {
@@ -22,13 +22,19 @@ public class ActiveUserManager {
     public void addListActiveUser(User U){
         listActiveUsers.add(U);
     }
+    public void changeListActiveUser(User U){
+        if (IsinActiveListUser(U.get_Hostname())){
+            removeListActiveUser(U.get_Hostname());
+        }
+        addListActiveUser(U);
+    }
 
     public void removeListActiveUser(String hostname){
         listActiveUsers.removeIf(u -> u.equals(hostname));
     }
-    public ArrayList<User> getListActiveUser() throws UnknownHostException {
-        ArrayList<User> list = new ArrayList<User>(this.listActiveUsers);
-        return list;
+
+    public ArrayList<User> getListActiveUser() {
+        return listActiveUsers;
     }
 
     public boolean IsinActiveListUser(String Pseudo){

@@ -57,7 +57,7 @@ public class ChoosePseudoInterface extends Container {
                 else {
                     try {
                         Self.getInstance().set_Pseudo(PseudoChosen);
-                        NetworkManager.Send_Pseudo(PseudoChosen);
+                        NetworkManager.Send_Pseudo();
                     } catch (UnknownHostException | SocketException unknownHostException) {
                         unknownHostException.printStackTrace();
                     }
@@ -100,7 +100,7 @@ public class ChoosePseudoInterface extends Container {
                     else {
                         try {
                             Self.getInstance().set_Pseudo(PseudoChosen);
-                            NetworkManager.Send_Pseudo(PseudoChosen);
+                            NetworkManager.Send_Pseudo();
                         } catch (UnknownHostException | SocketException unknownHostException) {
                             unknownHostException.printStackTrace();
                         }

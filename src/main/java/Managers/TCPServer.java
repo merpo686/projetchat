@@ -27,7 +27,6 @@ public class TCPServer {
                 link.close();
                 e.printStackTrace();
             }
-
         }
     }
 }

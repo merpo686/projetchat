@@ -169,7 +169,6 @@ public class ChatInterface extends Container {
             this.setDaemon(true);
         }
         public void run(){
-            String message;
             while(true) {
                 Message mess = null;
                 try {

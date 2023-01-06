@@ -1,12 +1,7 @@
 package Graphics;
 
-import Managers.Self;
 import Models.User;
-
-import javax.swing.*;
 import java.awt.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class InterfaceManager {
     public static Color background_color = new Color(15,5, 107);

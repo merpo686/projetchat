@@ -1,8 +1,4 @@
 package Managers;
-
-
-import Models.User;
-
 import java.io.IOException;
 import java.net.*;
 
@@ -11,7 +7,7 @@ public class Thread_Send_Pseudo_Unicast implements Runnable {
     int numSocket;
     private final String hostname;
 
-    public Thread_Send_Pseudo_Unicast(String hostname) throws SocketException, UnknownHostException {
+    public Thread_Send_Pseudo_Unicast(String hostname) throws SocketException {
         this.socket= new DatagramSocket();
         this.numSocket=Self.portUDP;
         this.hostname=hostname;
