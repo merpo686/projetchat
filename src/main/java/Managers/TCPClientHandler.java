@@ -4,6 +4,7 @@ import Models.*;
 import database.ConnectionError;
 import database.DatabaseManager;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -48,7 +49,7 @@ public class TCPClientHandler extends Thread {
                 //message
                 else{
                     Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), received);
-                    if(!DatabaseManager.getInstance().checkExistConversation()){
+                    if(!DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
                         DatabaseManager.getInstance().addConversation(dest.get_Hostname());
                     }
                     DatabaseManager.getInstance().addMessage(mess,dest.get_Hostname());

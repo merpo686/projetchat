@@ -190,7 +190,7 @@ public class ChatInterface extends Container {
         chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
     private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException {
-        if(DatabaseManager.getInstance().checkExistConversation()){
+        if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
             ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.get_Hostname());
             for (Message message: conv){
                 chatArea.append("\n("+message.get_sender()+") - "+message.get_message());

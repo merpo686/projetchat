@@ -2,7 +2,7 @@ package Models;
 
 
 import java.net.UnknownHostException;
-import java.util.Date;
+import java.sql.Date;
 
 public class Message {
     private Date date;
@@ -10,7 +10,8 @@ public class Message {
     private final User receiver;
     private final String data;
     public Message(User sender, User receiver, String messageData) throws UnknownHostException {
-        date = new Date();
+        long millis = System.currentTimeMillis();
+        date = new Date(millis);
         this.sender=sender;
         this.receiver=receiver;
         this.data=messageData;
