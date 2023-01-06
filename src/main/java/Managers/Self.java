@@ -35,7 +35,6 @@ public class Self {
     public void set_Pseudo(String pseudo){
         this.pseudo_Self =pseudo;
         this.set_User(this.get_Pseudo());
-        ActiveUserManager.getInstance().addListActiveUser(this.get_User());
     }
 
 }

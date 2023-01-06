@@ -23,7 +23,7 @@ public class ThreadSendBC implements Runnable {
     public void run() {
         String data;
         if (this.notif==null) {
-            data = "Connection-" + Boolean.toString(this.connect.get_Valid());
+            data = Boolean.toString(this.connect.get_Valid());
         }
         else {
             data = this.notif.get_Pseudo();

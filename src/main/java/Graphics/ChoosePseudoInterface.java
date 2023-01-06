@@ -56,7 +56,6 @@ public class ChoosePseudoInterface extends Container {
                 }
                 else {
                     try {
-                        ActiveUserManager.getInstance().removeListActiveUser(Self.getInstance().get_User());
                         Self.getInstance().set_Pseudo(PseudoChosen);
                         NetworkManager.Send_Pseudo(PseudoChosen);
                     } catch (UnknownHostException | SocketException unknownHostException) {
@@ -100,7 +99,6 @@ public class ChoosePseudoInterface extends Container {
                     }
                     else {
                         try {
-                            ActiveUserManager.getInstance().removeListActiveUser(Self.getInstance().get_User());
                             Self.getInstance().set_Pseudo(PseudoChosen);
                             NetworkManager.Send_Pseudo(PseudoChosen);
                         } catch (UnknownHostException | SocketException unknownHostException) {
