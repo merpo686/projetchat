@@ -53,10 +53,6 @@ public class DatabaseManager {
         //}
     }
 
-    public void createTableConversation() throws SQLException {
-
-    }
-
     public void addConversation(String hostnameConv) throws SQLException {
         Statement statement = co.createStatement();
         String sql = "CREATE TABLE IF NOT EXISTS hostnameConv (\n" +

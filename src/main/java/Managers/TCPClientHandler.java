@@ -48,6 +48,9 @@ public class TCPClientHandler extends Thread {
                 //message
                 else{
                     Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), received);
+                    if(!DatabaseManager.getInstance().checkExistConversation()){
+                        DatabaseManager.getInstance().addConversation(dest.get_Hostname());
+                    }
                     DatabaseManager.getInstance().addMessage(mess,dest.get_Hostname());
                 }
             } catch (InterruptedIOException e) { // Si l'interruption a été gérée correctement.
