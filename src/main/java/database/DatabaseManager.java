@@ -22,8 +22,8 @@ public class DatabaseManager {
     }
 
     public void connectDB() throws ConnectionError {
-        String databasename = " database";
-        String url = "jdbc:sqlite:C:/sqlite/db/" + databasename;
+        String databasename = "messages.sqlite";
+        String url = "jdbc:sqlite:" + databasename;
         //the driver automatically creates a new database when the database does not already exist
         try {
             co = DriverManager.getConnection(url);
@@ -73,11 +73,14 @@ public class DatabaseManager {
     public void addMessage(Message message, String hostnameConv) throws SQLException {
         String stringMessage = message.get_message();
         Date date = (Date) message.get_date();
-        String sender = message.get_sender().get_Hostname();
-        String receiver = message.get_receiver().get_Hostname();
+        String senderID = message.get_sender().get_Hostname();
+        String senderPseudo = message.get_sender().get_Pseudo();
+        String receiverID = message.get_receiver().get_Hostname();
+        String receiverPseudo = message.get_sender().get_Pseudo();
         Statement statement = co.createStatement();
+        //verifier si la conv existe sinon la creer
         String sql = "INSERT INTO hostnameConv \n" +
-                "VALUES(Id, date, sender, receiver, stringMessage);";
+                "VALUES(Id, date, senderID, senderPseudo, receiverID, receiverPseudo, stringMessage);";
         statement.executeUpdate(sql);
     }
 
@@ -85,7 +88,8 @@ public class DatabaseManager {
         Statement statement = co.createStatement();
         String sql = "SELECT LAST(Message) FROM hostnameConv";
         ResultSet rs = statement.executeQuery(sql);
-        Message mess = new Message(new User(rs.getString(0)), new User(rs.getString(1)), rs.getString(3));
+        Message mess = new Message(new User(rs.getString(2),rs.getString(3)),
+                new User(rs.getString(4), rs.getString(5)), rs.getString(6));
         mess.set_date(rs.getDate(2));
         return mess;
     }
@@ -98,7 +102,8 @@ public class DatabaseManager {
         /*String length = "COUNT * FROM hostnameConv";
         ResultSet rsLength = statement.executeQuery(sql);*/
         while(rs.next()) {
-            Message mess = new Message(new User(rs.getString(0)), new User(rs.getString(1)), rs.getString(3));
+            Message mess = new Message(new User(rs.getString(2),rs.getString(3)),
+                    new User(rs.getString(4), rs.getString(5)), rs.getString(6));
             mess.set_date(rs.getDate(2));
             listMessages.add(mess);
         }

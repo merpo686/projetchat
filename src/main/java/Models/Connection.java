@@ -1,17 +1,14 @@
 package Models;
 
-import Managers.*;
-
-public class Connection extends Notifications{
+public class Connection{
     private final Boolean connect;
-    static Connection instance;
-    public Connection( User user, boolean connect){
-        super(user);
+    private String hostname;
+    public Connection( String hostname, boolean connect){
         this.connect=connect;
+        this.hostname=hostname;
     }
-
-    public boolean get_Valid(){
+    public boolean getValid(){
         return this.connect;
     }
-    public String toString(){return this.connect.toString();}
+    public String getHostname(){return this.hostname;}
 }

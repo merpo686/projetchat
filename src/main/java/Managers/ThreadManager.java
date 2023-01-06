@@ -22,8 +22,6 @@ public class ThreadManager {
         }
         return instance;
     }
-
-    public Boolean is_an_active_conversation(User dest){return map_active_conversations.containsKey(dest);}
     public void add_active_conversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
     public void del_active_conversation(User dest){
         //fermer le thread
@@ -33,11 +31,11 @@ public class ThreadManager {
     public TCPClientHandler get_active_conversation(User dest){return map_active_conversations.get(dest);}
 
     public interface NotifHandler {
-        void handler(Notifications notif) throws SocketException, UnknownHostException;
+        void handler(Object notif) throws SocketException, UnknownHostException;
     }
 
-    static public void Send_BC(NotifPseudo notif) throws SocketException {
-        new Thread(new ThreadSendBC(notif)).start();
+    static public void Send_BC(User user) throws SocketException, UnknownHostException {
+        new Thread(new ThreadSendBC(user)).start();
     }
     static public void Send_BC(Connection connect) throws SocketException {
         new Thread(new ThreadSendBC(connect)).start();
@@ -49,8 +47,8 @@ public class ThreadManager {
         T_Recv_BC.start();
         return T_Recv_BC;
     }
-    static public void Send_Pseudo_Unicast(NotifPseudo notifPseudo) throws SocketException {
-        new Thread(new Thread_Send_Pseudo_Unicast(notifPseudo)).start();
+    static public void Send_Pseudo_Unicast(String hostname) throws SocketException, UnknownHostException {
+        new Thread(new Thread_Send_Pseudo_Unicast(hostname)).start();
     }
     static public void Start_TCP_Server() throws IOException {
         //we run the server

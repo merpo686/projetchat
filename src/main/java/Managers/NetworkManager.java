@@ -17,29 +17,28 @@ public class NetworkManager {
     public static Boolean Response_received=false;
 
     public static void Send_Connection() throws SocketException, UnknownHostException {
-        Connection connect = new Connection(Self.getInstance().get_User(),true);
+        Connection connect = new Connection(Self.getInstance().getHostname(),true);
         ThreadManager.Send_BC(connect);
     }
     public static void Send_Disconnection() throws SocketException, UnknownHostException {
-        Connection connect = new Connection(Self.getInstance().get_User(),false);
+        Connection connect = new Connection(Self.getInstance().getHostname(),false);
         ThreadManager.Send_BC(connect);
     }
 
     public static void Send_Pseudo( String PseudoChosen) throws SocketException, UnknownHostException {
-        NotifPseudo notifpseudo = new NotifPseudo(Self.getInstance().get_User(),PseudoChosen);
-        ThreadManager.Send_BC(notifpseudo);
+        ThreadManager.Send_BC(new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()));
     }
 
 
     public static void Process_Connection(Connection connect) throws UnknownHostException, SocketException {
         //true=connection; false=deconnection
-        if (connect.get_Valid()){
-            ThreadManager.Send_Pseudo_Unicast(new NotifPseudo(connect.get_User(), Self.getInstance().get_Pseudo()));
+        if (connect.getValid()){
+            ThreadManager.Send_Pseudo_Unicast(connect.getHostname());
         }
         else {
-            ActiveUserManager.getInstance().removeListActiveUser(connect.get_User());
+            ActiveUserManager.getInstance().removeListActiveUser(connect.getHostname());
             if (InterfaceManager.getInstance().get_state().equals("ChatInterface") &&
-                    InterfaceManager.getInstance().get_user()== connect.get_User()){
+                    InterfaceManager.getInstance().get_user().get_Hostname()== connect.getHostname()){
                     JFrame frame = new JFrame();
                     String lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
                     try {
@@ -66,13 +65,13 @@ public class NetworkManager {
                     frame.setBackground(InterfaceManager.background_color);
                     frame.setLocationRelativeTo(null); //center of the screen
                     frame.setVisible(true);
-                    ThreadManager.getInstance().del_active_conversation(connect.get_User());
+                    ThreadManager.getInstance().del_active_conversation(ActiveUserManager.getInstance().get_User(connect.getHostname()));
             }
         }
     }
 
-    public static void Process_Notif_Pseudo(NotifPseudo notif) throws SocketException, UnknownHostException {
-        ActiveUserManager.getInstance().addListActiveUser(notif.get_User());
+    public static void Process_Notif_Pseudo(User user) throws SocketException, UnknownHostException {
+        ActiveUserManager.getInstance().addListActiveUser(user);
     }
 
     public static void Send_Message_TCP(Message mess) throws IOException {
@@ -82,7 +81,7 @@ public class NetworkManager {
             socket=thread.getNumPort();
         }
         else{
-            socket= new Socket(InetAddress.getLocalHost(),mess.get_receiver().get_PortTCP());
+            socket= new Socket(InetAddress.getLocalHost(),Self.portTCP);
             thread = new TCPClientHandler(socket,mess.get_receiver());
             thread.start();
             ThreadManager.getInstance().add_active_conversation(mess.get_receiver(),thread);

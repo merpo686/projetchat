@@ -1,6 +1,0 @@
-database/ConnectionError.class
-Models/Conversation.class
-database/DatabaseManager.class
-Models/NotifPseudo.class
-Models/Connection.class
-Models/Message.class

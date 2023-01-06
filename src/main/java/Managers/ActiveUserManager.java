@@ -23,13 +23,11 @@ public class ActiveUserManager {
         listActiveUsers.add(U);
     }
 
-    public void removeListActiveUser(User U){
-        listActiveUsers.removeIf(u -> u.equals(U));
+    public void removeListActiveUser(String hostname){
+        listActiveUsers.removeIf(u -> u.equals(hostname));
     }
-
     public ArrayList<User> getListActiveUser() throws UnknownHostException {
         ArrayList<User> list = new ArrayList<User>(this.listActiveUsers);
-        list.remove(Self.getInstance().get_User());
         return list;
     }
 

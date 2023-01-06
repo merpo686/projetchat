@@ -10,8 +10,7 @@ public class TCPServer {
     //constructor
     public TCPServer() throws IOException {
         //creation du server socket
-        ServerSocket socket = new ServerSocket(0);
-        Self.getInstance().set_Port(socket.getLocalPort());
+        ServerSocket socket = new ServerSocket(Self.portTCP);
         //le server tourne a l'infinie s'il n'y a pas d'erreur/exception
         while(true) {
             Socket link = null;

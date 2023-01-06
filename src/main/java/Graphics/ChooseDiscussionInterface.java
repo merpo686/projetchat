@@ -59,6 +59,7 @@ public class ChooseDiscussionInterface extends Container {
 
     public void refreshDisplay() throws UnknownHostException {
         ArrayList<User> activeusers= ActiveUserManager.getInstance().getListActiveUser();
+        System.out.println(ActiveUserManager.getInstance().toString());
         //gridlayout, maybe not the best
         setLayout(  new GridLayout(activeusers.size(),1));
 

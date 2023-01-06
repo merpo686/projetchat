@@ -1,9 +1,8 @@
 import Graphics.InterfaceManager;
 import Managers.*;
 import Models.Connection;
-import Models.NotifPseudo;
-import Models.Notifications;
 import Graphics.ChoosePseudoInterface;
+import Models.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,14 +14,14 @@ public class Main {
 
     static ThreadManager.NotifHandler handler = new ThreadManager.NotifHandler() {
         @Override
-        public void handler(Notifications notif) throws SocketException, UnknownHostException {
+        public void handler(Object notif) throws SocketException, UnknownHostException {
             if (notif instanceof Connection) {
                 Connection connect =(Connection) notif;
                 NetworkManager.Process_Connection(connect);
             }
-            else if (notif instanceof NotifPseudo) {
-                NotifPseudo notifpseudo = (NotifPseudo)notif;
-                NetworkManager.Process_Notif_Pseudo(notifpseudo);
+            else if (notif instanceof User) {
+                User user = (User)notif;
+                NetworkManager.Process_Notif_Pseudo(user);
             }
         }
     };

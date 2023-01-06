@@ -1,36 +1,33 @@
 package Managers;
 
-import Models.Connection;
-import Models.NotifPseudo;
+
+import Models.User;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class Thread_Send_Pseudo_Unicast implements Runnable {
     private final DatagramSocket socket;
-    private final NotifPseudo notif;
     int numSocket;
+    private final String hostname;
 
-    public Thread_Send_Pseudo_Unicast(NotifPseudo notifPseudo) throws SocketException {
-        this.socket = new DatagramSocket();
-        this.notif = notifPseudo;
-        this.numSocket = notifPseudo.get_numPort();
+    public Thread_Send_Pseudo_Unicast(String hostname) throws SocketException, UnknownHostException {
+        this.socket= new DatagramSocket();
+        this.numSocket=Self.portUDP;
+        this.hostname=hostname;
     }
 
     public void run() {
         String data;
-            data = this.notif.get_Pseudo();
+        try {
+            data = Self.getInstance().get_Pseudo();
             byte[] pseudoData = data.getBytes();
-            try {
-                DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
-                        InetAddress.getByName(String.valueOf(notif.get_Hostname())), numSocket);
-                socket.send(sendNotif);
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            DatagramPacket sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
+                    InetAddress.getByName(String.valueOf(hostname)), numSocket);
+            socket.send(sendNotif);
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,9 +1,12 @@
 package Managers;
 
 import Models.*;
+import database.ConnectionError;
+import database.DatabaseManager;
 
 import java.io.*;
 import java.net.Socket;
+import java.sql.SQLException;
 
 public class TCPClientHandler extends Thread {
     private final Socket numPort;
@@ -44,8 +47,8 @@ public class TCPClientHandler extends Thread {
                 }
                 //message
                 else{
-                    Message mess = new Message(dest,Self.getInstance().get_User(), received);
-                    //DatabaseManager.getInstance.addMessage(mess,dest.get_hostname);
+                    Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), received);
+                    DatabaseManager.getInstance().addMessage(mess,dest.get_Hostname());
                 }
             } catch (InterruptedIOException e) { // Si l'interruption a été gérée correctement.
                 Thread.currentThread().interrupt();
@@ -56,6 +59,8 @@ public class TCPClientHandler extends Thread {
                 } else { // <italique>Thread</italique> interrompu mais <italique>InterruptedIOException</italique> n'était pas gérée pour ce type de flux.
                     System.out.println("Interrompu");
                 }
+            } catch (SQLException | ConnectionError throwables) {
+                throwables.printStackTrace();
             }
         }
     }

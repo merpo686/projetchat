@@ -7,34 +7,23 @@ import java.net.UnknownHostException;
 
 
 public class Self {
-
-
     private String pseudo_Self = null;
-    private final User user_self;
     static Self instance;
-    private int portTCP;
-    private int portUDP=12340;
-
+    static final int portTCP=12341;
+    static final int portUDP=12340;
+    private static String hostname;
     private Self() throws UnknownHostException {
-        user_self = new User(InetAddress.getLocalHost().getHostName(), get_PortTCP(),get_PortUDP());
+        hostname = InetAddress.getLocalHost().getHostName();
     }
-
     public static Self getInstance() throws UnknownHostException {
         if (instance == null) {
             instance = new Self();
         }
         return instance;
     }
-
+    public String getHostname(){return this.hostname;}
     public String get_Pseudo(){ return this.pseudo_Self;}
-    public User get_User(){ return this.user_self;}
-    public int get_PortTCP(){return this.portTCP;}
-    public int get_PortUDP(){return this.portUDP;}
-    public void set_Port(int port){this.portTCP=port;}
-    public void set_User(String Pseudo){this.user_self.Set_Pseudo(Pseudo);}
     public void set_Pseudo(String pseudo){
         this.pseudo_Self =pseudo;
-        this.set_User(this.get_Pseudo());
     }
-
 }

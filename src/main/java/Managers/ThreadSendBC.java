@@ -7,26 +7,26 @@ import java.net.*;
 public class ThreadSendBC implements Runnable {
     private final DatagramSocket socket;
     private Connection connect;
-    private NotifPseudo notif;
+    private User user;
     int numSocket;
     public ThreadSendBC(Connection connect) throws SocketException {
         this.socket = new DatagramSocket();
         this.connect=connect;
-        this.numSocket=connect.get_numPort();
+        this.numSocket=Self.portUDP;
     }
-    public ThreadSendBC(NotifPseudo notif) throws SocketException {
+    public ThreadSendBC(User user) throws SocketException, UnknownHostException {
         this.socket = new DatagramSocket();
-        this.notif=notif;
-        this.numSocket=notif.get_numPort();
+        this.user = user;
+        this.numSocket=Self.portUDP;
     }
 
     public void run() {
         String data;
-        if (this.notif==null) {
-            data = Boolean.toString(this.connect.get_Valid());
+        if (this.user==null) {
+            data = Boolean.toString(this.connect.getValid());
         }
         else {
-            data = this.notif.get_Pseudo();
+            data = this.user.get_Pseudo();
         }
         byte [] pseudoData = data.getBytes();
         try {

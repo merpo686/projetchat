@@ -186,11 +186,12 @@ public class ChatInterface extends Container {
     }
     //send messages, needs the tcp thread to be opened and to have a function send callable
     private void sendMessage(String message) throws IOException {
-        Message mess= new Message(Self.getInstance().get_User(), dest,message);
+        Message mess= new Message(new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), dest,message);
         NetworkManager.Send_Message_TCP(mess); //calls send: find the conversation's tcp thread or creates it
         chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
     private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException {
+        //verifier si la conv existe avant de la recuperer sinon la creer
         ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.get_Hostname());
         for (Message message: conv){
             chatArea.append("\n("+message.get_sender()+") - "+message.get_message());
