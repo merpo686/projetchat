@@ -2,9 +2,10 @@ package Models;
 
 public class User {
     private final String hostname;
-    private String Pseudo = null;
+    private String Pseudo;
     public User(String hostname,String Pseudo){
         this.hostname=hostname;
+        this.Pseudo=Pseudo;
     }
     public void Set_Pseudo(String pseudo){
         this.Pseudo=pseudo;

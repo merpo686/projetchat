@@ -7,22 +7,17 @@ import Models.User;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 public class Main {
 
-    static ThreadManager.NotifHandler handler = new ThreadManager.NotifHandler() {
-        @Override
-        public void handler(Object notif) throws SocketException, UnknownHostException {
-            if (notif instanceof Connection) {
-                Connection connect =(Connection) notif;
-                NetworkManager.Process_Connection(connect);
-            }
-            else if (notif instanceof User) {
-                User user = (User)notif;
-                NetworkManager.Process_Notif_Pseudo(user);
-            }
+    static ThreadManager.NotifHandler handler = notif -> {
+        if (notif instanceof Connection) {
+            Connection connect =(Connection) notif;
+            NetworkManager.Process_Connection(connect);
+        }
+        else if (notif instanceof User) {
+            User user = (User)notif;
+            NetworkManager.Process_Notif_Pseudo(user);
         }
     };
 

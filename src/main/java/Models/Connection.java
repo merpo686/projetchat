@@ -2,7 +2,7 @@ package Models;
 
 public class Connection{
     private final Boolean connect;
-    private String hostname;
+    private final String hostname;
     public Connection( String hostname, boolean connect){
         this.connect=connect;
         this.hostname=hostname;
