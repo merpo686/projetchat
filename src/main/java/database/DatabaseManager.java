@@ -40,7 +40,7 @@ public class DatabaseManager {
         } catch (SQLException throwables1) {
             throwables1.printStackTrace();
             throw new ConnectionError(url);
-        } finally {
+        } /*finally {
             try {
                 if(co != null){
                     co.close();
@@ -49,8 +49,8 @@ public class DatabaseManager {
             catch(SQLException throwables2) {
                 throwables2.printStackTrace();
                 throw new ConnectionError(url);
-            }
-        }
+            }*/
+        //}
     }
 
     public void createTableConversation() throws SQLException {
@@ -86,7 +86,7 @@ public class DatabaseManager {
 
     public Message getLastMessage(String hostnameConv) throws SQLException, UnknownHostException {
         Statement statement = co.createStatement();
-        String sql = "SELECT LAST(Message) FROM hostnameConv";
+        String sql = "SELECT LAST(Message) FROM hostnameConv;";
         ResultSet rs = statement.executeQuery(sql);
         Message mess = new Message(new User(rs.getString(2),rs.getString(3)),
                 new User(rs.getString(4), rs.getString(5)), rs.getString(6));
@@ -97,7 +97,7 @@ public class DatabaseManager {
     public ArrayList<Message> getAllMessages(String hostnameConv) throws SQLException, UnknownHostException {
         ArrayList<Message> listMessages = null;
         Statement statement = co.createStatement();
-        String sql = "SELECT * FROM hostnameConv";
+        String sql = "SELECT * FROM hostnameConv;";
         ResultSet rs = statement.executeQuery(sql);
         /*String length = "COUNT * FROM hostnameConv";
         ResultSet rsLength = statement.executeQuery(sql);*/
@@ -111,5 +111,21 @@ public class DatabaseManager {
             System.out.println("You have no existing messages with the designated user"); //il faudrait que ca remonte au user qu'il y ai aucun message
         }
         return listMessages;
+    }
+
+    public Boolean checkExistConversation() throws SQLException {
+        Statement statement = co.createStatement();
+        String sql = "SELECT \n" +
+                "  object_id \n" +
+                "FROM sys.tables\n" +
+                "WHERE name = 'hostnameConv';";
+        ResultSet rs = statement.executeQuery(sql);
+        //checks if the table is null
+        if (rs.getString(0).equals("NULL")){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
