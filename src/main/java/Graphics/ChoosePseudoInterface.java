@@ -11,6 +11,9 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 
+//when change pseudo doit changer les pseudos actifs!!!
+
+
 public class ChoosePseudoInterface extends Container {
     JFormattedTextField connection;
     GridBagConstraints cons;

@@ -21,13 +21,6 @@ import java.util.Objects;
 
 import javax.swing.*;
 
-//server is running full time
-// when sending message either the tcp thread exists: it finds it in an array of sockets and uses it to send
-// either it doesn't: it connects to the server then sends
-// server opens new thread for each new conversation (new dest).
-// the reception thread add received messages to the datamanager. to know if there is new messages,
-// we start a thread which keep track of last received message and check datamanager if there is new one, to append them
-
 public class ChatInterface extends Container {
     JTextArea chatArea;
     JTextField inputArea;

@@ -22,7 +22,7 @@ public class NetworkManager {
     }
     public static void Process_Connection(Connection connect) throws UnknownHostException, SocketException {
         //true=connection; false=deconnection
-        if (connect.getValid()){
+        if (connect.getValid() && Self.getInstance().get_Pseudo()!=null){
             ThreadManager.Send_Pseudo_Unicast(connect.getHostname());
         }
         else {

@@ -14,4 +14,5 @@ public class User {
         return this.hostname;
     }
     public Boolean equals(String hostname){return this.get_Hostname().equals(hostname);}
+    public String toString(){return this.get_Pseudo();}
 }

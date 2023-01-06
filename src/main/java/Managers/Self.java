@@ -1,5 +1,6 @@
 package Managers;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 
@@ -20,7 +21,7 @@ public class Self {
     }
     public String getHostname(){return this.hostname;}
     public String get_Pseudo(){ return this.pseudo_Self;}
-    public void set_Pseudo(String pseudo){
+    public void set_Pseudo(String pseudo) throws SocketException, UnknownHostException {
         this.pseudo_Self =pseudo;
     }
 }

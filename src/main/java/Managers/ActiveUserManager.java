@@ -37,10 +37,10 @@ public class ActiveUserManager {
         return listActiveUsers;
     }
 
-    public boolean IsinActiveListUser(String Pseudo){
+    public boolean IsinActiveListUser(String hostname){
         try {
             for (User user: listActiveUsers){
-                if (user.get_Pseudo().equals(Pseudo)){
+                if (user.equals(hostname)){
                     return true;
                 }
             }
