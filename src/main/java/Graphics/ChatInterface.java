@@ -57,7 +57,7 @@ public class ChatInterface extends Container {
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
             try {
-                NetworkManager.Send_Disconnection();
+                NetworkManager.SendDisconnection();
             } catch (SocketException | UnknownHostException e) {
                 e.printStackTrace();
             }
@@ -130,7 +130,7 @@ public class ChatInterface extends Container {
         //discussion_name specify
         discussion_name.setFont(new Font("Myriad Pro", Font.PLAIN, 30)); // NOI18N
         discussion_name.setForeground(InterfaceManager.foreground_color);
-        discussion_name.setText(dest.get_Pseudo());
+        discussion_name.setText(dest.getPseudo());
 
         //add
         add(inputArea);
@@ -166,13 +166,13 @@ public class ChatInterface extends Container {
             while(true) {
                 Message mess = null;
                 try {
-                    mess = DatabaseManager.getInstance().getLastMessage(dest.get_Hostname());
+                    mess = DatabaseManager.getInstance().getLastMessage(dest.getHostname());
                 } catch (ConnectionError | SQLException | UnknownHostException connectionError) {
                     connectionError.printStackTrace();
                 }
                 if (!lastMessage.equals(mess)) {
                     lastMessage =mess;
-                    chatArea.append(mess.get_message());
+                    chatArea.append(mess.getMessage());
                 }
             }
         }
@@ -180,9 +180,10 @@ public class ChatInterface extends Container {
     //send messages, needs the tcp thread to be opened and to have a function send callable
     private void sendMessage(String message) throws IOException {
         Message mess= new Message(new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), dest,message);
-        NetworkManager.Send_Message_TCP(mess); //calls send: find the conversation's tcp thread or creates it
+        NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
+<<<<<<< HEAD
     private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException, MessageAccessProblem {
         if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
             try {
@@ -193,11 +194,24 @@ public class ChatInterface extends Container {
                 }
             }catch(MessageAccessProblem e){
                 chatArea.append("(ERROR) We are waiting for your messages. It will be coming shortly.");
+=======
+    private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException {
+<<<<<<< HEAD
+        if(DatabaseManager.getInstance().checkExistConversation()){
+            ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.getHostname());
+=======
+        if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
+            ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.get_Hostname());
+>>>>>>> 883ed292846ee596c910df3a9443aebf1242c285
+            for (Message message: conv){
+                chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
+                lastMessage = message;
+>>>>>>> ab06e4752b3db66e082810fb4c78cca06631d21c
             }
 
         }
         else{
-            DatabaseManager.getInstance().addConversation(dest.get_Hostname());
+            DatabaseManager.getInstance().addConversation(dest.getHostname());
         }
     }
 }

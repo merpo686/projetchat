@@ -7,12 +7,12 @@ public class User {
         this.hostname=hostname;
         this.Pseudo=Pseudo;
     }
-    public String get_Pseudo(){
+    public String getPseudo(){
         return this.Pseudo;
     }
-    public String get_Hostname(){
+    public String getHostname(){
         return this.hostname;
     }
-    public Boolean equals(String hostname){return this.get_Hostname().equals(hostname);}
-    public String toString(){return this.get_Pseudo();}
+    public Boolean equals(String hostname){return this.getHostname().equals(hostname);}
+    public String toString(){return this.getPseudo();}
 }

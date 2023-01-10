@@ -42,7 +42,7 @@ public class ChooseDiscussionInterface extends Container {
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
             try {
-                NetworkManager.Send_Disconnection();
+                NetworkManager.SendDisconnection();
             } catch (SocketException | UnknownHostException e) {
                 e.printStackTrace();
             }
@@ -66,7 +66,7 @@ public class ChooseDiscussionInterface extends Container {
 
         //creates buttons for each users
         for (User user: activeusers){
-            Action user_button = new AbstractAction(user.get_Pseudo()) {
+            Action user_button = new AbstractAction(user.getPseudo()) {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     setVisible(false);

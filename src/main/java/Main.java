@@ -3,43 +3,44 @@ import Managers.*;
 import Models.Connection;
 import Graphics.ChoosePseudoInterface;
 import Models.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class Main {
 
+    private static final Logger LOGGER = LogManager.getLogger(Main.class);
+
+    /** handler for the reception of UDP messages */
     static ThreadManager.NotifHandler handler = notif -> {
         if (notif instanceof Connection) {
             Connection connect =(Connection) notif;
-            NetworkManager.Process_Connection(connect);
+            NetworkManager.ProcessConnection(connect);
         }
         else if (notif instanceof User) {
             User user = (User)notif;
-            NetworkManager.Process_Notif_Pseudo(user);
+            NetworkManager.ProcessPseudo(user);
         }
     };
 
     public static void main(String[] args) {
-        try {
-            Launcher();
-        }
-        catch (IOException e){
-            System.out.println(e);
-        }
+        LOGGER.info("Starting chat application. port UDP=12340; port TCP=12341");
+        Launcher();
     }
-
-    public static void Launcher() throws IOException {
-        ActiveUserManager AUM = ActiveUserManager.getInstance();
-        start_GraphicInterface();
-        ThreadManager.Start_RcvThread(handler);
-        NetworkManager.Send_Connection();
-        ThreadManager.Start_TCP_Server();
+    /** Start the background components in charge of running the application */
+    public static void Launcher() {
+        LOGGER.debug("Launching application.");
+        ActiveUserManager.getInstance(); //initalise the active user list
+        start_GraphicInterface(); //crystal clear
+        ThreadManager.StartRcvThread(handler); //starts the thread which receives non-stop on UDP
+        NetworkManager.SendConnection(); //sends a boolean (true) on broadcast to notify our connection
+        ThreadManager.StartTCPServer(); //Start the TCP server waiting to open conversations
     }
-
+ /** Function in charge of starting the Graphic Interface, which is afterwards self-sufficient*/
     public static void start_GraphicInterface(){
-
+        LOGGER.debug("Launching interface");
         //create new frame
         JFrame frame = new JFrame();
         //Set the look and feel.
@@ -47,10 +48,9 @@ public class Main {
         try {
             UIManager.setLookAndFeel(lookAndFeel);
         } catch (Exception e) {
-            System.err.println("Couldn't get specified look and feel ("
+            LOGGER.error("Couldn't get specified look and feel ("
                     + lookAndFeel
-                    + "), for some reason.");
-            System.err.println("Using the default look and feel.");
+                    + "), for some reason. Using the default look and feel.");
             e.printStackTrace();
         }
         //Make sure we have nice window decorations.
@@ -58,12 +58,11 @@ public class Main {
         //Create and set up the window.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Display the window.
-
         frame.setMinimumSize(new Dimension(400,300));
         frame.setForeground(InterfaceManager.foreground_color);
         frame.setBackground(InterfaceManager.background_color);
         frame.setLocationRelativeTo(null); //center of the screen
-        ChoosePseudoInterface IT= new ChoosePseudoInterface(frame); //first interface displayed
+        new ChoosePseudoInterface(frame); //first interface displayed
         frame.setVisible(true);
     }
 }
