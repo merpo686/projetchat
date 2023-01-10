@@ -135,11 +135,14 @@ public class DatabaseManager {
         ps.setString(1, hostname);
         ResultSet rs = ps.executeQuery();
         ps.clearParameters();
-        Message mess = new Message(new User(rs.getString(3),rs.getString(4)),
-                new User(rs.getString(5), rs.getString(6)), rs.getString(7));
-        String stringDate = rs.getString(2);
-        mess.setDate(LocalDateTime.parse(stringDate));
-        return mess;
+        if(rs.next()){
+            Message mess = new Message(new User(rs.getString(3),rs.getString(4)),
+                    new User(rs.getString(5), rs.getString(6)), rs.getString(7));
+            String stringDate = rs.getString(2);
+            mess.setDate(LocalDateTime.parse(stringDate));
+            return mess;
+        }
+        return null;
     }
 
     public ArrayList<Message> getAllMessages(String hostname) throws  MessageAccessProblem {
