@@ -121,6 +121,15 @@ public class DatabaseManager {
 
     //PAS BON ENCORE FAUT TROUVER UN MOYEN POUR FAIRE EXECUTE UPDATE ET RECUP LES MESSAGES
     public Message getLastMessage(String hostname) throws SQLException, UnknownHostException {
+        if(!checkExistTableConversations()){
+            createTableConversations();
+        }
+        if(!checkExistConversation(hostname)){
+            addConversation(hostname);
+        }
+        if(!checkExistTableMessages()){
+            createTableMessages(hostname);
+        }
         String sql = "SELECT * FROM Messages WHERE (hostname = ?) ORDER BY Hostname DESC LIMIT 1;";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.setString(1, hostname);
@@ -135,6 +144,15 @@ public class DatabaseManager {
 
     public ArrayList<Message> getAllMessages(String hostname) throws  MessageAccessProblem {
         try{
+            if(!checkExistTableConversations()){
+                createTableConversations();
+            }
+            if(!checkExistConversation(hostname)){
+                addConversation(hostname);
+            }
+            if(!checkExistTableMessages()){
+                createTableMessages(hostname);
+            }
             ArrayList<Message> listMessages = new ArrayList<>();
             String sql = "SELECT * FROM Messages WHERE (hostname = ?);";
             PreparedStatement ps = co.prepareStatement(sql);
