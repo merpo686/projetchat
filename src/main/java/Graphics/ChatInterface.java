@@ -156,8 +156,8 @@ public class ChatInterface extends Container {
             while(true) {
                 Message mess = null;
                 try {
-                    mess = DatabaseManager.getInstance().getLastMessage(dest.getHostname());
-                } catch (ConnectionError | SQLException | UnknownHostException connectionError) {
+                    mess = db.getLastMessage(dest.getHostname());
+                } catch ( SQLException | UnknownHostException connectionError) {
                     connectionError.printStackTrace();
                 }
                 if (!lastMessage.equals(mess)) {
