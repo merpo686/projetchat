@@ -15,12 +15,14 @@ public class Message {
         this.receiver=receiver;
         this.data=messageData;
     }
-    public String get_message(){return data;}
-    public User get_sender(){return sender;}
-    public User get_receiver(){return receiver;}
-    public Date get_date(){return date;}
-    public void set_date(Date date){
+    public String getMessage(){return data;}
+    public User getSender(){return sender;}
+    public User getReceiver(){return receiver;}
+    public Date getDate(){return date;}
+    public void setDate(Date date){
         this.date=date;
     }
-    public Boolean equals(Message other){return other.get_date()==this.get_date();}
+    public Boolean equals(Message other){return other.getDate()==this.getDate();}
+    public String toString(){return "Sender:"+ getSender()+" Receiver:"+ getReceiver()+
+            " Date:"+ getDate()+" Message:"+ getMessage();}
 }

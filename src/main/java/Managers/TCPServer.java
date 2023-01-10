@@ -1,32 +1,40 @@
 package Managers;
 
 import Models.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+/**Server class which accepts new conversations and create a receiving thread for each -
+ * also adds them to the list of active conversation */
 public class TCPServer {
-    //constructor
-    public TCPServer() throws IOException {
+    private static final Logger LOGGER = LogManager.getLogger(TCPServer.class);
+
+    public TCPServer() {
         //creation du server socket
-        ServerSocket socket = new ServerSocket(Self.portTCP);
-        //le server tourne a l'infinie s'il n'y a pas d'erreur/exception
+        ServerSocket socket = null;
+        try {
+            socket = new ServerSocket(Self.portTCP);
+        } catch (IOException e) {
+            LOGGER.error("Failed to create a new ServerSocket on port "+Self.portTCP);
+            e.printStackTrace();
+        }
+        //Server is running full time while the app is active if there is no exceptions
         while(true) {
             Socket link = null;
-            try{
+            try {
                 link = socket.accept();
-                System.out.println("A new connection identified at : " + link);
-                User dest = ActiveUserManager.getInstance().get_User(link.getInetAddress().getHostName());
-                TCPClientHandler thread = new TCPClientHandler(link,dest);
-                thread.start();
-                ThreadManager.getInstance().add_active_conversation(dest,thread);
-            }
-            catch(Exception e){
-                assert link != null;
-                link.close();
+            } catch (IOException e) {
+                LOGGER.error("Socket accept() returned an error.");
                 e.printStackTrace();
             }
+            LOGGER.debug("A new connection identified at : " + link);
+            User dest = ActiveUserManager.getInstance().get_User(link.getInetAddress().getHostName());
+            TCPClientHandler thread = new TCPClientHandler(link,dest); //creating the conversation receiving thread
+            thread.start();
+            ThreadManager.getInstance().addActiveconversation(dest,thread); //adding the thread to the list of active conversations
         }
     }
 }

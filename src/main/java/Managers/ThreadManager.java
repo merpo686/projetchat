@@ -1,13 +1,15 @@
 package Managers;
 import Models.*;
-import java.io.IOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.*;
 
-
+/**This class contains all the managing-thread related functions */
 public class ThreadManager {
-    private final Map<User,TCPClientHandler> map_active_conversations;
+
+    private static final Logger LOGGER = LogManager.getLogger(ThreadManager.class);
+    private final Map<User,TCPClientHandler> map_active_conversations; //list of active conversations (active TCP threads)
     static ThreadManager instance;
 
     private ThreadManager() {
@@ -20,34 +22,58 @@ public class ThreadManager {
         }
         return instance;
     }
-    public void add_active_conversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
-    public void del_active_conversation(User dest){
-        //fermer le thread
+    /** functions to manage the list of active conversations*/
+    public void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
+    public void delActiveconversation(User dest){
         TCPClientHandler thread = map_active_conversations.remove(dest);
-        thread.interrupt();
+        if (thread!=null){
+            thread.interrupt();
+        }
     }
-    public TCPClientHandler get_active_conversation(User dest){return map_active_conversations.get(dest);}
+    public TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
 
+    /**Defines the UDP-handler */
     public interface NotifHandler {
-        void handler(Object notif) throws SocketException, UnknownHostException;
+        void handler(Object notif);
     }
 
-    static public void Send_BC(User user) throws SocketException {
-        new Thread(new ThreadSendBC(user)).start();
+    /** Sends a Username or a boolean on UDP-broadcast */
+    static public void SendBC(User user)  {
+        try {
+            new Thread(new ThreadSendBC(user)).start();
+        }
+        catch (SocketException e){
+            LOGGER.error("Failed to create a new UDP socket.");
+            e.printStackTrace();
+        }
     }
-    static public void Send_BC(Connection connect) throws SocketException {
-        new Thread(new ThreadSendBC(connect)).start();
+    static public void SendBC(Connection connect)  {
+        try {
+            new Thread(new ThreadSendBC(connect)).start();
+        }
+        catch (SocketException e){
+            LOGGER.error("Failed to create a new UDP socket.");
+            e.printStackTrace();
+        }
     }
-    static public void Start_RcvThread(NotifHandler handler){
-        ThreadRcvBC T_Recv_BC;
-        T_Recv_BC= new ThreadRcvBC(handler);
-        T_Recv_BC.setDaemon(true);
-        T_Recv_BC.start();
+    /**Starts the UDP receiving thread*/
+    static public void StartRcvThread(NotifHandler handler){
+        ThreadRcvUDP threadRecvUDP;
+        threadRecvUDP = new ThreadRcvUDP(handler);
+        threadRecvUDP.setDaemon(true);
+        threadRecvUDP.start();
     }
-    static public void Send_Pseudo_Unicast(String hostname) throws SocketException, UnknownHostException {
-        new Thread(new Thread_Send_Pseudo_Unicast(hostname)).start();
+    /** Sends a username on UDP (non-broadcast)*/
+    static public void SendPseudoUnicast(String hostname) {
+        try {
+            new Thread(new ThreadSendPseudoUnicast(hostname)).start();
+        } catch (SocketException e) {
+            LOGGER.error("Failed to create a new UDP socket.");
+            e.printStackTrace();
+        }
     }
-    static public void Start_TCP_Server() throws IOException {
-        TCPServer server = new TCPServer();
+    /**Start TCP server for accepting new conversations*/
+    static public void StartTCPServer() {
+        new TCPServer();
     }
 }
