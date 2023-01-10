@@ -7,7 +7,6 @@ import Managers.Self;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 
@@ -25,11 +24,7 @@ public class ChoosePseudoInterface extends Container {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
-            try {
-                NetworkManager.SendDisconnection();
-            } catch (SocketException | UnknownHostException e) {
-                e.printStackTrace();
-            }
+            NetworkManager.SendDisconnection();
             frame.dispose();
         }
     };
@@ -58,12 +53,8 @@ public class ChoosePseudoInterface extends Container {
                     repaint();
                 }
                 else {
-                    try {
-                        Self.getInstance().set_Pseudo(PseudoChosen);
-                        NetworkManager.SendPseudo();
-                    } catch (UnknownHostException | SocketException unknownHostException) {
-                        unknownHostException.printStackTrace();
-                    }
+                    Self.getInstance().set_Pseudo(PseudoChosen);
+                    NetworkManager.SendPseudo();
                     setVisible(false);
                     try {
                         new ChooseDiscussionInterface(frame);
@@ -101,12 +92,8 @@ public class ChoosePseudoInterface extends Container {
                         repaint();
                     }
                     else {
-                        try {
-                            Self.getInstance().set_Pseudo(PseudoChosen);
-                            NetworkManager.SendPseudo();
-                        } catch (UnknownHostException | SocketException unknownHostException) {
-                            unknownHostException.printStackTrace();
-                        }
+                        Self.getInstance().set_Pseudo(PseudoChosen);
+                        NetworkManager.SendPseudo();
                         setVisible(false);
                         try {
                             new ChooseDiscussionInterface(frame);

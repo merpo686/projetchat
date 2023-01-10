@@ -48,7 +48,7 @@ public class TCPClientHandler extends Thread {
                 //getting message
                 String received = inputStream.readUTF();
                 Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), received);
-                if(!DatabaseManager.getInstance().checkExistConversation()){
+                if(!DatabaseManager.getInstance().checkExistConversation(dest.getHostname())){
                     DatabaseManager.getInstance().addConversation(dest.getHostname());
                 }
                 DatabaseManager.getInstance().addMessage(mess,dest.getHostname());

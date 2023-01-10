@@ -7,7 +7,6 @@ import database.MessageAccessProblem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,11 +40,7 @@ public class ChooseDiscussionInterface extends Container {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
-            try {
-                NetworkManager.SendDisconnection();
-            } catch (SocketException | UnknownHostException e) {
-                e.printStackTrace();
-            }
+            NetworkManager.SendDisconnection();
             frame.dispose();
         }
     };

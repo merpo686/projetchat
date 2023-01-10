@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,11 +55,7 @@ public class ChatInterface extends Container {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
-            try {
-                NetworkManager.SendDisconnection();
-            } catch (SocketException | UnknownHostException e) {
-                e.printStackTrace();
-            }
+            NetworkManager.SendDisconnection();
             frame.dispose();
         }
     };
@@ -183,32 +178,17 @@ public class ChatInterface extends Container {
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
-<<<<<<< HEAD
     private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException, MessageAccessProblem {
         if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
             try {
-                ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.get_Hostname());
+                ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.getHostname());
                 for (Message message: conv){
-                    chatArea.append("\n("+message.get_sender()+") - "+message.get_message());
+                    chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
                     lastMessage = message;
                 }
             }catch(MessageAccessProblem e){
                 chatArea.append("(ERROR) We are waiting for your messages. It will be coming shortly.");
-=======
-    private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException {
-<<<<<<< HEAD
-        if(DatabaseManager.getInstance().checkExistConversation()){
-            ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.getHostname());
-=======
-        if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
-            ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.get_Hostname());
->>>>>>> 883ed292846ee596c910df3a9443aebf1242c285
-            for (Message message: conv){
-                chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
-                lastMessage = message;
->>>>>>> ab06e4752b3db66e082810fb4c78cca06631d21c
             }
-
         }
         else{
             DatabaseManager.getInstance().addConversation(dest.getHostname());

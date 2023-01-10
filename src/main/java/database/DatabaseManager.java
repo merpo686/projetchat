@@ -92,20 +92,7 @@ public class DatabaseManager {
         SELECT IdConv FROM Conversations WHERE (Conversations.Hostname = ?)*/
     }
 
-<<<<<<< HEAD
-    public void addMessage(Message message, String hostnameConv) throws SQLException {
-        String stringMessage = message.getMessage();
-        Date date = (Date) message.getDate();
-        String senderID = message.getSender().getHostname();
-        String senderPseudo = message.getSender().getPseudo();
-        String receiverID = message.getReceiver().getHostname();
-        String receiverPseudo = message.getSender().getPseudo();
-        Statement statement = co.createStatement();
-        //verifier si la conv existe sinon la creer
-        String sql = "INSERT INTO hostnameConv \n" +
-                "VALUES(Id, date, senderID, senderPseudo, receiverID, receiverPseudo, stringMessage);";
-        statement.executeUpdate(sql);
-=======
+
     public void addConversation(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -117,12 +104,12 @@ public class DatabaseManager {
     }
 
     public void addMessage(Message message, String hostname) throws SQLException { //A VOIR SI ON PEUT PAS REDUIR LE NB DE PARAMETRES A 1 ET ENLEVER LE HOSTNAME CAR IL EST NORMALEMENT EGAL AU MESSAGE RECEIVER
-        String stringMessage = message.get_message();
-        LocalDateTime date = message.get_date();
-        String senderID = message.get_sender().get_Hostname();
-        String senderPseudo = message.get_sender().get_Pseudo();
-        String receiverID = message.get_receiver().get_Hostname();
-        String receiverPseudo = message.get_receiver().get_Pseudo();
+        String stringMessage = message.getMessage();
+        LocalDateTime date = message.getDate();
+        String senderID = message.getSender().getHostname();
+        String senderPseudo = message.getSender().getPseudo();
+        String receiverID = message.getReceiver().getHostname();
+        String receiverPseudo = message.getReceiver().getPseudo();
         //verifier si la conv existe sinon la creer et s'il existe une table de conversations tout court
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -144,7 +131,6 @@ public class DatabaseManager {
         ps.setString(8, hostname);
         ps.executeUpdate();
         ps.clearParameters();
->>>>>>> 883ed292846ee596c910df3a9443aebf1242c285
     }
 
     //PAS BON ENCORE FAUT TROUVER UN MOYEN POUR FAIRE EXECUTE UPDATE ET RECUP LES MESSAGES
@@ -154,11 +140,10 @@ public class DatabaseManager {
         ps.setString(1, hostname);
         ResultSet rs = ps.executeQuery(sql);
         ps.clearParameters();
-<<<<<<< HEAD
         Message mess = new Message(new User(rs.getString(3),rs.getString(4)),
                 new User(rs.getString(5), rs.getString(6)), rs.getString(7));
         String stringDate = rs.getString(2);
-        mess.set_date(LocalDateTime.parse(stringDate));
+        mess.setDate(LocalDateTime.parse(stringDate));
         return mess;
     }
 
@@ -175,36 +160,13 @@ public class DatabaseManager {
                 User receiver = new User(rs.getString(5), rs.getString(6));
                 Message mess = new Message(sender, receiver, rs.getString(7));
                 String stringDate = rs.getString(2);
-                mess.set_date(LocalDateTime.parse(stringDate));
+                mess.setDate(LocalDateTime.parse(stringDate));
                 listMessages.add(mess);
             }
             return listMessages;
         } catch(Exception e){
             e.printStackTrace();
             throw new MessageAccessProblem(hostname);
-=======
-        Message mess = new Message(new User(rs.getString(2),rs.getString(3)),
-                new User(rs.getString(4), rs.getString(5)), rs.getString(6));
-        mess.setDate(rs.getDate(2));
-        return mess;
-    }
-
-    public ArrayList<Message> getAllMessages(String hostnameConv) throws SQLException, UnknownHostException {
-        ArrayList<Message> listMessages = null;
-        Statement statement = co.createStatement();
-        String sql = "SELECT * FROM hostnameConv;";
-        ResultSet rs = statement.executeQuery(sql);
-        /*String length = "COUNT * FROM hostnameConv";
-        ResultSet rsLength = statement.executeQuery(sql);*/
-        while(rs.next()) {
-            Message mess = new Message(new User(rs.getString(2),rs.getString(3)),
-                    new User(rs.getString(4), rs.getString(5)), rs.getString(6));
-            mess.setDate(rs.getDate(2));
-            listMessages.add(mess);
-        }
-        if(listMessages == null){
-            System.out.println("You have no existing messages with the designated user"); //il faudrait que ca remonte au user qu'il y ai aucun message
->>>>>>> ab06e4752b3db66e082810fb4c78cca06631d21c
         }
     }
 
