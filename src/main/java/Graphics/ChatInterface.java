@@ -34,11 +34,7 @@ public class ChatInterface extends Container {
             setVisible(false);
             //close discussion
             frame.setResizable(true);
-            try {
-                new ChooseDiscussionInterface(frame);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
+            new ChooseDiscussionInterface(frame);
         }
     };
 
@@ -59,8 +55,8 @@ public class ChatInterface extends Container {
             frame.dispose();
         }
     };
-
-    public ChatInterface(JFrame frame, User dest) throws UnknownHostException, SQLException, ConnectionError, MessageAccessProblem {
+    /**Constructor */
+    public ChatInterface(JFrame frame, User dest){
         this.frame=frame;
         this.dest = dest;
         this.lastMessage =null;
@@ -178,20 +174,27 @@ public class ChatInterface extends Container {
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
     }
-    private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException, MessageAccessProblem {
-        if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
-            try {
-                ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.getHostname());
-                for (Message message: conv){
-                    chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
-                    lastMessage = message;
+    private void displayOldMessages() {
+
+        try {
+            if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
+                try {
+                    ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.getHostname());
+                    for (Message message: conv){
+                        chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
+                        lastMessage = message;
+                    }
+                }catch(MessageAccessProblem e){
+                    chatArea.append("(ERROR) We are waiting for your messages. It will be coming shortly.");
                 }
-            }catch(MessageAccessProblem e){
-                chatArea.append("(ERROR) We are waiting for your messages. It will be coming shortly.");
             }
-        }
-        else{
-            DatabaseManager.getInstance().addConversation(dest.getHostname());
+            else{
+                DatabaseManager.getInstance().addConversation(dest.getHostname());
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ConnectionError connectionError) {
+            connectionError.printStackTrace();
         }
     }
 }
