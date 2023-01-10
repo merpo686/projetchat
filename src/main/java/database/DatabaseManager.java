@@ -158,37 +158,52 @@ public class DatabaseManager {
 
     //checks if the entire conversations table exists
     public Boolean checkExistTableConversations() throws SQLException {
+        int count=0;
         Statement statement = co.createStatement();
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Conversations'";
         ResultSet rs = statement.executeQuery(sql);
-        //checks if the table is null
-        //System.out.println("The conversations table does not exist");
-        //System.out.println("The conversation table exists");
-        return !rs.getString(1).equals("0");
+        while(rs.next()){
+            count++;
+        }
+        if(count==1){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //checks if a single conversation exists inside the table conversations
     public Boolean checkExistConversation(String hostname) throws SQLException {
+        int count=0;
         String sql = "SELECT EXISTS(SELECT Hostname FROM Conversations WHERE Conversations.Hostname = ?);";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.setString(1, hostname);
         ResultSet rs = ps.executeQuery();
-
-        //checks if the table is null
-        //System.out.println("The conversation "+hostname+" does not exist");
-        //System.out.println("The conversation "+hostname+" exists");
-        return !rs.getString(1).equals("0");
+        while(rs.next()){
+            count++;
+        }
+        if(count==1){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //checks if the entire messages table exists
     public Boolean checkExistTableMessages() throws SQLException {
+        int count=0;
         Statement statement = co.createStatement();
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Messages'";
         ResultSet rs = statement.executeQuery(sql);
-        //checks if the table is null
-        //System.out.println("The messages table does not exist");
-        //System.out.println("The messages table exists");
-        return !rs.getString(1).equals("0");
+
+        while(rs.next()){
+            count++;
+        }
+        if(count==1){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public void clearDB(String databaseName) {

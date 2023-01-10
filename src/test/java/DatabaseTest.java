@@ -33,7 +33,8 @@ public class DatabaseTest {
         System.out.println("Conversation added in conversations table");
 
         //testing message methods
-        myDB.createTableMessages(testUser.getHostname()); //faudra creer une table en vrai aussi on l'a pas encore fait (genre lorsque tu cree une connexion tcp
+        myDB.addMessage(mess, testUser.getHostname());
+        myDB.createTableMessages(testUser.getHostname());
         assert myDB.checkExistTableMessages();
         System.out.println("Messages table created");
         myDB.addMessage(mess, testUser.getHostname());
