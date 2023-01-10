@@ -40,7 +40,7 @@ public class ThreadSendBC implements Runnable {
             data = this.user.getPseudo();
         }
         byte [] pseudoData = data.getBytes();
-        System.out.println("[ThreadSendBC] Sending "+data+" in SendThread");
+        LOGGER.debug("[ThreadSendBC] Sending "+data+" in SendThread");
         try {
             socket.setBroadcast(true);
         } catch (SocketException e) {

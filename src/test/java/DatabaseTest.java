@@ -6,7 +6,6 @@ import database.DatabaseManager;
 import database.MessageAccessProblem;
 import org.junit.Test;
 
-import javax.xml.crypto.Data;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -14,7 +13,7 @@ import java.sql.SQLException;
 public class DatabaseTest {
 
     @Test
-    public void DBTest() throws ConnectionError, SQLException, UnknownHostException, SocketException, MessageAccessProblem {
+    public void DBTest() throws ConnectionError, SQLException, UnknownHostException, MessageAccessProblem {
         String myPseudo = "Tim";
         Self.getInstance().set_Pseudo(myPseudo);
         String TestDBName = "test.sqlite";
@@ -29,16 +28,16 @@ public class DatabaseTest {
         //testing conversation methods
         myDB.createTableConversations();
         System.out.println("Conversations Table created");
-        myDB.addConversation(testUser.get_Hostname());
+        myDB.addConversation(testUser.getHostname());
         System.out.println("Conversation added in conversations table");
         assert myDB.checkExistTableConversations();
-        assert myDB.checkExistConversation(testUser.get_Hostname());
+        assert myDB.checkExistConversation(testUser.getHostname());
 
         //testing message methods
-        myDB.createTableMessages(testUser.get_Hostname()); //faudra creer une table en vrai aussi on l'a pas encore fait (genre lorsque tu cree une connexion tcp
-        myDB.addMessage(mess, testUser.get_Hostname());
-        System.out.println("Message added for the conversation with "+testUser.get_Hostname());
-        myDB.getAllMessages(testUser.get_Hostname());
-        myDB.getLastMessage(testUser.get_Hostname());
+        myDB.createTableMessages(testUser.getHostname()); //faudra creer une table en vrai aussi on l'a pas encore fait (genre lorsque tu cree une connexion tcp
+        myDB.addMessage(mess, testUser.getHostname());
+        System.out.println("Message added for the conversation with "+testUser.getHostname());
+        myDB.getAllMessages(testUser.getHostname());
+        myDB.getLastMessage(testUser.getHostname());
     }
 }
