@@ -7,9 +7,7 @@ import Models.User;
 import database.ConnectionError;
 import database.DatabaseManager;
 import database.MessageAccessProblem;
-
 import java.awt.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -18,9 +16,9 @@ import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
-
 import javax.swing.*;
 
+/**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
 public class ChatInterface extends Container {
     JTextArea chatArea;
     JTextField inputArea;
@@ -47,7 +45,7 @@ public class ChatInterface extends Container {
         }
     };
 
-    Action deconnexionButton = new AbstractAction("DECONNEXION") {
+    Action disconnectionButton = new AbstractAction("DECONNEXION") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
@@ -55,7 +53,7 @@ public class ChatInterface extends Container {
             frame.dispose();
         }
     };
-    /**Constructor */
+    /**Constructor, same as ChooseDiscussionInterface, the core of the interface is specified in initComponents*/
     public ChatInterface(JFrame frame, User dest){
         this.frame=frame;
         this.dest = dest;
@@ -63,53 +61,45 @@ public class ChatInterface extends Container {
         InterfaceManager IM=InterfaceManager.getInstance();
         IM.setState("ChatInterface");
         IM.setUser(dest);
-        initComponents();
-        displayOldMessages();
-        new Thread(new printReceivedMessage()).start();
+        initComponents(); //specify interface components
+        displayOldMessages(); //crystal clear
+        new Thread(new printReceivedMessage()).start(); //start a thread which will check constantly if there is new messages to print
         frame.setContentPane(this);
         frame.setSize(new java.awt.Dimension(510, 470));
     }
-
+/** Initialize the components of the interface */
     private void initComponents() {
         //declaration of variables
         inputArea = new JTextField();
         JScrollPane jScrollPane1 = new JScrollPane();
         chatArea = new JTextArea();
-        JLabel discussion_name = new JLabel();
+        JLabel discussionName = new JLabel();
         setLayout(null); //layout positioning via coordinates
         //inputArea specify
         inputArea.addKeyListener(new KeyAdapter() {
                @Override
                public void keyPressed(KeyEvent e) {
                    if (e.getKeyCode()== KeyEvent.VK_ENTER){
-                       try {
-                           sendMessage(inputArea.getText());
-                       } catch (IOException unknownHostException) {
-                           unknownHostException.printStackTrace();
-                       }
+                       sendMessage(inputArea.getText());
                        inputArea.setText("");
                    }
                }
            }); //send message when enter pressed in input area
 
         //send button specify
-        ImageIcon send_icon = (new ImageIcon(Objects.requireNonNull(ChatInterface.class.getClassLoader().getResource("send.png"))));
-        Image image = send_icon.getImage();
+        ImageIcon sendIcon = (new ImageIcon(Objects.requireNonNull(ChatInterface.class.getClassLoader().getResource("send.png"))));
+        Image image = sendIcon.getImage();
         image = image.getScaledInstance(40, 40,  Image.SCALE_SMOOTH);
-        send_icon = new ImageIcon(image);
+        sendIcon = new ImageIcon(image);
         JButton send = new JButton();
         send.setContentAreaFilled(true);
-        send.setIcon(send_icon);
+        send.setIcon(sendIcon);
         send.setOpaque(false);
         send.setContentAreaFilled(false);
         send.setBorderPainted(false);
         send.addActionListener(evt -> {
-            try {
-                sendMessage(inputArea.getText());
-                inputArea.setText("");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            sendMessage(inputArea.getText());
+            inputArea.setText("");
         });
 
         //chatArea specify
@@ -118,22 +108,22 @@ public class ChatInterface extends Container {
         chatArea.setEditable(false);
         jScrollPane1.setViewportView(chatArea);
 
-        //discussion_name specify
-        discussion_name.setFont(new Font("Myriad Pro", Font.PLAIN, 30)); // NOI18N
-        discussion_name.setForeground(InterfaceManager.foregroundColor);
-        discussion_name.setText(dest.getPseudo());
+        //discussionName specify
+        discussionName.setFont(new Font("Myriad Pro", Font.PLAIN, 30)); // NOI18N
+        discussionName.setForeground(InterfaceManager.foregroundColor);
+        discussionName.setText(dest.getPseudo());
 
         //add
         add(inputArea);
         add(send);
         add(jScrollPane1);
-        add(discussion_name);
+        add(discussionName);
 
         //positionning
         send.setBounds(450, 370, 40, 40);
         jScrollPane1.setBounds(10, 80, 490, 280);
-        discussion_name.setHorizontalAlignment(SwingConstants.CENTER);
-        discussion_name.setBounds(0, 20, 480, 40);
+        discussionName.setHorizontalAlignment(SwingConstants.CENTER);
+        discussionName.setBounds(0, 20, 480, 40);
         inputArea.setBounds(10, 370, 410, 40);
         setSize(new Dimension(510, 480));
 
@@ -142,7 +132,7 @@ public class ChatInterface extends Container {
         JMenu file = new JMenu("Menu");
         file.add(changeDiscussionButton);
         file.add(changePseudoButton);
-        file.add(deconnexionButton);
+        file.add(disconnectionButton);
         bar.add(file);
         frame.setJMenuBar(bar);
         frame.setResizable(false);
@@ -169,13 +159,13 @@ public class ChatInterface extends Container {
         }
     }
     //send messages, needs the tcp thread to be opened and to have a function send callable
-    private void sendMessage(String message) throws IOException {
-        Message mess= new Message(new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), dest,message);
+    private void sendMessage(String message) {
+        Self selfInstance = Self.getInstance();
+        Message mess= new Message(new User(selfInstance.getHostname(),selfInstance.getPseudo()), dest,message);
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
     }
     private void displayOldMessages() {
-
         try {
             if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
                 try {

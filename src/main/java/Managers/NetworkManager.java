@@ -67,20 +67,27 @@ public class NetworkManager {
         ActiveUserManager.getInstance().changeListActiveUser(user);
     }
  /** Sends a message on TCP */
-    public static void SendMessageTCP(Message mess) throws IOException {
+    public static void SendMessageTCP(Message mess){
         TCPClientHandler thread=ThreadManager.getInstance().getActiveconversation(mess.getReceiver());
         Socket socket;
-        if (thread!=null){
-            socket=thread.getSocket();
+        try {
+            if (thread!=null){
+                socket=thread.getSocket();
+            }
+            else{
+                socket= new Socket(Self.getInstance().getHostname(),Self.portTCP);
+                thread = new TCPClientHandler(socket,mess.getReceiver());
+                thread.start();
+                ThreadManager.getInstance().addActiveconversation(mess.getReceiver(),thread);
+            }
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF(mess.getMessage());
+        } catch (IOException e) {
+            LOGGER.error("Either: \n "
+                    + "Unable to create TCP socket. Hostname: "+ Self.getInstance().getHostname()+" Port TCP: "+Self.portTCP
+                    + "\nUnable to write the message on the outputStream.");
+            e.printStackTrace();
         }
-        else{
-            socket= new Socket(InetAddress.getLocalHost(),Self.portTCP);
-            thread = new TCPClientHandler(socket,mess.getReceiver());
-            thread.start();
-            ThreadManager.getInstance().addActiveconversation(mess.getReceiver(),thread);
-        }
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.writeUTF(mess.getMessage());
     }
 
 }

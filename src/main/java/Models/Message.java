@@ -1,7 +1,7 @@
 package Models;
 
 
-import java.net.UnknownHostException;
+
 import java.time.*;
 
 public class Message {
@@ -9,7 +9,7 @@ public class Message {
     private final User sender;
     private final User receiver;
     private final String data;
-    public Message(User sender, User receiver, String messageData) throws UnknownHostException {
+    public Message(User sender, User receiver, String messageData) {
         date = LocalDateTime.now();
         this.sender=sender;
         this.receiver=receiver;
