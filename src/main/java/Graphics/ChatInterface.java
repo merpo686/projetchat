@@ -189,7 +189,7 @@ public class ChatInterface extends Container {
                 lastMessage = message;
             }
         }catch(MessageAccessProblem e){
-            LOGGER.error("Error loading existing messages from the Database.");
+            LOGGER.error("Error loading existing messages from the Database. Or no messages for this conversation.");
         }
     }
 }
