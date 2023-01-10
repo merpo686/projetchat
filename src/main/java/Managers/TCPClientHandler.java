@@ -51,7 +51,6 @@ public class TCPClientHandler extends Thread {
                 if(!DatabaseManager.getInstance().checkExistConversation()){
                     DatabaseManager.getInstance().addConversation(dest.getHostname());
                 }
-<<<<<<< HEAD
                 DatabaseManager.getInstance().addMessage(mess,dest.getHostname());
             } catch (InterruptedIOException e) { //If interrupted
                 try {
@@ -59,15 +58,6 @@ public class TCPClientHandler extends Thread {
                 } catch (IOException ioException) {
                     LOGGER.error("Failed closing socket when interrupting the thread.");
                     ioException.printStackTrace();
-=======
-                //message
-                else{
-                    Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), received);
-                    if(!DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
-                        DatabaseManager.getInstance().addConversation(dest.get_Hostname());
-                    }
-                    DatabaseManager.getInstance().addMessage(mess,dest.get_Hostname());
->>>>>>> 883ed292846ee596c910df3a9443aebf1242c285
                 }
                 Thread.currentThread().interrupt();
                 LOGGER.debug("Interrupted with InterruptedIOException.");
