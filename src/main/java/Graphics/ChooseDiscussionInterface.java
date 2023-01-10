@@ -2,6 +2,7 @@ package Graphics;
 import Managers.*;
 import Models.*;
 import database.ConnectionError;
+import database.MessageAccessProblem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,7 +72,7 @@ public class ChooseDiscussionInterface extends Container {
                     setVisible(false);
                     try {
                         new ChatInterface(frame,user);
-                    } catch (UnknownHostException | SQLException | ConnectionError e) {
+                    } catch (UnknownHostException | SQLException | ConnectionError | MessageAccessProblem e) {
                         e.printStackTrace();
                     }
                 }

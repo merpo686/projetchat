@@ -1,10 +1,12 @@
 package database;
 import Models.Message;
 import Models.User;
+import org.sqlite.SQLiteConfig;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.nio.file.*;
 
@@ -28,7 +30,9 @@ public class DatabaseManager {
         String url = "jdbc:sqlite:" + databaseName;
         //the driver automatically creates a new database when the database does not already exist
         try {
-            co = DriverManager.getConnection(url);
+            SQLiteConfig config = new SQLiteConfig();
+            config.enforceForeignKeys(true);
+            co = DriverManager.getConnection(url, config.toProperties());
             DatabaseMetaData meta = co.getMetaData();
             ResultSet rs = meta.getCatalogs();
             while(rs.next()){
@@ -57,8 +61,7 @@ public class DatabaseManager {
 
     public void createTableConversations() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
-                "IdConv INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                "Hostname STRING NOT NULL);";
+                "Hostname STRING PRIMARY KEY NOT NULL);";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.executeUpdate();
         ps.clearParameters();
@@ -79,30 +82,33 @@ public class DatabaseManager {
                 "ReceiverID STRING NOT NULL, \n" +
                 "ReceiverPseudo STRING NOT NULL, \n" +
                 "StringMessage STRING NOT NULL, \n" +
-                "FOREIGN KEY(SELECT IdConv FROM Conversations WHERE (Conversations.Hostname = ?)) REFERENCES Conversations);";
+                "Hostname STRING NOT NULL, \n" +
+                "FOREIGN KEY(Hostname) REFERENCES Conversations(Hostname));";
         PreparedStatement ps = co.prepareStatement(sql);
-        ps.setString(1, hostname);
         ps.executeUpdate();
+        /*ps.setString(1, hostname);*/
+        /*ps.executeUpdate();
         ps.clearParameters();
+        SELECT IdConv FROM Conversations WHERE (Conversations.Hostname = ?)*/
     }
 
     public void addConversation(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
-        PreparedStatement ps = co.prepareStatement("INSERT INTO Conversations (IdConv, Hostname) VALUES(?, ?)");
-        ps.setString(2, hostname);
+        PreparedStatement ps = co.prepareStatement("INSERT INTO Conversations (Hostname) VALUES(?)");
+        ps.setString(1, hostname);
         ps.executeUpdate();
         ps.clearParameters();
     }
 
     public void addMessage(Message message, String hostname) throws SQLException { //A VOIR SI ON PEUT PAS REDUIR LE NB DE PARAMETRES A 1 ET ENLEVER LE HOSTNAME CAR IL EST NORMALEMENT EGAL AU MESSAGE RECEIVER
         String stringMessage = message.get_message();
-        Date date = message.get_date();
+        LocalDateTime date = message.get_date();
         String senderID = message.get_sender().get_Hostname();
         String senderPseudo = message.get_sender().get_Pseudo();
         String receiverID = message.get_receiver().get_Hostname();
-        String receiverPseudo = message.get_sender().get_Pseudo();
+        String receiverPseudo = message.get_receiver().get_Pseudo();
         //verifier si la conv existe sinon la creer et s'il existe une table de conversations tout court
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -114,7 +120,7 @@ public class DatabaseManager {
             createTableMessages(hostname);
         }
 
-        PreparedStatement ps = co.prepareStatement("INSERT INTO Messages (IdMessage, Date, SenderID, SenderPseudo, ReceiverID, ReceiverPseudo, StringMessage) VALUES(?, ?, ?, ?, ?, ?, ?, ?);");
+        PreparedStatement ps = co.prepareStatement("INSERT INTO Messages (IdMessage, Date, SenderID, SenderPseudo, ReceiverID, ReceiverPseudo, StringMessage, Hostname) VALUES(?, ?, ?, ?, ?, ?, ?, ?);");
         ps.setString(2, String.valueOf(date));
         ps.setString(3, senderID);
         ps.setString(4, senderPseudo);
@@ -127,35 +133,40 @@ public class DatabaseManager {
     }
 
     //PAS BON ENCORE FAUT TROUVER UN MOYEN POUR FAIRE EXECUTE UPDATE ET RECUP LES MESSAGES
-    public Message getLastMessage(String hostnameConv) throws SQLException, UnknownHostException {
+    public Message getLastMessage(String hostname) throws SQLException, UnknownHostException {
         String sql = "SELECT LAST(StringMessage) FROM ?;";
         PreparedStatement ps = co.prepareStatement(sql);
-        ps.setString(1, hostnameConv);
+        ps.setString(1, hostname);
         ResultSet rs = ps.executeQuery(sql);
         ps.clearParameters();
-        Message mess = new Message(new User(rs.getString(2),rs.getString(3)),
-                new User(rs.getString(4), rs.getString(5)), rs.getString(6));
-        mess.set_date(rs.getDate(2));
+        Message mess = new Message(new User(rs.getString(3),rs.getString(4)),
+                new User(rs.getString(5), rs.getString(6)), rs.getString(7));
+        String stringDate = rs.getString(2);
+        mess.set_date(LocalDateTime.parse(stringDate));
         return mess;
     }
 
-    public ArrayList<Message> getAllMessages(String hostnameConv) throws SQLException, UnknownHostException {
-        ArrayList<Message> listMessages = null;
-        Statement statement = co.createStatement();
-        String sql = "SELECT * FROM hostnameConv;";
-        ResultSet rs = statement.executeQuery(sql);
-        /*String length = "COUNT * FROM hostnameConv";
-        ResultSet rsLength = statement.executeQuery(sql);*/
-        while(rs.next()) {
-            Message mess = new Message(new User(rs.getString(2),rs.getString(3)),
-                    new User(rs.getString(4), rs.getString(5)), rs.getString(6));
-            mess.set_date(rs.getDate(2));
-            listMessages.add(mess);
+    public ArrayList<Message> getAllMessages(String hostname) throws  MessageAccessProblem {
+        try{
+            ArrayList<Message> listMessages = null;
+            String sql = "SELECT * FROM Messages WHERE (hostname = ?);";
+            PreparedStatement ps = co.prepareStatement(sql);
+            ps.setString(1, hostname);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                User sender = new User(rs.getString(3),rs.getString(4));
+                User receiver = new User(rs.getString(5), rs.getString(6));
+                Message mess = new Message(sender, receiver, rs.getString(7));
+                String stringDate = rs.getString(2);
+                mess.set_date(LocalDateTime.parse(stringDate));
+                listMessages.add(mess);
+            }
+            return listMessages;
+        } catch(Exception e){
+            e.printStackTrace();
+            throw new MessageAccessProblem(hostname);
         }
-        if(listMessages == null){
-            System.out.println("You have no existing messages with the designated user"); //il faudrait que ca remonte au user qu'il y ai aucun message
-        }
-        return listMessages;
     }
 
     //checks if the entire conversations table exists
@@ -209,16 +220,18 @@ public class DatabaseManager {
     }
 
     public void clearDB(String databaseName) {
+        Path path = Path.of(databaseName);
+        System.out.println(path.toAbsolutePath());
         try {
-            Files.deleteIfExists(Path.of("jdbc:sqlite:" + databaseName));
+            Files.delete(path);
         } catch(NoSuchFileException e) {
-            System.out.println("No such file directory");
+            System.out.println("Delete: No such file directory " + path);
         } catch(DirectoryNotEmptyException e){
-            System.out.println("Directory is not empty");
+            System.out.println("Directory is not empty" + path);
         } catch(IOException e) {
-            System.out.println("You don't permission");
+            System.out.println("You don't permission" + path);
         }
-        System.out.println("File deleted successfully");
+        System.out.println("File deleted successfully: " + path);
     }
     
     public String getDBName(){return this.databaseName;}

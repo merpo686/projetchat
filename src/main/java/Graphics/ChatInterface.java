@@ -6,6 +6,7 @@ import Models.Message;
 import Models.User;
 import database.ConnectionError;
 import database.DatabaseManager;
+import database.MessageAccessProblem;
 
 import java.awt.*;
 
@@ -64,7 +65,7 @@ public class ChatInterface extends Container {
         }
     };
 
-    public ChatInterface(JFrame frame, User dest) throws UnknownHostException, SQLException, ConnectionError {
+    public ChatInterface(JFrame frame, User dest) throws UnknownHostException, SQLException, ConnectionError, MessageAccessProblem {
         this.frame=frame;
         this.dest = dest;
         this.lastMessage =null;
@@ -182,13 +183,18 @@ public class ChatInterface extends Container {
         NetworkManager.Send_Message_TCP(mess); //calls send: find the conversation's tcp thread or creates it
         chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
     }
-    private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException {
+    private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException, MessageAccessProblem {
         if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
-            ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.get_Hostname());
-            for (Message message: conv){
-                chatArea.append("\n("+message.get_sender()+") - "+message.get_message());
-                lastMessage = message;
+            try {
+                ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.get_Hostname());
+                for (Message message: conv){
+                    chatArea.append("\n("+message.get_sender()+") - "+message.get_message());
+                    lastMessage = message;
+                }
+            }catch(MessageAccessProblem e){
+                chatArea.append("(ERROR) We are waiting for your messages. It will be coming shortly.");
             }
+
         }
         else{
             DatabaseManager.getInstance().addConversation(dest.get_Hostname());
