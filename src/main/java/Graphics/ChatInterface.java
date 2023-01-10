@@ -7,11 +7,12 @@ import Models.User;
 import database.ConnectionError;
 import database.DatabaseManager;
 import database.MessageAccessProblem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,11 +21,13 @@ import javax.swing.*;
 
 /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
 public class ChatInterface extends Container {
+    private static final Logger LOGGER = LogManager.getLogger(ChatInterface.class);
     JTextArea chatArea;
     JTextField inputArea;
     JFrame frame;
     User dest;
     Message lastMessage;
+    DatabaseManager db;
     //menu buttons
     Action changeDiscussionButton = new AbstractAction("CHANGE DISCUSSION") {
         @Override
@@ -58,6 +61,12 @@ public class ChatInterface extends Container {
         this.frame=frame;
         this.dest = dest;
         this.lastMessage =null;
+        try {
+            this.db = DatabaseManager.getInstance();
+        } catch (ConnectionError connectionError) {
+            LOGGER.error("Error connecting to the database.");
+            connectionError.printStackTrace();
+        }
         InterfaceManager IM=InterfaceManager.getInstance();
         IM.setState("ChatInterface");
         IM.setUser(dest);
@@ -138,7 +147,7 @@ public class ChatInterface extends Container {
         frame.setResizable(false);
     }
 
-    //thread for received messages
+    /**Thread which appends new received messsages constantly */
     public class printReceivedMessage extends Thread{
         public printReceivedMessage(){
             this.setDaemon(true);
@@ -158,33 +167,29 @@ public class ChatInterface extends Container {
             }
         }
     }
-    //send messages, needs the tcp thread to be opened and to have a function send callable
+    /**Send messages to the destination user */
     private void sendMessage(String message) {
         Self selfInstance = Self.getInstance();
         Message mess= new Message(new User(selfInstance.getHostname(),selfInstance.getPseudo()), dest,message);
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
+        try {
+            db.addMessage(mess,dest.getHostname());
+        } catch (SQLException throwable) {
+            LOGGER.error("Error inserting the message in the Database.");
+            throwable.printStackTrace();
+        }
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
     }
+    /**Display old messages at the opening of the chat interface*/
     private void displayOldMessages() {
         try {
-            if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){
-                try {
-                    ArrayList<Message> conv = DatabaseManager.getInstance().getAllMessages(dest.getHostname());
-                    for (Message message: conv){
-                        chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
-                        lastMessage = message;
-                    }
-                }catch(MessageAccessProblem e){
-                    chatArea.append("(ERROR) We are waiting for your messages. It will be coming shortly.");
-                }
+            ArrayList<Message> conv = db.getAllMessages(dest.getHostname());
+            for (Message message: conv){
+                chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
+                lastMessage = message;
             }
-            else{
-                DatabaseManager.getInstance().addConversation(dest.getHostname());
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } catch (ConnectionError connectionError) {
-            connectionError.printStackTrace();
+        }catch(MessageAccessProblem e){
+            LOGGER.error("Error loading existing messages from the Database.");
         }
     }
 }

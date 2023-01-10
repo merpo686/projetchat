@@ -162,14 +162,9 @@ public class DatabaseManager {
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Conversations'";
         ResultSet rs = statement.executeQuery(sql);
         //checks if the table is null
-        if (rs.getString(1).equals("0")){
-            //System.out.println("The conversations table does not exist");
-            return false;
-        }
-        else {
-            //System.out.println("The conversation table exists");
-            return true;
-        }
+        //System.out.println("The conversations table does not exist");
+        //System.out.println("The conversation table exists");
+        return !rs.getString(1).equals("0");
     }
 
     //checks if a single conversation exists inside the table conversations
@@ -180,14 +175,9 @@ public class DatabaseManager {
         ResultSet rs = ps.executeQuery();
 
         //checks if the table is null
-        if (rs.getString(1).equals("0")){
-            //System.out.println("The conversation "+hostname+" does not exist");
-            return false;
-        }
-        else {
-            //System.out.println("The conversation "+hostname+" exists");
-            return true;
-        }
+        //System.out.println("The conversation "+hostname+" does not exist");
+        //System.out.println("The conversation "+hostname+" exists");
+        return !rs.getString(1).equals("0");
     }
 
     //checks if the entire messages table exists
@@ -196,14 +186,9 @@ public class DatabaseManager {
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Messages'";
         ResultSet rs = statement.executeQuery(sql);
         //checks if the table is null
-        if (rs.getString(1).equals("0")){
-            //System.out.println("The messages table does not exist");
-            return false;
-        }
-        else {
-            //System.out.println("The messages table exists");
-            return true;
-        }
+        //System.out.println("The messages table does not exist");
+        //System.out.println("The messages table exists");
+        return !rs.getString(1).equals("0");
     }
 
     public void clearDB(String databaseName) {
@@ -220,6 +205,4 @@ public class DatabaseManager {
         }
         System.out.println("File deleted successfully: " + path);
     }
-    
-    public String getDBName(){return this.databaseName;}
 }

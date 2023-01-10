@@ -1,14 +1,10 @@
 package Graphics;
 import Managers.*;
 import Models.*;
-import database.ConnectionError;
-import database.MessageAccessProblem;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**Interface on which the user chooses who to chat with, refreshable*/
