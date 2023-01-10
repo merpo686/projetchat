@@ -65,8 +65,8 @@ public class ChatInterface extends Container {
         this.dest = dest;
         this.lastMessage =null;
         InterfaceManager IM=InterfaceManager.getInstance();
-        IM.set_state("ChatInterface");
-        IM.set_user(dest);
+        IM.setState("ChatInterface");
+        IM.setUser(dest);
         initComponents();
         displayOldMessages();
         new Thread(new printReceivedMessage()).start();
@@ -124,7 +124,7 @@ public class ChatInterface extends Container {
 
         //discussion_name specify
         discussion_name.setFont(new Font("Myriad Pro", Font.PLAIN, 30)); // NOI18N
-        discussion_name.setForeground(InterfaceManager.foreground_color);
+        discussion_name.setForeground(InterfaceManager.foregroundColor);
         discussion_name.setText(dest.getPseudo());
 
         //add
@@ -174,9 +174,9 @@ public class ChatInterface extends Container {
     }
     //send messages, needs the tcp thread to be opened and to have a function send callable
     private void sendMessage(String message) throws IOException {
-        Message mess= new Message(new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), dest,message);
+        Message mess= new Message(new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), dest,message);
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
-        chatArea.append("\nME("+ Self.getInstance().get_Pseudo()+") - "+message);
+        chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
     }
     private void displayOldMessages() throws ConnectionError, UnknownHostException, SQLException, MessageAccessProblem {
         if(DatabaseManager.getInstance().checkExistConversation(DatabaseManager.getInstance().getDBName())){

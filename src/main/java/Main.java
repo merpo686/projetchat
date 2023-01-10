@@ -59,8 +59,8 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Display the window.
         frame.setMinimumSize(new Dimension(400,300));
-        frame.setForeground(InterfaceManager.foreground_color);
-        frame.setBackground(InterfaceManager.background_color);
+        frame.setForeground(InterfaceManager.foregroundColor);
+        frame.setBackground(InterfaceManager.backgroundColor);
         frame.setLocationRelativeTo(null); //center of the screen
         new ChoosePseudoInterface(frame); //first interface displayed
         frame.setVisible(true);

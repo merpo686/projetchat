@@ -6,7 +6,6 @@ import database.DatabaseManager;
 import database.MessageAccessProblem;
 import org.junit.Test;
 
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 
@@ -15,11 +14,11 @@ public class DatabaseTest {
     @Test
     public void DBTest() throws ConnectionError, SQLException, UnknownHostException, MessageAccessProblem {
         String myPseudo = "Tim";
-        Self.getInstance().set_Pseudo(myPseudo);
+        Self.getInstance().setPseudo(myPseudo);
         String TestDBName = "test.sqlite";
         DatabaseManager myDB = DatabaseManager.getInstance();
         User testUser = new User("testHost", "Patrick");
-        Message mess = new Message(new User(Self.getInstance().getHostname(), Self.getInstance().get_Pseudo()), testUser , "Bonjour Test Test");
+        Message mess = new Message(new User(Self.getInstance().getHostname(), Self.getInstance().getPseudo()), testUser , "Bonjour Test Test");
 
         //testing connection
         myDB.clearDB(TestDBName);

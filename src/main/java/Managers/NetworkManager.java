@@ -24,17 +24,17 @@ public class NetworkManager {
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo()  {
-        ThreadManager.SendBC(new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()));
+        ThreadManager.SendBC(new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()));
     }
     /**Process boolean received on udp : either a connection(true) or a disconnection (false) */
     public static void ProcessConnection(Connection connect){
-        if (connect.getValid() && Self.getInstance().get_Pseudo()!=null){
+        if (connect.getValid() && Self.getInstance().getPseudo()!=null){
             ThreadManager.SendPseudoUnicast(connect.getHostname()); //we received a connection notification, we respond our pseudo if we chose it
         }
         else {
             ActiveUserManager.getInstance().removeListActiveUser(connect.getHostname()); //we remove the user from the list of active user
-            if (InterfaceManager.getInstance().get_state().equals("ChatInterface") &&
-                InterfaceManager.getInstance().get_user().getHostname().equals(connect.getHostname())){
+            if (InterfaceManager.getInstance().getState().equals("ChatInterface") &&
+                InterfaceManager.getInstance().getUser().getHostname().equals(connect.getHostname())){
                 //if we are chatting with the user right now it shows a user-disconnected interface
                 JFrame frame = new JFrame();
                 String lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
@@ -53,8 +53,8 @@ public class NetworkManager {
                 label.setHorizontalAlignment(SwingConstants.CENTER);
                 frame.add(label);
                 frame.setMinimumSize(new Dimension(350,70));
-                frame.setForeground(InterfaceManager.foreground_color);
-                frame.setBackground(InterfaceManager.background_color);
+                frame.setForeground(InterfaceManager.foregroundColor);
+                frame.setBackground(InterfaceManager.backgroundColor);
                 frame.setLocationRelativeTo(null); //center of the screen
                 frame.setVisible(true);
             }

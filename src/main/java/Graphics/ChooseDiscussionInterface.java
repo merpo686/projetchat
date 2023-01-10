@@ -11,32 +11,28 @@ import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
+/**Interface on which the user chooses who to chat with, refreshable*/
 public class ChooseDiscussionInterface extends Container {
     JFrame frame;
 
     //menu actions
-    Action refresh_button = new AbstractAction("REFRESH") {
+    Action refreshButton = new AbstractAction("REFRESH") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             removeAll();
             invalidate();
-            try {
-                refreshDisplay();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
+            refreshDisplay();
             revalidate();
         }
     };
-    Action change_pseudo_button = new AbstractAction("CHANGE PSEUDO") {
+    Action changePseudoButton = new AbstractAction("CHANGE PSEUDO") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
             new ChoosePseudoInterface(frame);
         }
     };
-    Action deconnexion_button = new AbstractAction("DECONNEXION") {
+    Action disconnectionButton = new AbstractAction("DECONNEXION") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
@@ -44,42 +40,38 @@ public class ChooseDiscussionInterface extends Container {
             frame.dispose();
         }
     };
-
-    public ChooseDiscussionInterface(JFrame frame) throws UnknownHostException {
+    /**Constructor */
+    public ChooseDiscussionInterface(JFrame frame) {
         this.frame=frame;
         InterfaceManager IM=InterfaceManager.getInstance();
-        IM.set_state("ChooseDiscussionInterface");
-        IM.set_user(null);
+        IM.setState("ChooseDiscussionInterface");
+        IM.setUser(null);
         refreshDisplay();
     }
 
-    public void refreshDisplay() throws UnknownHostException {
+    /**The core of the interface is defined here, to make it refreshable*/
+    public void refreshDisplay(){
         ArrayList<User> activeusers= ActiveUserManager.getInstance().getListActiveUser();
         System.out.println(ActiveUserManager.getInstance().toString());
         //gridlayout, maybe not the best
         setLayout(  new GridLayout(activeusers.size(),1));
-
         //creates buttons for each users
         for (User user: activeusers){
-            Action user_button = new AbstractAction(user.getPseudo()) {
+            Action userButton = new AbstractAction(user.getPseudo()) {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     setVisible(false);
-                    try {
-                        new ChatInterface(frame,user);
-                    } catch (UnknownHostException | SQLException | ConnectionError | MessageAccessProblem e) {
-                        e.printStackTrace();
-                    }
+                    new ChatInterface(frame,user);
                 }
             };
-            add(new JButton(user_button));
+            add(new JButton(userButton));
         }
         //create menu
         JMenuBar bar = new JMenuBar();
         JMenu file = new JMenu("Menu");
-        file.add(refresh_button);
-        file.add(change_pseudo_button);
-        file.add(deconnexion_button);
+        file.add(refreshButton);
+        file.add(changePseudoButton);
+        file.add(disconnectionButton);
         bar.add(file);
         frame.setJMenuBar(bar);
         frame.setContentPane(this);

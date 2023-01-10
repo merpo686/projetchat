@@ -6,7 +6,6 @@ import database.DatabaseManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -47,7 +46,7 @@ public class TCPClientHandler extends Thread {
                 inputStream = new DataInputStream(socket.getInputStream());
                 //getting message
                 String received = inputStream.readUTF();
-                Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().get_Pseudo()), received);
+                Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
                 if(!DatabaseManager.getInstance().checkExistConversation(dest.getHostname())){
                     DatabaseManager.getInstance().addConversation(dest.getHostname());
                 }

@@ -3,20 +3,22 @@ package Graphics;
 import Models.User;
 import java.awt.*;
 
+/** Class which contains the name of the current used interface "state",
+ *  the user with which we are discussing (if relevant), and some static parameters like the colors*/
 public class InterfaceManager {
-    public static Color background_color = new Color(15,5, 107);
-    public static Color foreground_color = new Color(252,210,28);
+    public static Color backgroundColor = new Color(15,5, 107); //colors by default of the interface
+    public static Color foregroundColor = new Color(252,210,28);
     String state;
-    User user_discussion;
+    User userDiscussion;
     static InterfaceManager instance;
     private InterfaceManager() {
-         user_discussion=null;
+         userDiscussion =null;
          state=null;
     }
-    public String get_state(){return state;}
-    public User get_user(){return user_discussion;}
-    public void set_state(String state){this.state=state;}
-    public void set_user(User user){this.user_discussion=user;}
+    public String getState(){return state;}
+    public User getUser(){return userDiscussion;}
+    public void setState(String state){this.state=state;}
+    public void setUser(User user){this.userDiscussion =user;}
 
     public static InterfaceManager getInstance() {
         if (instance == null) {

@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 
 public class Self {
     private static final Logger LOGGER = LogManager.getLogger(Self.class);
-    private String pseudo_Self = null;
+    private String pseudoSelf = null;
     static Self instance;
     static final int portTCP=12341;
     static final int portUDP=12340;
@@ -30,8 +30,8 @@ public class Self {
         return instance;
     }
     public String getHostname(){return this.hostname;}
-    public String get_Pseudo(){ return this.pseudo_Self;}
-    public void set_Pseudo(String pseudo) {
-        this.pseudo_Self =pseudo;
+    public String getPseudo(){ return this.pseudoSelf;}
+    public void setPseudo(String pseudo) {
+        this.pseudoSelf =pseudo;
     }
 }

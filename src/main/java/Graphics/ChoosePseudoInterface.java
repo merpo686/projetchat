@@ -3,24 +3,27 @@ package Graphics;
 import Managers.ActiveUserManager;
 import Managers.NetworkManager;
 import Managers.Self;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.UnknownHostException;
 import java.text.ParseException;
 
 //when change pseudo doit changer les pseudos actifs!!!
 
-
+/** Implements the interface on which the user chooses his pseudo */
 public class ChoosePseudoInterface extends Container {
+
+    private static final Logger LOGGER = LogManager.getLogger(ChoosePseudoInterface.class);
     JFormattedTextField connection;
     GridBagConstraints cons;
     JFrame frame;
 
     //action of the menu
     //deconnexion button in the menu
-    Action deconnexion_button = new AbstractAction("DECONNEXION") {
+    Action disconnectionButton = new AbstractAction("DECONNEXION") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
@@ -28,23 +31,24 @@ public class ChoosePseudoInterface extends Container {
             frame.dispose();
         }
     };
-
+    /**Constructor */
     public ChoosePseudoInterface(JFrame frame){
         this.frame=frame;
         InterfaceManager IM=InterfaceManager.getInstance();
-        IM.set_state("ChoosePseudoInterface");
-        IM.set_user(null);
+        IM.setState("ChoosePseudoInterface");
+        IM.setUser(null);
         //GridBagLayout, maybe not the best either but I found it smooth
         setLayout(new GridBagLayout());
         cons= new GridBagConstraints();
 
         //connection button
-        Action connection_button = new AbstractAction("CONNECTION"){
+        Action connectionButton = new AbstractAction("CONNECTION"){
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     connection.commitEdit();
                 } catch (ParseException e) {
+                    LOGGER.error("Failed to edit the connection button with chosen pseudo.");
                     e.printStackTrace();
                 }
                 String PseudoChosen= connection.getText();
@@ -53,14 +57,10 @@ public class ChoosePseudoInterface extends Container {
                     repaint();
                 }
                 else {
-                    Self.getInstance().set_Pseudo(PseudoChosen);
+                    Self.getInstance().setPseudo(PseudoChosen);
                     NetworkManager.SendPseudo();
                     setVisible(false);
-                    try {
-                        new ChooseDiscussionInterface(frame);
-                    } catch (UnknownHostException e) {
-                        e.printStackTrace();
-                    }
+                    new ChooseDiscussionInterface(frame);
                 }
             }
         };
@@ -72,9 +72,9 @@ public class ChoosePseudoInterface extends Container {
         cons.ipady=10;
         cons.gridx=1;
         cons.gridy=2;
-        add(new JButton(connection_button),cons);
+        add(new JButton(connectionButton),cons);
 
-        //input text bar
+        //input text bar: the same as connection button but when pressing enter
         connection = new JFormattedTextField();
         connection.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
         connection.addKeyListener(new KeyAdapter() {
@@ -84,6 +84,7 @@ public class ChoosePseudoInterface extends Container {
                     try {
                         connection.commitEdit();
                     } catch (ParseException exc) {
+                        LOGGER.error("Failed to edit the connection button with chosen pseudo.");
                         exc.printStackTrace();
                     }
                     String PseudoChosen= connection.getText();
@@ -92,14 +93,10 @@ public class ChoosePseudoInterface extends Container {
                         repaint();
                     }
                     else {
-                        Self.getInstance().set_Pseudo(PseudoChosen);
+                        Self.getInstance().setPseudo(PseudoChosen);
                         NetworkManager.SendPseudo();
                         setVisible(false);
-                        try {
-                            new ChooseDiscussionInterface(frame);
-                        } catch (UnknownHostException unknownHostException) {
-                            unknownHostException.printStackTrace();
-                        }
+                        new ChooseDiscussionInterface(frame);
                     }
                 }
             }
@@ -115,7 +112,7 @@ public class ChoosePseudoInterface extends Container {
         //menu
         JMenuBar bar = new JMenuBar();
         JMenu file = new JMenu("Menu");
-        file.add(deconnexion_button); // adds a menu item called deconnexion_button
+        file.add(disconnectionButton); // adds a menu item called disconnectionButton
         bar.add(file);
         frame.setJMenuBar(bar);
         frame.setContentPane(this);

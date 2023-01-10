@@ -20,7 +20,7 @@ public class ThreadSendPseudoUnicast implements Runnable {
 
     public void run() {
         String data;
-        data = Self.getInstance().get_Pseudo();
+        data = Self.getInstance().getPseudo();
         byte[] pseudoData = data.getBytes();
         DatagramPacket sendNotif = null;
         try {
