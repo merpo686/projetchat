@@ -12,7 +12,7 @@ import java.nio.file.*;
 
 public class DatabaseManager {
     private Connection co;
-    private String databaseName = "messages.sqlite";
+    private final String databaseName = "messages.sqlite";
     static DatabaseManager instance;
 
     private DatabaseManager() throws ConnectionError {
@@ -46,17 +46,7 @@ public class DatabaseManager {
         } catch (SQLException throwables1) {
             throwables1.printStackTrace();
             throw new ConnectionError(url);
-        } /*finally {
-            try {
-                if(co != null){
-                    co.close();
-                }
-            }
-            catch(SQLException throwables2) {
-                throwables2.printStackTrace();
-                throw new ConnectionError(url);
-            }*/
-        //}
+        }
     }
 
     public void createTableConversations() throws SQLException {
@@ -86,10 +76,6 @@ public class DatabaseManager {
                 "FOREIGN KEY(Hostname) REFERENCES Conversations(Hostname));";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.executeUpdate();
-        /*ps.setString(1, hostname);*/
-        /*ps.executeUpdate();
-        ps.clearParameters();
-        SELECT IdConv FROM Conversations WHERE (Conversations.Hostname = ?)*/
     }
 
 
@@ -135,10 +121,10 @@ public class DatabaseManager {
 
     //PAS BON ENCORE FAUT TROUVER UN MOYEN POUR FAIRE EXECUTE UPDATE ET RECUP LES MESSAGES
     public Message getLastMessage(String hostname) throws SQLException, UnknownHostException {
-        String sql = "SELECT LAST(StringMessage) FROM ?;";
+        String sql = "SELECT * FROM Messages WHERE (hostname = ?) ORDER BY Hostname DESC LIMIT 1;";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.setString(1, hostname);
-        ResultSet rs = ps.executeQuery(sql);
+        ResultSet rs = ps.executeQuery();
         ps.clearParameters();
         Message mess = new Message(new User(rs.getString(3),rs.getString(4)),
                 new User(rs.getString(5), rs.getString(6)), rs.getString(7));
@@ -149,7 +135,7 @@ public class DatabaseManager {
 
     public ArrayList<Message> getAllMessages(String hostname) throws  MessageAccessProblem {
         try{
-            ArrayList<Message> listMessages = null;
+            ArrayList<Message> listMessages = new ArrayList<>();
             String sql = "SELECT * FROM Messages WHERE (hostname = ?);";
             PreparedStatement ps = co.prepareStatement(sql);
             ps.setString(1, hostname);
@@ -177,11 +163,11 @@ public class DatabaseManager {
         ResultSet rs = statement.executeQuery(sql);
         //checks if the table is null
         if (rs.getString(1).equals("0")){
-            System.out.println("The conversations table does not exist");
+            //System.out.println("The conversations table does not exist");
             return false;
         }
         else {
-            System.out.println("The conversation table exists");
+            //System.out.println("The conversation table exists");
             return true;
         }
     }
@@ -195,11 +181,11 @@ public class DatabaseManager {
 
         //checks if the table is null
         if (rs.getString(1).equals("0")){
-            System.out.println("The conversation "+hostname+" does not exist");
+            //System.out.println("The conversation "+hostname+" does not exist");
             return false;
         }
         else {
-            System.out.println("The conversation "+hostname+" exists");
+            //System.out.println("The conversation "+hostname+" exists");
             return true;
         }
     }
@@ -211,11 +197,11 @@ public class DatabaseManager {
         ResultSet rs = statement.executeQuery(sql);
         //checks if the table is null
         if (rs.getString(1).equals("0")){
-            System.out.println("The messages table does not exist");
+            //System.out.println("The messages table does not exist");
             return false;
         }
         else {
-            System.out.println("The messages table exists");
+            //System.out.println("The messages table exists");
             return true;
         }
     }
@@ -230,7 +216,7 @@ public class DatabaseManager {
         } catch(DirectoryNotEmptyException e){
             System.out.println("Directory is not empty" + path);
         } catch(IOException e) {
-            System.out.println("You don't permission" + path);
+            System.out.println("You don't have permission" + path);
         }
         System.out.println("File deleted successfully: " + path);
     }

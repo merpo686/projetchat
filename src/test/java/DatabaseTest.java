@@ -26,14 +26,16 @@ public class DatabaseTest {
 
         //testing conversation methods
         myDB.createTableConversations();
-        System.out.println("Conversations Table created");
-        myDB.addConversation(testUser.getHostname());
-        System.out.println("Conversation added in conversations table");
         assert myDB.checkExistTableConversations();
+        System.out.println("Conversations table created");
+        myDB.addConversation(testUser.getHostname());
         assert myDB.checkExistConversation(testUser.getHostname());
+        System.out.println("Conversation added in conversations table");
 
         //testing message methods
         myDB.createTableMessages(testUser.getHostname()); //faudra creer une table en vrai aussi on l'a pas encore fait (genre lorsque tu cree une connexion tcp
+        assert myDB.checkExistTableMessages();
+        System.out.println("Messages table created");
         myDB.addMessage(mess, testUser.getHostname());
         System.out.println("Message added for the conversation with "+testUser.getHostname());
         myDB.getAllMessages(testUser.getHostname());
