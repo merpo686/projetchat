@@ -60,7 +60,7 @@ public class ChatInterface extends Container {
     public ChatInterface(JFrame frame, User dest){
         this.frame=frame;
         this.dest = dest;
-        LOGGER.info("starting conv with user:"+dest);
+        LOGGER.info("starting conversation with user:"+dest);
         this.lastMessage =null;
         try {
             this.db = DatabaseManager.getInstance();

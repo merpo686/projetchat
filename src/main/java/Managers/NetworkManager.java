@@ -28,6 +28,7 @@ public class NetworkManager {
             LOGGER.debug("Error putting the thread to sleep in disconnection.");
             e.printStackTrace();
         }
+        System.out.println("here");
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo()  {
@@ -54,7 +55,7 @@ public class NetworkManager {
                     e.printStackTrace();
                 }
                 JFrame.setDefaultLookAndFeelDecorated(true);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 JLabel label =new JLabel("<html>User disconnected, messages won't get through, <br>" +
                     "please return to choose discussion interface</html>");
                 label.setHorizontalAlignment(SwingConstants.CENTER);

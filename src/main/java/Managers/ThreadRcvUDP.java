@@ -29,7 +29,7 @@ public class ThreadRcvUDP extends Thread {
         //we receive the model (either notification or validation)
         while (true) { //the thread will be in a receiving state constantly
             try {
-                LOGGER.debug("[ThreadRcvBC] Waiting for Broadcast");
+                LOGGER.debug("Waiting for UDP message");
                 socket.receive(rcvNotif);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -80,6 +80,8 @@ public class ThreadManager {
     }
     /**Start TCP server for accepting new conversations*/
     static public void StartTCPServer() {
-        new TCPServer();
+        TCPServer tcpServer= new TCPServer();
+        tcpServer.setDaemon(true);
+        tcpServer.start();
     }
 }
