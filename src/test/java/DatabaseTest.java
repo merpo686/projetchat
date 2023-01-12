@@ -28,8 +28,8 @@ public class DatabaseTest {
         myDB.createTableConversations();
         assert myDB.checkExistTableConversations();
         System.out.println("Conversations table created");
-        assert myDB.checkExistConversation(testUser.getHostname());
         myDB.addConversation(testUser.getHostname());
+        assert myDB.checkExistConversation(testUser.getHostname());
 
         System.out.println("Conversation added in conversations table");
 
@@ -41,9 +41,10 @@ public class DatabaseTest {
         myDB.addMessage(mess);
         System.out.println("Message added for the conversation with "+testUser.getHostname());
         myDB.getAllMessages(testUser.getHostname());
-        myDB.getLastMessage(testUser.getHostname());
-        myDB.showConversations();
+        Message lastMessage = myDB.getLastMessage(testUser.getHostname());
+        System.out.println(lastMessage);
+        /*myDB.showConversations();
         myDB.showMessages(testUser.getHostname());
-        myDB.showTables();
+        myDB.showTables();*/
     }
 }
