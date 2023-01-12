@@ -130,7 +130,7 @@ public class DatabaseManager {
         if(!checkExistTableMessages()){
             createTableMessages(hostname);
         }
-        String sql = "SELECT * FROM Messages WHERE (ReceiverID = ?) ORDER BY Hostname DESC LIMIT 1;";
+        String sql = "SELECT * FROM Messages WHERE (ReceiverID = ?) ORDER BY ReceiverID DESC LIMIT 1;";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.setString(1, hostname);
         ResultSet rs = ps.executeQuery();
