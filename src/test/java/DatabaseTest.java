@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class DatabaseTest {
 
     @Test
-    public void DBTest() throws ConnectionError, SQLException, UnknownHostException, MessageAccessProblem, ConversationsTableDoesNotExist {
+    public void DBTest() throws ConnectionError, SQLException, UnknownHostException, MessageAccessProblem {
         String myPseudo = "Tim";
         Self.getInstance().setPseudo(myPseudo);
         String TestDBName = "test.sqlite";
