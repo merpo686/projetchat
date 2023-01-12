@@ -113,6 +113,7 @@ public class DatabaseManager {
         if(!checkExistTableMessages()){
             createTableMessages(hostname);
         }
+        DatabaseManager.getInstance().showConversations();
         //we acquire the Id of the table Conversations (IdConv), which is the foreign key for the table messages
         PreparedStatement ps1 = co.prepareStatement("SELECT IdConv FROM Conversations WHERE Conversations.Hostname == ?");
         ps1.setString(1, hostname);
@@ -197,7 +198,7 @@ public class DatabaseManager {
     }
 
     /**checks if the entire conversations table exists*/
-    public Boolean checkExistTableConversations() throws SQLException {
+    public boolean checkExistTableConversations() throws SQLException {
         int count=0;
         Statement statement = co.createStatement();
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Conversations'";
@@ -209,20 +210,28 @@ public class DatabaseManager {
     }
 
     /**checks if a specific conversation exists inside the conversations table*/
-    public Boolean checkExistConversation(String hostname) throws SQLException {
-        int count=0;
-        String sql = "SELECT EXISTS(SELECT Hostname FROM Conversations WHERE Conversations.Hostname = ?);";
-        PreparedStatement ps = co.prepareStatement(sql);
-        ps.setString(1, hostname);
-        ResultSet rs = ps.executeQuery();
-        while(rs.next()){
-            count++;
+    public boolean checkExistConversation(String hostname) throws SQLException, ConversationsTableDoesNotExist {
+        try {
+            int count=0;
+            String sql = "SELECT EXISTS(SELECT Hostname FROM Conversations WHERE Conversations.Hostname = ?);";
+            PreparedStatement ps = co.prepareStatement(sql);
+            ps.setString(1, hostname);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                count++;
+            }
+            return count == 1;
+        } catch(SQLException e){
+            if(!checkExistTableConversations()){
+                throw new ConversationsTableDoesNotExist();
+            }
+            e.printStackTrace();
+            return false;
         }
-        return count == 1;
     }
 
     /**checks if the entire messages table exists*/
-    public Boolean checkExistTableMessages() throws SQLException {
+    public boolean checkExistTableMessages() throws SQLException {
         int count=0;
         Statement statement = co.createStatement();
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Messages'";
@@ -267,6 +276,15 @@ public class DatabaseManager {
         ResultSet rs = ps.executeQuery();
         while (rs.next()){
             System.out.println(rs.getInt(1) + "\t" + rs.getString(2) + "\t" + rs.getString(3) + "\t" + rs.getString(4) + "\t" + rs.getString(5) + "\t" + rs.getString(6) + "\t" + rs.getString(7));
+        }
+    }
+
+    public void showConversations() throws SQLException {
+        String sql = "SELECT * FROM Conversations;";
+        PreparedStatement ps = co.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()){
+            System.out.println(rs.getInt(1) + "\t" + rs.getString(2));
         }
     }
 }

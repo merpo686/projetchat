@@ -24,12 +24,13 @@ public class DatabaseTest {
         myDB.clearDB(TestDBName);
         myDB.connectDB(TestDBName);
 
+        assert myDB.checkExistConversation(testUser.getHostname());
         //testing conversation methods
         myDB.createTableConversations();
         assert myDB.checkExistTableConversations();
         System.out.println("Conversations table created");
         myDB.addConversation(testUser.getHostname());
-        assert myDB.checkExistConversation(testUser.getHostname());
+
         System.out.println("Conversation added in conversations table");
 
         //testing message methods
@@ -41,6 +42,7 @@ public class DatabaseTest {
         System.out.println("Message added for the conversation with "+testUser.getHostname());
         myDB.getAllMessages(testUser.getHostname());
         myDB.getLastMessage(testUser.getHostname());
+        myDB.showConversations();
         myDB.showMessages(testUser.getHostname());
         myDB.showTables();
     }
