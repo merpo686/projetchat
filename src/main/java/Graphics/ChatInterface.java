@@ -48,7 +48,7 @@ public class ChatInterface extends Container {
         }
     };
 
-    Action disconnectionButton = new AbstractAction("DECONNEXION") {
+    Action disconnectionButton = new AbstractAction("DISCONNECTION") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);

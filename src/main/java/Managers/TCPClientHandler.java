@@ -40,43 +40,43 @@ public class TCPClientHandler extends Thread {
 
     /** Run method of thread*/
     public void run(){
-        while(true){
-            try {
-                //we recover the input stream
-                inputStream = new DataInputStream(socket.getInputStream());
+        try{
+            //we recover the input stream
+            inputStream = new DataInputStream(socket.getInputStream());
+            while(true) {
                 //getting message
                 String received = inputStream.readUTF();
-                Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
-                if(!DatabaseManager.getInstance().checkExistConversation(dest.getHostname())){
+                Message mess = new Message(dest, new User(Self.getInstance().getHostname(), Self.getInstance().getPseudo()), received);
+                if (!DatabaseManager.getInstance().checkExistConversation(dest.getHostname())) {
                     DatabaseManager.getInstance().addConversation(dest.getHostname());
                 }
-                DatabaseManager.getInstance().addMessage(mess,dest.getHostname());
-            } catch (InterruptedIOException e) { //If interrupted
+                DatabaseManager.getInstance().addMessage(mess, dest.getHostname());
+            }
+        } catch (InterruptedIOException e) { //If interrupted
+            try {
+                socket.close();
+            } catch (IOException ioException) {
+                LOGGER.error("Failed closing socket when interrupting the thread.");
+                ioException.printStackTrace();
+            }
+            Thread.currentThread().interrupt();
+            LOGGER.debug("Interrupted with InterruptedIOException.");
+        } catch (IOException e) {
+            if (!isInterrupted()) {
+                LOGGER.error("Exception other than interruption while running.");
+                e.printStackTrace();
+            } else { //interrupted but InterruptedIOException wasn't triggered
                 try {
                     socket.close();
                 } catch (IOException ioException) {
                     LOGGER.error("Failed closing socket when interrupting the thread.");
                     ioException.printStackTrace();
                 }
-                Thread.currentThread().interrupt();
-                LOGGER.debug("Interrupted with InterruptedIOException.");
-            } catch (IOException e) {
-                if (!isInterrupted()) {
-                    LOGGER.error("Exception other than interruption while running.");
-                    e.printStackTrace();
-                } else { // <italique>Thread</italique> interrompu mais <italique>InterruptedIOException</italique> n'était pas gérée pour ce type de flux.
-                    try {
-                        socket.close();
-                    } catch (IOException ioException) {
-                        LOGGER.error("Failed closing socket when interrupting the thread.");
-                        ioException.printStackTrace();
-                    }
-                    LOGGER.debug("Interrupted.");
-                }
-            } catch (SQLException | ConnectionError throwables) {
-                LOGGER.error("Error due to database connection or request.");
-                throwables.printStackTrace();
+                LOGGER.debug("Interrupted.");
             }
+        } catch (SQLException | ConnectionError throwables) {
+            LOGGER.error("Error due to database connection or request.");
+            throwables.printStackTrace();
         }
     }
 }

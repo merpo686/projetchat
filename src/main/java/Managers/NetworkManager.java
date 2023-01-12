@@ -21,6 +21,14 @@ public class NetworkManager {
     public static void SendDisconnection() {
         Connection connect = new Connection(Self.getInstance().getHostname(),false);
         ThreadManager.SendBC(connect);
+        ThreadManager.getInstance().deleteAllThreads();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("here");
+
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo()  {

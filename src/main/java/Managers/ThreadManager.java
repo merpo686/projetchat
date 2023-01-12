@@ -32,6 +32,13 @@ public class ThreadManager {
     }
     public TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
 
+    /** Closes all threads, active conversation and recv servers*/
+    public void deleteAllThreads(){
+        //close active conversations threads
+        for (User dest : map_active_conversations.keySet()){
+            delActiveconversation(dest);
+        }
+    }
     /**Defines the UDP-handler */
     public interface NotifHandler {
         void handler(Object notif);
@@ -58,10 +65,9 @@ public class ThreadManager {
     }
     /**Starts the UDP receiving thread*/
     static public void StartRcvThread(NotifHandler handler){
-        ThreadRcvUDP threadRecvUDP;
-        threadRecvUDP = new ThreadRcvUDP(handler);
-        threadRecvUDP.setDaemon(true);
-        threadRecvUDP.start();
+        ThreadRcvUDP threadRcvUDP = new ThreadRcvUDP(handler);
+        threadRcvUDP.setDaemon(true);
+        threadRcvUDP.start();
     }
     /** Sends a username on UDP (non-broadcast)*/
     static public void SendPseudoUnicast(String hostname) {
@@ -74,6 +80,5 @@ public class ThreadManager {
     }
     /**Start TCP server for accepting new conversations*/
     static public void StartTCPServer() {
-        new TCPServer();
     }
 }
