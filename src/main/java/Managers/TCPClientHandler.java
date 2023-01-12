@@ -53,7 +53,7 @@ public class TCPClientHandler extends Thread {
                 //getting message
                 String received = inputStream.readUTF();
                 LOGGER.debug("Received message TCP: "+received);
-                Message mess = new Message(new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), dest, received);
+                Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
                 DatabaseManager.getInstance().addMessage(mess);
             }
         } catch (InterruptedIOException e) { //If interrupted
