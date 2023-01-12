@@ -2,6 +2,7 @@ import Managers.Self;
 import Models.Message;
 import Models.User;
 import database.ConnectionError;
+import database.ConversationsTableDoesNotExist;
 import database.DatabaseManager;
 import database.MessageAccessProblem;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import java.sql.SQLException;
 public class DatabaseTest {
 
     @Test
-    public void DBTest() throws ConnectionError, SQLException, UnknownHostException, MessageAccessProblem {
+    public void DBTest() throws ConnectionError, SQLException, UnknownHostException, MessageAccessProblem, ConversationsTableDoesNotExist {
         String myPseudo = "Tim";
         Self.getInstance().setPseudo(myPseudo);
         String TestDBName = "test.sqlite";

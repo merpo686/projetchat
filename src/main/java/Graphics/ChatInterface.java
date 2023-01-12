@@ -5,6 +5,7 @@ import Managers.Self;
 import Models.Message;
 import Models.User;
 import database.ConnectionError;
+import database.ConversationsTableDoesNotExist;
 import database.DatabaseManager;
 import database.MessageAccessProblem;
 import org.apache.logging.log4j.LogManager;
@@ -158,7 +159,7 @@ public class ChatInterface extends Container {
                 Message mess = null;
                 try {
                     mess = db.getLastMessage(dest.getHostname());
-                } catch ( SQLException | UnknownHostException connectionError) {
+                } catch (SQLException | UnknownHostException | ConversationsTableDoesNotExist connectionError) {
                     connectionError.printStackTrace();
                 }
                 if (mess!=null && !lastMessage.equals(mess)) {
@@ -175,7 +176,7 @@ public class ChatInterface extends Container {
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         try {
             db.addMessage(mess);
-        } catch (SQLException | ConnectionError throwable) {
+        } catch (SQLException | ConnectionError | ConversationsTableDoesNotExist throwable) {
             LOGGER.error("Error inserting the message in the Database.");
             throwable.printStackTrace();
         }

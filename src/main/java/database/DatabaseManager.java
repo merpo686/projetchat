@@ -62,7 +62,7 @@ public class DatabaseManager {
     }
 
     /**creates a table for the messages to be stored in a specific conversation identified by hostname, which corresponds to the hostname of the receiver*/
-    public void createTableMessages(String hostname) throws SQLException {
+    public void createTableMessages(String hostname) throws SQLException, ConversationsTableDoesNotExist {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
@@ -95,7 +95,7 @@ public class DatabaseManager {
     }
 
     /**adds a message in the messages table*/
-    public void addMessage(Message message) throws SQLException, ConnectionError {
+    public void addMessage(Message message) throws SQLException, ConnectionError, ConversationsTableDoesNotExist {
         int idConv = 0;
         String stringMessage = message.getMessage();
         LocalDateTime date = message.getDate();
@@ -139,7 +139,7 @@ public class DatabaseManager {
      * gets the last message sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
      * @param hostname
      * */
-    public Message getLastMessage(String hostname) throws SQLException, UnknownHostException {
+    public Message getLastMessage(String hostname) throws SQLException, UnknownHostException, ConversationsTableDoesNotExist {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
