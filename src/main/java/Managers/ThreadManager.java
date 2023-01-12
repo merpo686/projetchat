@@ -80,5 +80,6 @@ public class ThreadManager {
     }
     /**Start TCP server for accepting new conversations*/
     static public void StartTCPServer() {
+        new TCPServer();
     }
 }

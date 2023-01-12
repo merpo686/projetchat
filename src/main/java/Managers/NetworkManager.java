@@ -91,10 +91,9 @@ public class NetworkManager {
             outputStream.writeUTF(mess.getMessage());
         } catch (IOException e) {
             LOGGER.error("Either: \n "
-                    + "Unable to create TCP socket. Hostname: "+ Self.getInstance().getHostname()+" Port TCP: "+Self.portTCP
+                    + "Unable to create TCP socket. Hostname: "+ mess.getReceiver().getHostname()+" Port TCP: "+Self.portTCP
                     + "\nUnable to write the message on the outputStream.");
             e.printStackTrace();
         }
     }
-
 }
