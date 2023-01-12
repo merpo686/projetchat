@@ -33,11 +33,11 @@ public class DatabaseTest {
         System.out.println("Conversation added in conversations table");
 
         //testing message methods
-        myDB.addMessage(mess, testUser.getHostname());
+        myDB.addMessage(mess);
         myDB.createTableMessages(testUser.getHostname());
         assert myDB.checkExistTableMessages();
         System.out.println("Messages table created");
-        myDB.addMessage(mess, testUser.getHostname());
+        myDB.addMessage(mess);
         System.out.println("Message added for the conversation with "+testUser.getHostname());
         myDB.getAllMessages(testUser.getHostname());
         myDB.getLastMessage(testUser.getHostname());
