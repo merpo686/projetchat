@@ -168,8 +168,13 @@ public class ChatInterface extends Container {
                     if ( !lastMessage.equals(mess))
                     {
                         lastMessage =mess;
-                        chatArea.append(mess.getMessage());
+                        chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+mess);
                     }
+                }
+                try {
+                    sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -189,6 +194,7 @@ public class ChatInterface extends Container {
         } catch (ConnectionError e){
             LOGGER.error("Error connecting to the Database.");
         }
+        lastMessage=mess;
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
     }
     /**Display old messages at the opening of the chat interface*/
