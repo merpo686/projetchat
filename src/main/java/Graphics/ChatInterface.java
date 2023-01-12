@@ -164,9 +164,12 @@ public class ChatInterface extends Container {
                 } catch (SQLException | UnknownHostException e) {
                     e.printStackTrace();
                 }
-                if (mess!=null && !lastMessage.equals(mess)) {
-                    lastMessage =mess;
-                    chatArea.append(mess.getMessage());
+                if (mess!=null) {
+                    if ( !lastMessage.equals(mess))
+                    {
+                        lastMessage =mess;
+                        chatArea.append(mess.getMessage());
+                    }
                 }
             }
         }
