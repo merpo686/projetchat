@@ -131,7 +131,7 @@ public class DatabaseManager {
         ps2.setInt(8, idConv);
         ps2.executeUpdate();
         ps2.clearParameters();
-        //DatabaseManager.getInstance().showMessages(hostname);
+        System.out.println("Message added to the database to designated user " + hostname);
     }
 
     /**
