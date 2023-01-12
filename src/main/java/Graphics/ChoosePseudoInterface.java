@@ -53,13 +53,19 @@ public class ChoosePseudoInterface extends Container {
                     LOGGER.error("Failed to edit the connection button with chosen pseudo.");
                     e.printStackTrace();
                 }
-                String PseudoChosen= connection.getText();
-                if (ActiveUserManager.getInstance().IsinActiveListUser(PseudoChosen)){
-                    add(new JLabel("Pseudo already taken: "+PseudoChosen));
-                    repaint();
+                String pseudoChosen = connection.getText();
+                if (pseudoChosen.equals("")){
+                    JOptionPane.showMessageDialog(frame, "Pseudo can't be null",
+                            "Warning",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+                else if (ActiveUserManager.getInstance().IsinActiveListUser(pseudoChosen)){
+                    JOptionPane.showMessageDialog(frame, "Pseudo taken "+pseudoChosen,
+                            "Warning",
+                            JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    Self.getInstance().setPseudo(PseudoChosen);
+                    Self.getInstance().setPseudo(pseudoChosen);
                     NetworkManager.SendPseudo();
                     setVisible(false);
                     new ChooseDiscussionInterface(frame);
@@ -89,13 +95,19 @@ public class ChoosePseudoInterface extends Container {
                         LOGGER.error("Failed to edit the connection button with chosen pseudo.");
                         exc.printStackTrace();
                     }
-                    String PseudoChosen= connection.getText();
-                    if (ActiveUserManager.getInstance().IsinActiveListUser(PseudoChosen)){
-                        add(new JLabel("Pseudo already taken: "+PseudoChosen));
-                        repaint();
+                    String pseudoChosen = connection.getText();
+                    if (pseudoChosen.equals("")){
+                        JOptionPane.showMessageDialog(frame, "Pseudo can't be null",
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
+                    else if (ActiveUserManager.getInstance().IsinActiveListUser(pseudoChosen)){
+                        JOptionPane.showMessageDialog(frame, "Pseudo taken "+pseudoChosen,
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                     else {
-                        Self.getInstance().setPseudo(PseudoChosen);
+                        Self.getInstance().setPseudo(pseudoChosen);
                         NetworkManager.SendPseudo();
                         setVisible(false);
                         new ChooseDiscussionInterface(frame);
