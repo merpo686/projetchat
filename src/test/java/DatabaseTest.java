@@ -2,7 +2,6 @@ import Managers.Self;
 import Models.Message;
 import Models.User;
 import database.ConnectionError;
-import database.ConversationsTableDoesNotExist;
 import database.DatabaseManager;
 import database.MessageAccessProblem;
 import org.junit.Test;

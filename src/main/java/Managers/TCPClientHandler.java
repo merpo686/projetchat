@@ -2,7 +2,6 @@ package Managers;
 
 import Models.*;
 import database.ConnectionError;
-import database.ConversationsTableDoesNotExist;
 import database.DatabaseManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,8 +83,6 @@ public class TCPClientHandler extends Thread {
         } catch (SQLException | ConnectionError throwables) {
             LOGGER.error("Error due to database connection or request.");
             throwables.printStackTrace();
-        } catch (ConversationsTableDoesNotExist conversationsTableDoesNotExist) {
-            conversationsTableDoesNotExist.printStackTrace();
         }
     }
 }

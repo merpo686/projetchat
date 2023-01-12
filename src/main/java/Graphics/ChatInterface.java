@@ -5,7 +5,6 @@ import Managers.Self;
 import Models.Message;
 import Models.User;
 import database.ConnectionError;
-import database.ConversationsTableDoesNotExist;
 import database.DatabaseManager;
 import database.MessageAccessProblem;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +18,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 import javax.swing.*;
-import javax.xml.crypto.Data;
 
 /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
 public class ChatInterface extends Container {
@@ -163,8 +161,8 @@ public class ChatInterface extends Container {
                 Message mess = null;
                 try {
                     mess = db.getLastMessage(dest.getHostname());
-                } catch (SQLException | UnknownHostException | ConversationsTableDoesNotExist connectionError) {
-                    connectionError.printStackTrace();
+                } catch (SQLException | UnknownHostException e) {
+                    e.printStackTrace();
                 }
                 if (mess!=null && !lastMessage.equals(mess)) {
                     lastMessage =mess;
@@ -187,8 +185,6 @@ public class ChatInterface extends Container {
             throwable.printStackTrace();
         } catch (ConnectionError e){
             LOGGER.error("Error connecting to the Database.");
-        } catch (ConversationsTableDoesNotExist e) {
-            LOGGER.error("Conversations table does not exist.");
         }
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
     }

@@ -62,7 +62,7 @@ public class DatabaseManager {
     }
 
     /**creates a table for the messages to be stored in a specific conversation identified by hostname, which corresponds to the hostname of the receiver*/
-    public void createTableMessages(String hostname) throws SQLException, ConversationsTableDoesNotExist {
+    public void createTableMessages(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
@@ -95,7 +95,7 @@ public class DatabaseManager {
     }
 
     /**adds a message in the messages table*/
-    public void addMessage(Message message) throws SQLException, ConnectionError, ConversationsTableDoesNotExist {
+    public void addMessage(Message message) throws SQLException, ConnectionError {
         int idConv = 0;
         String stringMessage = message.getMessage();
         LocalDateTime date = message.getDate();
@@ -113,8 +113,6 @@ public class DatabaseManager {
         if(!checkExistTableMessages()){
             createTableMessages(hostname);
         }
-        DatabaseManager.getInstance().showConversations();
-        DatabaseManager.getInstance().showTables();
         //we acquire the Id of the table Conversations (IdConv), which is the foreign key for the table messages
         PreparedStatement ps1 = co.prepareStatement("SELECT IdConv FROM Conversations WHERE Conversations.Hostname == ?");
         ps1.setString(1, hostname);
@@ -140,7 +138,7 @@ public class DatabaseManager {
      * gets the last message sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
      * @param hostname
      * */
-    public Message getLastMessage(String hostname) throws SQLException, UnknownHostException, ConversationsTableDoesNotExist {
+    public Message getLastMessage(String hostname) throws SQLException, UnknownHostException {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
@@ -211,7 +209,7 @@ public class DatabaseManager {
     }
 
     /**checks if a specific conversation exists inside the conversations table*/
-    public boolean checkExistConversation(String hostname) throws SQLException, ConversationsTableDoesNotExist {
+    public boolean checkExistConversation(String hostname) throws SQLException {
         try {
             if(!checkExistTableConversations()){
                 createTableConversations();
