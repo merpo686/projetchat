@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 import javax.swing.*;
+import javax.xml.crypto.Data;
 
 /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
 public class ChatInterface extends Container {
@@ -181,9 +182,13 @@ public class ChatInterface extends Container {
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         try {
             db.addMessage(mess);
-        } catch (SQLException | ConnectionError | ConversationsTableDoesNotExist throwable) {
+        } catch (SQLException throwable) {
             LOGGER.error("Error inserting the message in the Database.");
             throwable.printStackTrace();
+        } catch (ConnectionError e){
+            LOGGER.error("Error connecting to the Database.");
+        } catch (ConversationsTableDoesNotExist e) {
+            LOGGER.error("Conversations table does not exist.");
         }
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
     }

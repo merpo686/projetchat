@@ -114,6 +114,7 @@ public class DatabaseManager {
             createTableMessages(hostname);
         }
         DatabaseManager.getInstance().showConversations();
+        DatabaseManager.getInstance().showTables();
         //we acquire the Id of the table Conversations (IdConv), which is the foreign key for the table messages
         PreparedStatement ps1 = co.prepareStatement("SELECT IdConv FROM Conversations WHERE Conversations.Hostname == ?");
         ps1.setString(1, hostname);
@@ -212,19 +213,21 @@ public class DatabaseManager {
     /**checks if a specific conversation exists inside the conversations table*/
     public boolean checkExistConversation(String hostname) throws SQLException, ConversationsTableDoesNotExist {
         try {
-            int count=0;
-            String sql = "SELECT EXISTS(SELECT Hostname FROM Conversations WHERE Conversations.Hostname = ?);";
+            if(!checkExistTableConversations()){
+                createTableConversations();
+            }
+            String sql = "SELECT EXISTS(SELECT 1 FROM Conversations WHERE Conversations.Hostname = ?);";
             PreparedStatement ps = co.prepareStatement(sql);
             ps.setString(1, hostname);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                count++;
+                String stringExist = rs.getString(1);
+                if (stringExist.equals("1")){ //SELECT EXISTS returns 1 if the query exists, 0 if not
+                    return true;
+                }
             }
-            return count == 1;
+            return false;
         } catch(SQLException e){
-            if(!checkExistTableConversations()){
-                throw new ConversationsTableDoesNotExist();
-            }
             e.printStackTrace();
             return false;
         }

@@ -25,11 +25,11 @@ public class DatabaseTest {
         myDB.clearDB(TestDBName);
         myDB.connectDB(TestDBName);
 
-        assert myDB.checkExistConversation(testUser.getHostname());
         //testing conversation methods
         myDB.createTableConversations();
         assert myDB.checkExistTableConversations();
         System.out.println("Conversations table created");
+        assert myDB.checkExistConversation(testUser.getHostname());
         myDB.addConversation(testUser.getHostname());
 
         System.out.println("Conversation added in conversations table");
