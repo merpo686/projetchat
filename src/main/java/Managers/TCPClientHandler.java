@@ -17,13 +17,19 @@ public class TCPClientHandler extends Thread {
     private final User dest;
     DataInputStream inputStream;
 
-    /**constructor */
+    /**
+     * Constructor
+     * @param link
+     * @param dest
+     */
     public TCPClientHandler(Socket link,User dest){
         this.setDaemon(true);
         this.socket = link;
         this.dest=dest;
     }
-    /**returns the socket of the conversation */
+    /**returns the socket of the conversation
+     * @return socket
+     * */
     public Socket getSocket() {
         return socket;
     }

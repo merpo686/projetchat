@@ -57,7 +57,10 @@ public class ChatInterface extends Container {
             frame.dispose();
         }
     };
-    /**Constructor, same as ChooseDiscussionInterface, the core of the interface is specified in initComponents*/
+    /**Constructor, same as ChooseDiscussionInterface, the core of the interface is specified in initComponents
+     * @param dest User to discuss with
+     * @param frame - frame in activity
+     * */
     public ChatInterface(JFrame frame, User dest){
         this.frame=frame;
         this.dest = dest;
@@ -169,7 +172,9 @@ public class ChatInterface extends Container {
             }
         }
     }
-    /**Send messages to the destination user */
+    /**Send messages to the destination user
+     * @param message to send
+     * */
     private void sendMessage(String message) {
         Self selfInstance = Self.getInstance();
         Message mess= new Message(new User(selfInstance.getHostname(),selfInstance.getPseudo()), dest,message);

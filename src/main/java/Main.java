@@ -15,7 +15,9 @@ public class Main {
 
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
-    /** handler for the reception of UDP messages */
+    /** handler for the reception of UDP messages
+     * @param notif either a Connection (boolean + user) or just a User
+     * */
     static ThreadManager.NotifHandler handler = notif -> {
         if (notif instanceof Connection) {
             Connection connect =(Connection) notif;

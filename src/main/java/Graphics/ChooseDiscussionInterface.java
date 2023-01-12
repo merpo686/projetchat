@@ -36,7 +36,9 @@ public class ChooseDiscussionInterface extends Container {
             frame.dispose();
         }
     };
-    /**Constructor */
+    /**Constructor
+     * @param frame in activity
+     * */
     public ChooseDiscussionInterface(JFrame frame) {
         this.frame=frame;
         InterfaceManager IM=InterfaceManager.getInstance();

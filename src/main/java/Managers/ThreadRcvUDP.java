@@ -12,6 +12,11 @@ import java.net.*;
 public class ThreadRcvUDP extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(ThreadRcvUDP.class);
     private final ThreadManager.NotifHandler notifHandler;
+
+    /**
+     * Constructor
+     * @param handler
+     */
     public ThreadRcvUDP(ThreadManager.NotifHandler handler) {
         this.notifHandler=handler;
     }

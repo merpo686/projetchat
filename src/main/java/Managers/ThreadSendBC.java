@@ -11,18 +11,27 @@ import java.net.*;
 public class ThreadSendBC implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger(ThreadSendBC.class);
-
     private final DatagramSocket socket;
     private Connection connect;
     private User user;
     int numSocket;
-    /** Constructor to send a Boolean Broadcast*/
+
+    /**
+     * Constructor when sending a boolean broadcast
+     * @param connect
+     * @throws SocketException
+     */
     public ThreadSendBC(Connection connect) throws SocketException {
         this.socket = new DatagramSocket();
         this.connect=connect;
         this.numSocket=Self.portUDP;
     }
-    /** Constructor to send an username (pseudo) Broadcast*/
+
+    /**
+     * Constructor when sending a pseudo broadcast
+     * @param user
+     * @throws SocketException
+     */
     public ThreadSendBC(User user) throws SocketException {
         this.socket = new DatagramSocket();
         this.user = user;

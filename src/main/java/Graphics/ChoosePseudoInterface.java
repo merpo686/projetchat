@@ -31,7 +31,9 @@ public class ChoosePseudoInterface extends Container {
             frame.dispose();
         }
     };
-    /**Constructor */
+    /**Constructor
+     * @param frame in activity
+     * */
     public ChoosePseudoInterface(JFrame frame){
         this.frame=frame;
         InterfaceManager IM=InterfaceManager.getInstance();

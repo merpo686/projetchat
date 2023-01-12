@@ -12,6 +12,11 @@ public class ThreadSendPseudoUnicast implements Runnable {
     int numSocket;
     private final String hostname;
 
+    /**
+     * Constructor
+     * @param hostname
+     * @throws SocketException
+     */
     public ThreadSendPseudoUnicast(String hostname) throws SocketException {
         this.socket= new DatagramSocket();
         this.numSocket=Self.portUDP;
