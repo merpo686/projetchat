@@ -173,7 +173,7 @@ public class ChatInterface extends Container {
         Message mess= new Message(new User(selfInstance.getHostname(),selfInstance.getPseudo()), dest,message);
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         try {
-            db.addMessage(mess,dest.getHostname());
+            db.addMessage(mess);
         } catch (SQLException throwable) {
             LOGGER.error("Error inserting the message in the Database.");
             throwable.printStackTrace();

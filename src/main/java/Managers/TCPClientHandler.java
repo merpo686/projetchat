@@ -46,11 +46,11 @@ public class TCPClientHandler extends Thread {
                 inputStream = new DataInputStream(socket.getInputStream());
                 //getting message
                 String received = inputStream.readUTF();
-                Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
+                Message mess = new Message(new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), dest, received);
                 if(!DatabaseManager.getInstance().checkExistConversation(dest.getHostname())){
                     DatabaseManager.getInstance().addConversation(dest.getHostname());
                 }
-                DatabaseManager.getInstance().addMessage(mess,dest.getHostname());
+                DatabaseManager.getInstance().addMessage(mess); //the conversation related to the message is identified through the receiverID (aka the hostname of the receiver)
             } catch (InterruptedIOException e) { //If interrupted
                 try {
                     socket.close();

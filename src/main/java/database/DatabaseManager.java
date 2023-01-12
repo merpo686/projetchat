@@ -19,6 +19,7 @@ public class DatabaseManager {
         this.connectDB(databaseName);
     }
 
+    /**The get instance() for the database manager, as we want to be able to access it at any time from any function*/
     public static DatabaseManager getInstance() throws ConnectionError {
         if (instance == null) {
             instance = new DatabaseManager();
@@ -26,6 +27,7 @@ public class DatabaseManager {
         return instance;
     }
 
+    /**Connects to the database*/
     public void connectDB(String databaseName) throws ConnectionError {
         String url = "jdbc:sqlite:" + databaseName;
         //the driver automatically creates a new database when the database does not already exist
@@ -72,8 +74,7 @@ public class DatabaseManager {
                 "ReceiverID STRING NOT NULL, \n" +
                 "ReceiverPseudo STRING NOT NULL, \n" +
                 "StringMessage STRING NOT NULL, \n" +
-                "Hostname STRING NOT NULL, \n" +
-                "FOREIGN KEY(Hostname) REFERENCES Conversations(Hostname));";
+                "FOREIGN KEY(ReceiverID) REFERENCES Conversations(Hostname));";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.executeUpdate();
     }
@@ -89,14 +90,14 @@ public class DatabaseManager {
         ps.clearParameters();
     }
 
-    public void addMessage(Message message, String hostname) throws SQLException { //A VOIR SI ON PEUT PAS REDUIR LE NB DE PARAMETRES A 1 ET ENLEVER LE HOSTNAME CAR IL EST NORMALEMENT EGAL AU MESSAGE RECEIVER
+    public void addMessage(Message message) throws SQLException { //A VOIR SI ON PEUT PAS REDUIR LE NB DE PARAMETRES A 1 ET ENLEVER LE HOSTNAME CAR IL EST NORMALEMENT EGAL AU MESSAGE RECEIVER
         String stringMessage = message.getMessage();
         LocalDateTime date = message.getDate();
         String senderID = message.getSender().getHostname();
         String senderPseudo = message.getSender().getPseudo();
-        String receiverID = message.getReceiver().getHostname();
+        String hostname = message.getReceiver().getHostname(); //hostname == receiverID
         String receiverPseudo = message.getReceiver().getPseudo();
-        //verifier si la conv existe sinon la creer et s'il existe une table de conversations tout court
+        //check if the tables and corresponding conversation exist
         if(!checkExistTableConversations()){
             createTableConversations();
         }
@@ -107,14 +108,13 @@ public class DatabaseManager {
             createTableMessages(hostname);
         }
 
-        PreparedStatement ps = co.prepareStatement("INSERT INTO Messages (IdMessage, Date, SenderID, SenderPseudo, ReceiverID, ReceiverPseudo, StringMessage, Hostname) VALUES(?, ?, ?, ?, ?, ?, ?, ?);");
+        PreparedStatement ps = co.prepareStatement("INSERT INTO Messages (IdMessage, Date, SenderID, SenderPseudo, ReceiverID, ReceiverPseudo, StringMessage) VALUES(?, ?, ?, ?, ?, ?, ?);");
         ps.setString(2, String.valueOf(date));
         ps.setString(3, senderID);
         ps.setString(4, senderPseudo);
-        ps.setString(5, receiverID);
+        ps.setString(5, hostname);
         ps.setString(6, receiverPseudo);
         ps.setString(7, stringMessage);
-        ps.setString(8, hostname);
         ps.executeUpdate();
         ps.clearParameters();
     }
@@ -130,7 +130,7 @@ public class DatabaseManager {
         if(!checkExistTableMessages()){
             createTableMessages(hostname);
         }
-        String sql = "SELECT * FROM Messages WHERE (hostname = ?) ORDER BY Hostname DESC LIMIT 1;";
+        String sql = "SELECT * FROM Messages WHERE (ReceiverID = ?) ORDER BY Hostname DESC LIMIT 1;";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.setString(1, hostname);
         ResultSet rs = ps.executeQuery();
@@ -157,7 +157,7 @@ public class DatabaseManager {
                 createTableMessages(hostname);
             }
             ArrayList<Message> listMessages = new ArrayList<>();
-            String sql = "SELECT * FROM Messages WHERE (hostname = ?);";
+            String sql = "SELECT * FROM Messages WHERE (ReceiverID = ?);";
             PreparedStatement ps = co.prepareStatement(sql);
             ps.setString(1, hostname);
             ResultSet rs = ps.executeQuery();
