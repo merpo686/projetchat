@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Main {
 
@@ -56,7 +58,15 @@ public class Main {
         //Make sure we have nice window decorations.
         JFrame.setDefaultLookAndFeelDecorated(true);
         //Create and set up the window.
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                frame.setVisible(false);
+                NetworkManager.SendDisconnection();
+                frame.dispose();
+            }
+        });
         //Display the window.
         frame.setMinimumSize(new Dimension(400,300));
         frame.setForeground(InterfaceManager.foregroundColor);

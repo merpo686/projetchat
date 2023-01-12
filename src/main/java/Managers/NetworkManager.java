@@ -25,10 +25,9 @@ public class NetworkManager {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
+            LOGGER.debug("Error putting the thread to sleep in disconnection.");
             e.printStackTrace();
         }
-        System.out.println("here");
-
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo()  {
@@ -83,7 +82,7 @@ public class NetworkManager {
                 socket=thread.getSocket();
             }
             else{
-                socket= new Socket(InetAddress.getByName(Self.getInstance().getHostname()),Self.portTCP);
+                socket= new Socket(mess.getReceiver().getHostname(),Self.portTCP);
                 thread = new TCPClientHandler(socket,mess.getReceiver());
                 thread.start();
                 ThreadManager.getInstance().addActiveconversation(mess.getReceiver(),thread);
