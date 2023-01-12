@@ -167,6 +167,7 @@ public class ChatInterface extends Container {
                 if (mess!=null) {
                     if ( lastMessage==null || !lastMessage.equals(mess))
                     {
+                        LOGGER.debug("Resultat de :!lastMessage.equals(mess): "+!lastMessage.equals(mess));
                         lastMessage =mess;
                         chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
                     }
