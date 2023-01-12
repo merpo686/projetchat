@@ -19,7 +19,7 @@ public class DatabaseManager {
         this.connectDB(databaseName);
     }
 
-    /**The get instance() for the database manager, as we want to be able to access it at any time from any function*/
+    /**the get instance() for the database manager, as we want to be able to access it at any time from any function*/
     public static DatabaseManager getInstance() throws ConnectionError {
         if (instance == null) {
             instance = new DatabaseManager();
@@ -27,7 +27,7 @@ public class DatabaseManager {
         return instance;
     }
 
-    /**Connects to the database*/
+    /**connects to the database*/
     public void connectDB(String databaseName) throws ConnectionError {
         String url = "jdbc:sqlite:" + databaseName;
         //the driver automatically creates a new database when the database does not already exist
@@ -38,7 +38,7 @@ public class DatabaseManager {
             DatabaseMetaData meta = co.getMetaData();
             ResultSet rs = meta.getCatalogs();
             while(rs.next()){
-                String catalog = rs.getString(1); //retrieves the second column of the result set corresponding to the catalogs which stores the names of all the databases
+                String catalog = rs.getString(1); //retrieves the first column of the result set corresponding to the catalogs which stores the names of all the databases
                 if(!catalog.equals(databaseName)){ //check if the database exists already
                     System.out.println("Creating a new database...");
                 }
@@ -51,6 +51,7 @@ public class DatabaseManager {
         }
     }
 
+    /**creates a table for the conversations to be stored*/
     public void createTableConversations() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
                 "Hostname STRING PRIMARY KEY NOT NULL);";
@@ -59,6 +60,7 @@ public class DatabaseManager {
         ps.clearParameters();
     }
 
+    /**creates a table for the messages to be stored in a specific conversation identified by hostname, which corresponds to the hostname of the receiver*/
     public void createTableMessages(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -79,7 +81,7 @@ public class DatabaseManager {
         ps.executeUpdate();
     }
 
-
+    /**adds a conversation identified by the hostname of the receiver in the conversations table*/
     public void addConversation(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -90,6 +92,7 @@ public class DatabaseManager {
         ps.clearParameters();
     }
 
+    /**adds a message in the messages table*/
     public void addMessage(Message message) throws SQLException { //A VOIR SI ON PEUT PAS REDUIR LE NB DE PARAMETRES A 1 ET ENLEVER LE HOSTNAME CAR IL EST NORMALEMENT EGAL AU MESSAGE RECEIVER
         String stringMessage = message.getMessage();
         LocalDateTime date = message.getDate();
@@ -119,7 +122,10 @@ public class DatabaseManager {
         ps.clearParameters();
     }
 
-    //PAS BON ENCORE FAUT TROUVER UN MOYEN POUR FAIRE EXECUTE UPDATE ET RECUP LES MESSAGES
+    /**
+     * gets the last message sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
+     * @param hostname
+     * */
     public Message getLastMessage(String hostname) throws SQLException, UnknownHostException {
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -145,6 +151,7 @@ public class DatabaseManager {
         return null;
     }
 
+    /**gets all messages sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver*/
     public ArrayList<Message> getAllMessages(String hostname) throws  MessageAccessProblem {
         try{
             if(!checkExistTableConversations()){
@@ -177,7 +184,7 @@ public class DatabaseManager {
         }
     }
 
-    //checks if the entire conversations table exists
+    /**checks if the entire conversations table exists*/
     public Boolean checkExistTableConversations() throws SQLException {
         int count=0;
         Statement statement = co.createStatement();
@@ -193,7 +200,7 @@ public class DatabaseManager {
         }
     }
 
-    //checks if a single conversation exists inside the table conversations
+    /**checks if a specific conversation exists inside the conversations table*/
     public Boolean checkExistConversation(String hostname) throws SQLException {
         int count=0;
         String sql = "SELECT EXISTS(SELECT Hostname FROM Conversations WHERE Conversations.Hostname = ?);";
@@ -210,7 +217,7 @@ public class DatabaseManager {
         }
     }
 
-    //checks if the entire messages table exists
+    /**checks if the entire messages table exists*/
     public Boolean checkExistTableMessages() throws SQLException {
         int count=0;
         Statement statement = co.createStatement();
@@ -227,6 +234,7 @@ public class DatabaseManager {
         }
     }
 
+    /**clears the database specified*/
     public void clearDB(String databaseName) {
         Path path = Path.of(databaseName);
         System.out.println(path.toAbsolutePath());

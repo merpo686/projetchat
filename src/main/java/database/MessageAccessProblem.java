@@ -1,5 +1,6 @@
 package database;
 
+/**exception that occurs when the server is unable to access the messages with designated hostname*/
 public class MessageAccessProblem extends Exception {
     final String hostname;
     public MessageAccessProblem(String pseudo){

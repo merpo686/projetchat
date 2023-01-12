@@ -77,7 +77,7 @@ public class ChatInterface extends Container {
         frame.setSize(new java.awt.Dimension(510, 470));
     }
 /** Initialize the components of the interface */
-    private void initComponents() {
+    private void initComponents(){
         //declaration of variables
         inputArea = new JTextField();
         JScrollPane jScrollPane1 = new JScrollPane();
