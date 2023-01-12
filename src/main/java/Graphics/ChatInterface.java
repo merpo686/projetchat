@@ -165,10 +165,10 @@ public class ChatInterface extends Container {
                     e.printStackTrace();
                 }
                 if (mess!=null) {
-                    if ( !lastMessage.equals(mess))
+                    if ( lastMessage==null || !lastMessage.equals(mess))
                     {
                         lastMessage =mess;
-                        chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+mess);
+                        chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
                     }
                 }
                 try {
@@ -196,13 +196,20 @@ public class ChatInterface extends Container {
         }
         lastMessage=mess;
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
+        chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
     }
     /**Display old messages at the opening of the chat interface*/
     private void displayOldMessages() {
         try {
             ArrayList<Message> conv = db.getAllMessages(dest.getHostname());
             for (Message message: conv){
-                chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
+                if (message.getSender().getHostname()==Self.getInstance().getHostname())
+                {
+                    chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
+                }
+                else {
+                    chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
+                }
                 lastMessage = message;
             }
         }catch(MessageAccessProblem e){
