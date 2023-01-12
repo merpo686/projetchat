@@ -9,10 +9,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 /**Server class which accepts new conversations and create a receiving thread for each -
  * also adds them to the list of active conversation */
-public class TCPServer {
+public class TCPServer extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPServer.class);
-
-    public TCPServer() {
+    public TCPServer() {}
+    public void run(){
         //creation du server socket
         ServerSocket socket = null;
         try {
@@ -23,6 +23,7 @@ public class TCPServer {
         }
         //Server is running full time while the app is active if there is no exceptions
         while(true) {
+            LOGGER.debug("Waiting for TCP connection");
             Socket link = null;
             try {
                 link = socket.accept();

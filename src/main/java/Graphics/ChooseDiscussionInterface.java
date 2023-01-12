@@ -48,7 +48,6 @@ public class ChooseDiscussionInterface extends Container {
     /**The core of the interface is defined here, to make it refreshable*/
     public void refreshDisplay(){
         ArrayList<User> activeusers= ActiveUserManager.getInstance().getListActiveUser();
-        System.out.println(ActiveUserManager.getInstance().toString());
         //gridlayout, maybe not the best
         setLayout(  new GridLayout(activeusers.size(),1));
         //creates buttons for each users
