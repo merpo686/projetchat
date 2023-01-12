@@ -83,7 +83,7 @@ public class NetworkManager {
                 socket=thread.getSocket();
             }
             else{
-                socket= new Socket(Self.getInstance().getHostname(),Self.portTCP);
+                socket= new Socket(InetAddress.getByName(Self.getInstance().getHostname()),Self.portTCP);
                 thread = new TCPClientHandler(socket,mess.getReceiver());
                 thread.start();
                 ThreadManager.getInstance().addActiveconversation(mess.getReceiver(),thread);
