@@ -193,11 +193,7 @@ public class DatabaseManager {
         while(rs.next()){
             count++;
         }
-        if(count==1){
-            return true;
-        }else{
-            return false;
-        }
+        return count == 1;
     }
 
     /**checks if a specific conversation exists inside the conversations table*/
@@ -210,11 +206,7 @@ public class DatabaseManager {
         while(rs.next()){
             count++;
         }
-        if(count==1){
-            return true;
-        }else{
-            return false;
-        }
+        return count == 1;
     }
 
     /**checks if the entire messages table exists*/
@@ -227,11 +219,7 @@ public class DatabaseManager {
         while(rs.next()){
             count++;
         }
-        if(count==1){
-            return true;
-        }else{
-            return false;
-        }
+        return count == 1;
     }
 
     /**clears the database specified*/
@@ -248,5 +236,25 @@ public class DatabaseManager {
             System.out.println("You don't have permission" + path);
         }
         System.out.println("File deleted successfully: " + path);
+    }
+
+    public void identifyConstraint() throws SQLException {
+        String sql = "select sql from sqlite_master where tbl_name = 'old_table_name';\n" +
+                    "select sql from sqlite_master where tbl_name = 'new_table_name';";
+        PreparedStatement ps = co.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()){
+            System.out.println(rs.getString("sql"));
+        }
+    }
+
+    public void showMessages(String hostname) throws SQLException {
+        String sql = "SELECT * FROM Messages WHERE Messages.ReceiverID == ?;";
+        PreparedStatement ps = co.prepareStatement(sql);
+        ps.setString(1, hostname);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()){
+            System.out.println(rs.getInt(1) + "\t" + rs.getString(2) + "\t" + rs.getString(3) + "\t" + rs.getString(4) + "\t" + rs.getString(5) + "\t" + rs.getString(6) + "\t" + rs.getString(7));
+        }
     }
 }

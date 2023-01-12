@@ -41,5 +41,7 @@ public class DatabaseTest {
         System.out.println("Message added for the conversation with "+testUser.getHostname());
         myDB.getAllMessages(testUser.getHostname());
         myDB.getLastMessage(testUser.getHostname());
+        myDB.showMessages(testUser.getHostname());
+        myDB.identifyConstraint();
     }
 }
