@@ -11,13 +11,37 @@ public class InterfaceManager {
     String state;
     User userDiscussion;
     static InterfaceManager instance;
+
+    /**
+     * Constructor
+     */
     private InterfaceManager() {
          userDiscussion =null;
          state=null;
     }
+
+    /**
+     * Return the interface in activity
+     * @return state - string name of the interface
+     */
     public String getState(){return state;}
+
+    /**
+     * Return User with whom we're discussing if relevant
+     * @return userDiscussion
+     */
     public User getUser(){return userDiscussion;}
+
+    /**
+     * Change interface in activity
+     * @param state - string name of the interface
+     */
     public void setState(String state){this.state=state;}
+
+    /**
+     * Change user with whom we discuss
+     * @param user
+     */
     public void setUser(User user){this.userDiscussion =user;}
 
     public static InterfaceManager getInstance() {

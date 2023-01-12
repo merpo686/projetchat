@@ -28,13 +28,14 @@ public class NetworkManager {
             LOGGER.debug("Error putting the thread to sleep in disconnection.");
             e.printStackTrace();
         }
-        System.out.println("here");
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo()  {
         ThreadManager.SendBC(new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()));
     }
-    /**Process boolean received on udp : either a connection(true) or a disconnection (false) */
+    /**Process boolean received on udp : either a connection(true) or a disconnection (false)
+     * @param connect the Connection containing the boolean to send and the user whom sent
+     * */
     public static void ProcessConnection(Connection connect){
         if (connect.getValid() && Self.getInstance().getPseudo()!=null){
             ThreadManager.SendPseudoUnicast(connect.getHostname()); //we received a connection notification, we respond our pseudo if we chose it
@@ -70,11 +71,15 @@ public class NetworkManager {
             ThreadManager.getInstance().delActiveconversation(ActiveUserManager.getInstance().get_User(connect.getHostname()));
         }
     }
-    /**Process a pseudo received on UDP */
+    /**Process a pseudo received on UDP
+     * @param user we received the pseudo from
+     * */
     public static void ProcessPseudo(User user) {
         ActiveUserManager.getInstance().changeListActiveUser(user);
     }
- /** Sends a message on TCP */
+ /** Sends a message on TCP
+  * @param mess to send, containing who to send to and the message
+  * */
     public static void SendMessageTCP(Message mess){
         TCPClientHandler thread=ThreadManager.getInstance().getActiveconversation(mess.getReceiver());
         Socket socket;

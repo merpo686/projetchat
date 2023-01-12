@@ -12,24 +12,45 @@ public class ThreadManager {
     private final Map<User,TCPClientHandler> map_active_conversations; //list of active conversations (active TCP threads)
     static ThreadManager instance;
 
+    /**
+     * Constructor
+     */
     private ThreadManager() {
         map_active_conversations = new HashMap<>();
     }
 
+    /**
+     * @return the instance of ThreadManager
+     */
     public static ThreadManager getInstance() {
         if (instance == null) {
             instance = new ThreadManager();
         }
         return instance;
     }
-    /** functions to manage the list of active conversations*/
+
+    /**
+     * Add a thread to the list of active conversation threads
+     * @param dest
+     * @param thread
+     */
     public void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
+
+    /**
+     * Delete a thread to the list of active conversation threads
+     * @param dest
+     */
     public void delActiveconversation(User dest){
         TCPClientHandler thread = map_active_conversations.remove(dest);
         if (thread!=null){
             thread.interrupt();
         }
     }
+
+    /**
+     * @param dest
+     * @return the conversation thread corresponding to the user, null if not exist
+     */
     public TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
 
     /** Closes all threads, active conversation and recv servers*/
@@ -44,7 +65,9 @@ public class ThreadManager {
         void handler(Object notif);
     }
 
-    /** Sends a Username or a boolean on UDP-broadcast */
+    /** Sends a Username or a boolean on UDP-broadcast
+     * @param user
+     * */
     static public void SendBC(User user)  {
         try {
             new Thread(new ThreadSendBC(user)).start();
@@ -63,13 +86,17 @@ public class ThreadManager {
             e.printStackTrace();
         }
     }
-    /**Starts the UDP receiving thread*/
+    /**Starts the UDP receiving thread
+     * @param handler
+     * */
     static public void StartRcvThread(NotifHandler handler){
         ThreadRcvUDP threadRcvUDP = new ThreadRcvUDP(handler);
         threadRcvUDP.setDaemon(true);
         threadRcvUDP.start();
     }
-    /** Sends a username on UDP (non-broadcast)*/
+    /** Sends a username on UDP (non-broadcast)
+     * @param hostname to send to
+     * */
     static public void SendPseudoUnicast(String hostname) {
         try {
             new Thread(new ThreadSendPseudoUnicast(hostname)).start();

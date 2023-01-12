@@ -11,7 +11,6 @@ import java.net.Socket;
  * also adds them to the list of active conversation */
 public class TCPServer extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPServer.class);
-    public TCPServer() {}
     public void run(){
         //creation du server socket
         ServerSocket socket = null;
