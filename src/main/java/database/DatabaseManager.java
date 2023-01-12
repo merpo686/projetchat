@@ -54,7 +54,8 @@ public class DatabaseManager {
     /**creates a table for the conversations to be stored*/
     public void createTableConversations() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
-                "Hostname STRING PRIMARY KEY NOT NULL);";
+                "IdConv INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                "Hostname STRING NOT NULL);";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.executeUpdate();
         ps.clearParameters();
@@ -76,7 +77,8 @@ public class DatabaseManager {
                 "ReceiverID STRING NOT NULL, \n" +
                 "ReceiverPseudo STRING NOT NULL, \n" +
                 "StringMessage STRING NOT NULL, \n" +
-                "FOREIGN KEY(ReceiverID) REFERENCES Conversations(Hostname));";
+                "IdConv INTEGER NOT NULL, \n" +
+                "FOREIGN KEY(IdConv) REFERENCES Conversations(IdConv));";
         PreparedStatement ps = co.prepareStatement(sql);
         ps.executeUpdate();
     }
@@ -86,14 +88,15 @@ public class DatabaseManager {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
-        PreparedStatement ps = co.prepareStatement("INSERT INTO Conversations (Hostname) VALUES(?)");
-        ps.setString(1, hostname);
+        PreparedStatement ps = co.prepareStatement("INSERT INTO Conversations (IdConv, Hostname) VALUES(?, ?)");
+        ps.setString(2, hostname);
         ps.executeUpdate();
         ps.clearParameters();
     }
 
     /**adds a message in the messages table*/
-    public void addMessage(Message message) throws SQLException { //A VOIR SI ON PEUT PAS REDUIR LE NB DE PARAMETRES A 1 ET ENLEVER LE HOSTNAME CAR IL EST NORMALEMENT EGAL AU MESSAGE RECEIVER
+    public void addMessage(Message message) throws SQLException, ConnectionError {
+        int idConv = 0;
         String stringMessage = message.getMessage();
         LocalDateTime date = message.getDate();
         String senderID = message.getSender().getHostname();
@@ -110,16 +113,25 @@ public class DatabaseManager {
         if(!checkExistTableMessages()){
             createTableMessages(hostname);
         }
-
-        PreparedStatement ps = co.prepareStatement("INSERT INTO Messages (IdMessage, Date, SenderID, SenderPseudo, ReceiverID, ReceiverPseudo, StringMessage) VALUES(?, ?, ?, ?, ?, ?, ?);");
-        ps.setString(2, String.valueOf(date));
-        ps.setString(3, senderID);
-        ps.setString(4, senderPseudo);
-        ps.setString(5, hostname);
-        ps.setString(6, receiverPseudo);
-        ps.setString(7, stringMessage);
-        ps.executeUpdate();
-        ps.clearParameters();
+        //we acquire the Id of the table Conversations (IdConv), which is the foreign key for the table messages
+        PreparedStatement ps1 = co.prepareStatement("SELECT IdConv FROM Conversations WHERE Conversations.Hostname == ?");
+        ps1.setString(1, hostname);
+        ResultSet rs = ps1.executeQuery();
+        while(rs.next()){
+            idConv = rs.getInt("IdConv");
+        }
+        PreparedStatement ps2 = co.prepareStatement("INSERT INTO Messages (IdMessage, Date, SenderID, SenderPseudo, ReceiverID, ReceiverPseudo, StringMessage, IdConv) VALUES(?, ?, ?, ?, ?, ?, ?, ?);");
+        ps2.setString(2, String.valueOf(date));
+        ps2.setString(3, senderID);
+        ps2.setString(4, senderPseudo);
+        ps2.setString(5, hostname);
+        ps2.setString(6, receiverPseudo);
+        ps2.setString(7, stringMessage);
+        assert idConv != 0;
+        ps2.setInt(8, idConv);
+        ps2.executeUpdate();
+        ps2.clearParameters();
+        //DatabaseManager.getInstance().showMessages(hostname);
     }
 
     /**
@@ -238,9 +250,9 @@ public class DatabaseManager {
         System.out.println("File deleted successfully: " + path);
     }
 
-    public void identifyConstraint() throws SQLException {
-        String sql = "select sql from sqlite_master where tbl_name = 'old_table_name';\n" +
-                    "select sql from sqlite_master where tbl_name = 'new_table_name';";
+    public void showTables() throws SQLException {
+        String sql = "select sql from sqlite_master where tbl_name = 'Conversations';\n" +
+                    "select sql from sqlite_master where tbl_name = 'Messages';";
         PreparedStatement ps = co.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()){

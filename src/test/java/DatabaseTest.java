@@ -42,6 +42,6 @@ public class DatabaseTest {
         myDB.getAllMessages(testUser.getHostname());
         myDB.getLastMessage(testUser.getHostname());
         myDB.showMessages(testUser.getHostname());
-        myDB.identifyConstraint();
+        myDB.showTables();
     }
 }

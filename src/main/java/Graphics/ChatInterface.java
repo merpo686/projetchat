@@ -175,7 +175,7 @@ public class ChatInterface extends Container {
         NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
         try {
             db.addMessage(mess);
-        } catch (SQLException throwable) {
+        } catch (SQLException | ConnectionError throwable) {
             LOGGER.error("Error inserting the message in the Database.");
             throwable.printStackTrace();
         }
