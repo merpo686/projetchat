@@ -99,6 +99,7 @@ public class TCPClientHandler extends Thread implements ObserverDisconnection{
             LOGGER.error("Failed closing socket when interrupting the thread.");
             ioException.printStackTrace();
         }
+        ThreadManager.getInstance().delActiveconversation(dest);
         this.interrupt();
     }
 }
