@@ -23,9 +23,7 @@ public class Main {
         LOGGER.debug("Launching application.");
         ActiveUserManager.getInstance(); //initalise the active user list
         start_GraphicInterface(); //crystal clear
-        ThreadManager.getInstance(); //starts the thread which receives non-stop on UDP
-        ThreadManager.SendConnection(); //sends a boolean (true) on broadcast to notify our connection
-        ThreadManager.StartTCPServer(); //Start the TCP server waiting to open conversations
+        ThreadManager.getInstance(); //starts all reception threads, and send true (connected) to others
     }
  /** Function in charge of starting the Graphic Interface, which is afterwards self-sufficient*/
     public static void start_GraphicInterface(){

@@ -1,12 +1,11 @@
 package Graphics;
 
-import Models.Message;
-import Models.Observer;
+
 import Models.User;
 
-import javax.swing.*;
+
 import java.awt.*;
-import java.util.ArrayList;
+
 
 /** Class which contains the name of the current used interface "state",
  *  the user with which we are discussing (if relevant), and some static parameters like the colors*/
@@ -16,7 +15,6 @@ public class InterfaceManager {
     String state;
     User userDiscussion;
     static InterfaceManager instance;
-
 
     /**
      * Constructor

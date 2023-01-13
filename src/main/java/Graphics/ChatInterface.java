@@ -220,7 +220,7 @@ public class ChatInterface extends Container implements ObserverReception, Obser
         try {
             ArrayList<Message> conv = db.getAllMessages(dest.getHostname());
             for (Message message: conv){
-                if (message.getSender().getHostname()==Self.getInstance().getHostname())
+                if ((message.getSender().getHostname()).equals(Self.getInstance().getHostname()))
                 {
                     chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
                 }

@@ -1,7 +1,6 @@
 package Threads;
 
 import Models.*;
-import Conversations.ConnectionError;
 import Conversations.ConversationsManager;
 import Models.ObserverReception;
 import ActivityManagers.Self;
@@ -10,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
-import java.sql.SQLException;
+
 
 public class TCPClientHandler extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPClientHandler.class);
@@ -66,7 +65,6 @@ public class TCPClientHandler extends Thread {
                 String received = inputStream.readUTF();
                 LOGGER.debug("Received message TCP: "+received);
                 Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
-                ConversationsManager.getInstance().addMessage(mess);
                 notifyObserver(mess);
             }
         } catch (InterruptedIOException e) { //If interrupted
@@ -91,9 +89,6 @@ public class TCPClientHandler extends Thread {
                 }
                 LOGGER.debug("Interrupted.");
             }
-        } catch (SQLException | ConnectionError throwables) {
-            LOGGER.error("Error due to database connection or request.");
-            throwables.printStackTrace();
         }
     }
 }

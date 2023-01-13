@@ -29,11 +29,9 @@ public class MessageTest {
         System.out.println(mess1+"\n");
         System.out.println(mess2+"\n");
         String Neo="bonjour";
-        //assert mess1.getSender().equals(mess2.getSender()); issue !!!!!!!!!!!
-        //assert mess1.getReceiver().equals(mess2.getReceiver());
+        assert (mess1.getSender()).isEquals(mess2.getSender().getHostname());
         assert mess1.getDate().equals(mess2.getDate());
         assert mess1.getMessage().equals(mess2.getMessage());
-        assert mess1.equals(mess2);
-
+        assert mess1.isEquals(mess2);
     }
 }

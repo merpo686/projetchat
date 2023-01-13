@@ -39,7 +39,11 @@ public class ConversationsManager implements ObserverReception {
         return instance;
     }
 
-    /**connects to the database*/
+    /**
+     * Connects to database
+     * @param databaseName the database to connect to
+     * @throws ConnectionError if connection fails
+     */
     public void connectDB(String databaseName) throws ConnectionError {
         String url = "jdbc:sqlite:" + databaseName;
         //the driver automatically creates a new database when the database does not already exist
@@ -63,7 +67,10 @@ public class ConversationsManager implements ObserverReception {
         }
     }
 
-    /**creates a table for the conversations to be stored*/
+    /**
+     * creates a table for the conversations to be stored
+     * @throws SQLException
+     */
     public void createTableConversations() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
                 "IdConv INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
@@ -73,7 +80,12 @@ public class ConversationsManager implements ObserverReception {
         ps.clearParameters();
     }
 
-    /**creates a table for the messages to be stored in a specific conversation identified by hostname, which corresponds to the hostname of the receiver*/
+    /**
+     * creates a table for the messages to be stored in a specific conversation identified by hostname,
+     * which corresponds to the hostname of the receiver
+     * @param hostname
+     * @throws SQLException
+     */
     public void createTableMessages(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -95,7 +107,11 @@ public class ConversationsManager implements ObserverReception {
         ps.executeUpdate();
     }
 
-    /**adds a conversation identified by the hostname of the receiver in the conversations table*/
+    /**
+     * adds a conversation identified by the hostname of the receiver in the conversations table
+     * @param hostname
+     * @throws SQLException
+     */
     public void addConversation(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -106,7 +122,12 @@ public class ConversationsManager implements ObserverReception {
         ps.clearParameters();
     }
 
-    /**adds a message in the messages table*/
+    /**
+     * adds a message in the messages table
+     * @param message
+     * @throws SQLException
+     * @throws ConnectionError
+     */
     public void addMessage(Message message) throws SQLException, ConnectionError {
         int idConv = 0;
         String stringMessage = message.getMessage();
@@ -175,7 +196,12 @@ public class ConversationsManager implements ObserverReception {
         return null;
     }
 
-    /**gets all messages sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver*/
+    /**
+     * gets all messages sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
+     * @param hostname
+     * @return an array list of messages corresponding to the conversation
+     * @throws MessageAccessProblem
+     */
     public ArrayList<Message> getAllMessages(String hostname) throws  MessageAccessProblem {
         try{
             if(!checkExistTableConversations()){
@@ -208,7 +234,11 @@ public class ConversationsManager implements ObserverReception {
         }
     }
 
-    /**checks if the entire conversations table exists*/
+    /**
+     * checks if the entire conversations table exists
+     * @return
+     * @throws SQLException
+     */
     public boolean checkExistTableConversations() throws SQLException {
         int count=0;
         Statement statement = co.createStatement();
@@ -220,7 +250,11 @@ public class ConversationsManager implements ObserverReception {
         return count == 1;
     }
 
-    /**checks if a specific conversation exists inside the conversations table*/
+    /**
+     * checks if a specific conversation exists inside the conversations table
+     * @param hostname
+     * @return
+     */
     public boolean checkExistConversation(String hostname) {
         try {
             if(!checkExistTableConversations()){
@@ -243,7 +277,11 @@ public class ConversationsManager implements ObserverReception {
         }
     }
 
-    /**checks if the entire messages table exists*/
+    /**
+     * checks if the entire messages table exists
+     * @return
+     * @throws SQLException
+     */
     public boolean checkExistTableMessages() throws SQLException {
         int count=0;
         Statement statement = co.createStatement();
@@ -256,7 +294,10 @@ public class ConversationsManager implements ObserverReception {
         return count == 1;
     }
 
-    /**clears the database specified*/
+    /**
+     * clears the database specified
+     * @param databaseName of the database to clear
+     */
     public void clearDB(String databaseName) {
         Path path = Path.of(databaseName);
         System.out.println(path.toAbsolutePath());

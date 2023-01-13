@@ -24,12 +24,6 @@ public class UDPServer extends Thread {
         observer.update();
     }
 
-    /**
-     * Constructor
-     */
-    public UDPServer(){
-    }
-
     public void run() {
         byte[] data = new byte[1024];
         DatagramSocket socket = null;

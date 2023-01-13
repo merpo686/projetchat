@@ -25,6 +25,8 @@ public class ThreadManager implements ObserverReception{
         udpServer = new UDPServer();
         udpServer.setDaemon(true);
         udpServer.start();
+        StartTCPServer();
+        SendConnection();
     }
 
     /**
@@ -48,10 +50,6 @@ public class ThreadManager implements ObserverReception{
      */
     public void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
 
-    /**
-     * @return the map of active conversations
-     */
-    public Map<User, TCPClientHandler> getAllActiveconversation() {return map_active_conversations;}
     /**
      * Delete a thread to the list of active conversation threads
      * @param dest
@@ -77,7 +75,7 @@ public class ThreadManager implements ObserverReception{
         }
     }
     /**Start TCP server for accepting new conversations*/
-    static public void StartTCPServer() {
+    public void StartTCPServer() {
         TCPServer tcpServer= new TCPServer();
         tcpServer.setDaemon(true);
         tcpServer.start();
@@ -87,7 +85,7 @@ public class ThreadManager implements ObserverReception{
      * Functions for Sending on UDP
      *
      * Sends true on Broadcast */
-    public static void SendConnection() {
+    public void SendConnection() {
         SendUDPBC("true");
     }
     /**Sends false on Broadcast */
@@ -116,7 +114,7 @@ public class ThreadManager implements ObserverReception{
         try {
             socket = new DatagramSocket();
             socket.setBroadcast(true);
-            DatagramPacket sendNotif = null;
+            DatagramPacket sendNotif;
             sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
                     InetAddress.getByName("255.255.255.255"), Self.portUDP);
             socket.send(sendNotif);
@@ -132,7 +130,7 @@ public class ThreadManager implements ObserverReception{
      * */
     static public void SendPseudoUnicast(String hostname) {
         byte[] pseudoData = (Self.getInstance().getPseudo()).getBytes();
-        DatagramPacket sendNotif = null;
+        DatagramPacket sendNotif;
         DatagramSocket socket;
         try {
             socket = new DatagramSocket();

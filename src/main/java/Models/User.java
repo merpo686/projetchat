@@ -33,9 +33,9 @@ public class User {
     /**
      * Check if the hostname is the same
      * @param hostname
-     * @return true if equals
+     * @return true if isEquals
      */
-    public Boolean equals(String hostname){return this.getHostname().equals(hostname);}
+    public Boolean isEquals(String hostname){return (this.getHostname()).equals(hostname);}
 
     /**
      *

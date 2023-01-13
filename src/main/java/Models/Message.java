@@ -56,7 +56,10 @@ public class Message {
      * @param other - Message to compare
      * @return true if same message
      */
-    public Boolean equals(Message other){return other.getDate().equals(this.date);}
+    public Boolean isEquals(Message other){return (other.getDate()).equals(this.date) &&
+            (other.getMessage()).equals(this.getMessage()) &&
+            (other.getReceiver()).isEquals(this.getReceiver().getHostname()) &&
+            (other.getSender()).isEquals(this.getSender().getHostname());}
 
     /**
      * @return String value of Message
