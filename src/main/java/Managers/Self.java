@@ -12,8 +12,8 @@ public class Self {
     private static final Logger LOGGER = LogManager.getLogger(Self.class);
     private String pseudoSelf = null;
     static Self instance;
-    static final int portTCP=12341;
-    static final int portUDP=12340;
+    static public final int portTCP=12341;
+    static public final int portUDP=12340;
     private final String hostname;
 
     /**

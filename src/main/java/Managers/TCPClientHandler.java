@@ -8,7 +8,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.channels.Channel;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TCPClientHandler extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPClientHandler.class);
@@ -16,6 +19,15 @@ public class TCPClientHandler extends Thread {
     private final User dest;
     DataInputStream inputStream;
 
+    private Observer observer;
+
+    public void attach(Observer observer){
+        this.observer= observer;
+    }
+
+    public void notifyObserver(Message mess){
+        observer.update(mess);
+    }
     /**
      * Constructor
      * @param link
@@ -55,6 +67,7 @@ public class TCPClientHandler extends Thread {
                 LOGGER.debug("Received message TCP: "+received);
                 Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
                 DatabaseManager.getInstance().addMessage(mess);
+                notifyObserver(mess);
             }
         } catch (InterruptedIOException e) { //If interrupted
             try {

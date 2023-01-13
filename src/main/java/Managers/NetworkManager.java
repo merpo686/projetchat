@@ -84,21 +84,11 @@ public class NetworkManager {
         TCPClientHandler thread=ThreadManager.getInstance().getActiveconversation(mess.getReceiver());
         Socket socket;
         try {
-            if (thread!=null){
-                socket=thread.getSocket();
-            }
-            else{
-                socket= new Socket(mess.getReceiver().getHostname(),Self.portTCP);
-                thread = new TCPClientHandler(socket,mess.getReceiver());
-                thread.start();
-                ThreadManager.getInstance().addActiveconversation(mess.getReceiver(),thread);
-            }
+            socket=thread.getSocket();
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF(mess.getMessage());
         } catch (IOException e) {
-            LOGGER.error("Either: \n "
-                    + "Unable to create TCP socket. Hostname: "+ mess.getReceiver().getHostname()+" Port TCP: "+Self.portTCP
-                    + "\nUnable to write the message on the outputStream.");
+            LOGGER.error("Unable to write the message on the outputStream.");
             e.printStackTrace();
         }
     }

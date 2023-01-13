@@ -1,7 +1,6 @@
 package Graphics;
 
-import Managers.NetworkManager;
-import Managers.Self;
+import Managers.*;
 import Models.Message;
 import Models.User;
 import database.ConnectionError;
@@ -13,6 +12,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,14 +21,14 @@ import java.util.Objects;
 import javax.swing.*;
 
 /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
-public class ChatInterface extends Container {
+public class ChatInterface extends Container implements Observer {
     private static final Logger LOGGER = LogManager.getLogger(ChatInterface.class);
     JTextArea chatArea;
     JTextField inputArea;
     JFrame frame;
     User dest;
-    Message lastMessage;
     DatabaseManager db;
+    TCPClientHandler tcpClientHandler;
     //menu buttons
     Action changeDiscussionButton = new AbstractAction("CHANGE DISCUSSION") {
         @Override
@@ -64,7 +65,20 @@ public class ChatInterface extends Container {
         this.frame=frame;
         this.dest = dest;
         LOGGER.info("starting conversation with user:"+dest);
-        this.lastMessage =null;
+        this.tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
+        if (tcpClientHandler!=null){
+            Socket socket= null;
+            try {
+                socket = new Socket(dest.getHostname(), Self.portTCP);
+            } catch (IOException e) {
+                LOGGER.error("Unable to create TCP socket. Hostname: "+ dest.getHostname()+" Port TCP: "+Self.portTCP);
+                e.printStackTrace();
+            }
+            tcpClientHandler = new TCPClientHandler(socket,dest);
+                tcpClientHandler.start();
+                ThreadManager.getInstance().addActiveconversation(dest,tcpClientHandler);
+            }
+        tcpClientHandler.attach(this);
         try {
             this.db = DatabaseManager.getInstance();
         } catch (ConnectionError connectionError) {
@@ -76,7 +90,6 @@ public class ChatInterface extends Container {
         IM.setUser(dest);
         initComponents(); //specify interface components
         displayOldMessages(); //crystal clear
-        new Thread(new printReceivedMessage()).start(); //start a thread which will check constantly if there is new messages to print
         frame.setContentPane(this);
         frame.setSize(new java.awt.Dimension(510, 470));
     }
@@ -151,35 +164,14 @@ public class ChatInterface extends Container {
         frame.setResizable(false);
     }
 
-    /**Thread which appends new received messsages constantly */
-    public class printReceivedMessage extends Thread{
-        public printReceivedMessage(){
-            this.setDaemon(true);
-        }
-        public void run(){
-            while(true) {
-                Message mess = null;
-                try {
-                    mess = db.getLastMessage(dest.getHostname());
-                } catch (SQLException | UnknownHostException e) {
-                    e.printStackTrace();
-                }
-                if (mess!=null) {
-                    if ( lastMessage==null || !lastMessage.equals(mess))
-                    {
-                        LOGGER.debug("Resultat de :!lastMessage.equals(mess): "+!lastMessage.equals(mess));
-                        lastMessage =mess;
-                        chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
-                    }
-                }
-                try {
-                    sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    /**Update method which appends new received messsages when TCPClient says he received some
+     * @param mess Message the tcpclienthanlder received
+     * */
+    @Override
+    public void update(Message mess){
+        chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
     }
+
     /**Send messages to the destination user
      * @param message to send
      * */
@@ -195,9 +187,7 @@ public class ChatInterface extends Container {
         } catch (ConnectionError e){
             LOGGER.error("Error connecting to the Database.");
         }
-        lastMessage=mess;
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
-        chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
     }
     /**Display old messages at the opening of the chat interface*/
     private void displayOldMessages() {
@@ -211,7 +201,6 @@ public class ChatInterface extends Container {
                 else {
                     chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
                 }
-                lastMessage = message;
             }
         }catch(MessageAccessProblem e){
             LOGGER.error("Error loading existing messages from the Database. Or no messages for this conversation.");
