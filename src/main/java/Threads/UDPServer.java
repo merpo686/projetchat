@@ -11,17 +11,21 @@ import org.apache.logging.log4j.Logger;
 import java.lang.*;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
+
 /** Class responsible for receiving UDP messages -  a thread receiving full time on a UDP socket,
  *  calling the subconsequent handler when there is a message */
 public class UDPServer extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(UDPServer.class);
 
-    private ObserverDisconnection observer;
+    private ArrayList<ObserverDisconnection> observers = new ArrayList<>();
     public void attach(ObserverDisconnection observer){
-        this.observer= observer;
+        this.observers.add(observer);
     }
     public void notifyObserver(){
-        observer.update();
+        for(ObserverDisconnection observer :observers){
+            observer.update();
+        }
     }
 
     public void run() {

@@ -11,7 +11,7 @@ import java.io.*;
 import java.net.Socket;
 
 
-public class TCPClientHandler extends Thread {
+public class TCPClientHandler extends Thread implements ObserverDisconnection{
     private static final Logger LOGGER = LogManager.getLogger(TCPClientHandler.class);
     private final Socket socket;
     private final User dest;
@@ -90,5 +90,15 @@ public class TCPClientHandler extends Thread {
                 LOGGER.debug("Interrupted.");
             }
         }
+    }
+    @Override
+    public void update(){
+        try {
+            socket.close();
+        } catch (IOException ioException) {
+            LOGGER.error("Failed closing socket when interrupting the thread.");
+            ioException.printStackTrace();
+        }
+        this.interrupt();
     }
 }
