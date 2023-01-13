@@ -1,4 +1,4 @@
-package Managers;
+package ActivityManagers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

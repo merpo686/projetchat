@@ -1,23 +1,90 @@
-package Managers;
-import Graphics.InterfaceManager;
+package Threads;
+import ActivityManagers.Self;
 import Models.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
-/** Class containing all functions related to sending messages */
-public class NetworkManager {
+import java.util.*;
 
-    private static final Logger LOGGER = LogManager.getLogger(NetworkManager.class);
+/**This class contains all the managing-thread related functions */
+public class ThreadManager implements ObserverReception{
 
+    private static final Logger LOGGER = LogManager.getLogger(ThreadManager.class);
+    private final Map<User,TCPClientHandler> map_active_conversations; //list of active conversations (active TCP threads)
+    static ThreadManager instance;
+    private final UDPServer udpServer;
+
+    /**
+     * Constructor
+     */
+    private ThreadManager() {
+        map_active_conversations = new HashMap<>();
+        udpServer = new UDPServer();
+        udpServer.setDaemon(true);
+        udpServer.start();
+    }
+
+    /**
+     * @return the instance of ThreadManager
+     */
+    public static ThreadManager getInstance() {
+        if (instance == null) {
+            instance = new ThreadManager();
+        }
+        return instance;
+    }
+
+    /**
+     * @return the active ThreadRecvUDP
+     */
+    public UDPServer getUdpServer(){return udpServer;}
+    /**
+     * Add a thread to the list of active conversation threads
+     * @param dest
+     * @param thread
+     */
+    public void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
+
+    /**
+     * @return the map of active conversations
+     */
+    public Map<User, TCPClientHandler> getAllActiveconversation() {return map_active_conversations;}
+    /**
+     * Delete a thread to the list of active conversation threads
+     * @param dest
+     */
+    public void delActiveconversation(User dest){
+        TCPClientHandler thread = map_active_conversations.remove(dest);
+        if (thread!=null){
+            thread.interrupt();
+        }
+    }
+
+    /**
+     * @param dest
+     * @return the conversation thread corresponding to the user, null if not exist
+     */
+    public TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
+
+    /** Closes all threads, active conversation and recv servers*/
+    public void deleteAllThreads(){
+        //close active conversations threads
+        for (User dest : map_active_conversations.keySet()){
+            delActiveconversation(dest);
+        }
+    }
+    /**Start TCP server for accepting new conversations*/
+    static public void StartTCPServer() {
+        TCPServer tcpServer= new TCPServer();
+        tcpServer.setDaemon(true);
+        tcpServer.start();
+    }
 
     /***
      * Functions for Sending on UDP
-     *
      *
      * Sends true on Broadcast */
     public static void SendConnection() {
@@ -86,9 +153,10 @@ public class NetworkManager {
     }
 
     /** Sends a message on TCP
-  * @param mess to send, containing who to send to and the message
-  * */
-    public static void SendMessageTCP(Message mess){
+     * @param mess to send, containing who to send to and the message
+     * */
+    @Override
+    public void update(Message mess){
         TCPClientHandler thread=ThreadManager.getInstance().getActiveconversation(mess.getReceiver());
         Socket socket;
         try {

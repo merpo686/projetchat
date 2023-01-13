@@ -1,17 +1,16 @@
-package Managers;
+package Threads;
 
 import Models.*;
-import database.ConnectionError;
-import database.DatabaseManager;
+import Conversations.ConnectionError;
+import Conversations.ConversationsManager;
+import Models.ObserverReception;
+import ActivityManagers.Self;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.channels.Channel;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TCPClientHandler extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPClientHandler.class);
@@ -19,9 +18,9 @@ public class TCPClientHandler extends Thread {
     private final User dest;
     DataInputStream inputStream;
 
-    private Observer observer;
+    private ObserverReception observer;
 
-    public void attach(Observer observer){
+    public void attach(ObserverReception observer){
         this.observer= observer;
     }
 
@@ -37,6 +36,7 @@ public class TCPClientHandler extends Thread {
         this.setDaemon(true);
         this.socket = link;
         this.dest=dest;
+        this.attach(ConversationsManager.getInstance());
     }
     /**returns the socket of the conversation
      * @return socket
@@ -66,7 +66,7 @@ public class TCPClientHandler extends Thread {
                 String received = inputStream.readUTF();
                 LOGGER.debug("Received message TCP: "+received);
                 Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
-                DatabaseManager.getInstance().addMessage(mess);
+                ConversationsManager.getInstance().addMessage(mess);
                 notifyObserver(mess);
             }
         } catch (InterruptedIOException e) { //If interrupted

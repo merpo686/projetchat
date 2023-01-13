@@ -1,28 +1,40 @@
-package database;
+package Conversations;
 import Models.Message;
+import Models.ObserverReception;
 import Models.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sqlite.SQLiteConfig;
-
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.nio.file.*;
 
-public class DatabaseManager {
+
+//add logger and update method
+public class ConversationsManager implements ObserverReception {
     private Connection co;
     private final String databaseName = "messages.sqlite";
-    static DatabaseManager instance;
+    static ConversationsManager instance;
+    private static final Logger LOGGER = LogManager.getLogger(ConversationsManager.class);
 
-    private DatabaseManager() throws ConnectionError {
-        this.connectDB(databaseName);
+    /**
+     * Constructor
+     */
+    private ConversationsManager(){
+        try {
+            this.connectDB(databaseName);
+        } catch (ConnectionError connectionError) {
+            LOGGER.error("Can't make connection to the database");
+            connectionError.printStackTrace();
+        }
     }
 
     /**the get instance() for the database manager, as we want to be able to access it at any time from any function*/
-    public static DatabaseManager getInstance() throws ConnectionError {
+    public static ConversationsManager getInstance() {
         if (instance == null) {
-            instance = new DatabaseManager();
+            instance = new ConversationsManager();
         }
         return instance;
     }
@@ -138,7 +150,7 @@ public class DatabaseManager {
      * gets the last message sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
      * @param hostname
      * */
-    public Message getLastMessage(String hostname) throws SQLException, UnknownHostException {
+    public Message getLastMessage(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
@@ -209,7 +221,7 @@ public class DatabaseManager {
     }
 
     /**checks if a specific conversation exists inside the conversations table*/
-    public boolean checkExistConversation(String hostname) throws SQLException {
+    public boolean checkExistConversation(String hostname) {
         try {
             if(!checkExistTableConversations()){
                 createTableConversations();
@@ -260,32 +272,16 @@ public class DatabaseManager {
         System.out.println("File deleted successfully: " + path);
     }
 
-    public void showTables() throws SQLException {
-        String sql = "select sql from sqlite_master where tbl_name = 'Conversations';\n" +
-                    "select sql from sqlite_master where tbl_name = 'Messages';";
-        PreparedStatement ps = co.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()){
-            System.out.println(rs.getString("sql"));
-        }
-    }
-
-    public void showMessages(String hostname) throws SQLException {
-        String sql = "SELECT * FROM Messages WHERE Messages.ReceiverID == ?;";
-        PreparedStatement ps = co.prepareStatement(sql);
-        ps.setString(1, hostname);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()){
-            System.out.println(rs.getInt(1) + "\t" + rs.getString(2) + "\t" + rs.getString(3) + "\t" + rs.getString(4) + "\t" + rs.getString(5) + "\t" + rs.getString(6) + "\t" + rs.getString(7));
-        }
-    }
-
-    public void showConversations() throws SQLException {
-        String sql = "SELECT * FROM Conversations;";
-        PreparedStatement ps = co.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()){
-            System.out.println(rs.getInt(1) + "\t" + rs.getString(2));
+    /**Update method which appends new received messages when TCPClient says he received some
+     * or when ChatInterface sends one
+     * @param mess Message the TCPClientHandler received
+     * */
+    @Override
+    public void update(Message mess){
+        try {
+            this.addMessage(mess);
+        } catch (SQLException | ConnectionError throwables) {
+            throwables.printStackTrace();
         }
     }
 }

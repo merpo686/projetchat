@@ -1,4 +1,4 @@
-package database;
+package Conversations;
 
 /**exception that represents a connection error to the database*/
 public class ConnectionError extends Exception {

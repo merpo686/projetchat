@@ -1,8 +1,8 @@
 package Graphics;
 
-import Managers.ActiveUserManager;
-import Managers.NetworkManager;
-import Managers.Self;
+import ActivityManagers.ActiveUserManager;
+import ActivityManagers.Self;
+import Threads.ThreadManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +27,7 @@ public class ChoosePseudoInterface extends Container {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
-            NetworkManager.SendDisconnection();
+            ThreadManager.SendDisconnection();
             frame.dispose();
         }
     };
@@ -66,7 +66,7 @@ public class ChoosePseudoInterface extends Container {
                 }
                 else {
                     Self.getInstance().setPseudo(pseudoChosen);
-                    NetworkManager.SendPseudo();
+                    ThreadManager.SendPseudo();
                     setVisible(false);
                     new ChooseDiscussionInterface(frame);
                 }
@@ -108,7 +108,7 @@ public class ChoosePseudoInterface extends Container {
                     }
                     else {
                         Self.getInstance().setPseudo(pseudoChosen);
-                        NetworkManager.SendPseudo();
+                        ThreadManager.SendPseudo();
                         setVisible(false);
                         new ChooseDiscussionInterface(frame);
                     }

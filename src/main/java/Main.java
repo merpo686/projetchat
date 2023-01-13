@@ -1,8 +1,7 @@
 import Graphics.InterfaceManager;
-import Managers.*;
-import Models.Connection;
+import ActivityManagers.*;
 import Graphics.ChoosePseudoInterface;
-import Models.User;
+import Threads.ThreadManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +24,7 @@ public class Main {
         ActiveUserManager.getInstance(); //initalise the active user list
         start_GraphicInterface(); //crystal clear
         ThreadManager.getInstance(); //starts the thread which receives non-stop on UDP
-        NetworkManager.SendConnection(); //sends a boolean (true) on broadcast to notify our connection
+        ThreadManager.SendConnection(); //sends a boolean (true) on broadcast to notify our connection
         ThreadManager.StartTCPServer(); //Start the TCP server waiting to open conversations
     }
  /** Function in charge of starting the Graphic Interface, which is afterwards self-sufficient*/
@@ -51,7 +50,7 @@ public class Main {
             @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
-                NetworkManager.SendDisconnection();
+                ThreadManager.SendDisconnection();
                 frame.dispose();
             }
         });

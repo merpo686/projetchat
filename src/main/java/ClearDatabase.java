@@ -1,9 +1,9 @@
-import database.ConnectionError;
-import database.DatabaseManager;
+import Conversations.ConnectionError;
+import Conversations.ConversationsManager;
 
 public class ClearDatabase {
     /** To delete the Database. Will suppress all conversations */
     public static void main(String[] args) throws ConnectionError {
-        DatabaseManager.getInstance().clearDB("messages.sqlite");
+        ConversationsManager.getInstance().clearDB("messages.sqlite");
     }
 }

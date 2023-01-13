@@ -1,6 +1,8 @@
-package Managers;
+package Threads;
 
 import Models.User;
+import ActivityManagers.ActiveUserManager;
+import ActivityManagers.Self;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

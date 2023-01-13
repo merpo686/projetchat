@@ -1,9 +1,9 @@
-import Managers.Self;
+import ActivityManagers.Self;
 import Models.Message;
 import Models.User;
-import database.ConnectionError;
-import database.DatabaseManager;
-import database.MessageAccessProblem;
+import Conversations.ConnectionError;
+import Conversations.ConversationsManager;
+import Conversations.MessageAccessProblem;
 import org.junit.Test;
 
 import java.net.UnknownHostException;
@@ -16,7 +16,7 @@ public class DatabaseTest {
         String myPseudo = "Tim";
         Self.getInstance().setPseudo(myPseudo);
         String TestDBName = "test.sqlite";
-        DatabaseManager myDB = DatabaseManager.getInstance();
+        ConversationsManager myDB = ConversationsManager.getInstance();
         User testUser = new User("testHost", "Patrick");
         Message mess = new Message(new User(Self.getInstance().getHostname(), Self.getInstance().getPseudo()), testUser , "Bonjour Test Test");
 

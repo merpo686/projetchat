@@ -1,6 +1,7 @@
 package Graphics;
-import Managers.*;
+import ActivityManagers.*;
 import Models.*;
+import Threads.ThreadManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +33,7 @@ public class ChooseDiscussionInterface extends Container {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
-            NetworkManager.SendDisconnection();
+            ThreadManager.SendDisconnection();
             frame.dispose();
         }
     };

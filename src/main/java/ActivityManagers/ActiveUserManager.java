@@ -1,4 +1,4 @@
-package Managers;
+package ActivityManagers;
 import Models.User;
 
 import java.util.ArrayList;

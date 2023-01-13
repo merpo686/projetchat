@@ -1,9 +1,9 @@
 
 import Models.Message;
 import Models.User;
-import database.ConnectionError;
+import Conversations.ConnectionError;
 
-import database.MessageAccessProblem;
+import Conversations.MessageAccessProblem;
 import org.junit.Test;
 
 import java.net.InetAddress;

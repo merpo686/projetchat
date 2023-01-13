@@ -1,11 +1,15 @@
 package Graphics;
 
-import Managers.*;
+import Models.ObserverReception;
+import ActivityManagers.*;
 import Models.Message;
+import Models.ObserverDisconnection;
 import Models.User;
-import database.ConnectionError;
-import database.DatabaseManager;
-import database.MessageAccessProblem;
+import Conversations.ConversationsManager;
+import Conversations.MessageAccessProblem;
+import Threads.TCPClientHandler;
+import Threads.ThreadManager;
+import Threads.UDPServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.awt.*;
@@ -14,21 +18,31 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 import javax.swing.*;
 
 /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
-public class ChatInterface extends Container implements Observer {
+public class ChatInterface extends Container implements ObserverReception, ObserverDisconnection {
     private static final Logger LOGGER = LogManager.getLogger(ChatInterface.class);
     JTextArea chatArea;
     JTextField inputArea;
     JFrame frame;
     User dest;
-    DatabaseManager db;
+    ConversationsManager db;
     TCPClientHandler tcpClientHandler;
     UDPServer udpServer;
+
+    private final ArrayList<ObserverReception> observers = new ArrayList<>();
+    public void attach(ObserverReception observer){
+        this.observers.add(observer);
+    }
+    public void notifyObserver(Message mess){
+        for (ObserverReception observer: observers){
+            observer.update(mess);
+        }
+    }
+
     //menu buttons
     Action changeDiscussionButton = new AbstractAction("CHANGE DISCUSSION") {
         @Override
@@ -53,7 +67,7 @@ public class ChatInterface extends Container implements Observer {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
-            NetworkManager.SendDisconnection();
+            ThreadManager.SendDisconnection();
             frame.dispose();
         }
     };
@@ -64,8 +78,10 @@ public class ChatInterface extends Container implements Observer {
     public ChatInterface(JFrame frame, User dest){
         this.frame=frame;
         this.dest = dest;
+        this.attach(ConversationsManager.getInstance());
+        this.attach(ThreadManager.getInstance());
         LOGGER.info("starting conversation with user:"+dest);
-        this.udpServer =ThreadManager.getInstance().getUdpServer();
+        this.udpServer = ThreadManager.getInstance().getUdpServer();
         this.udpServer.attach(this);
         //here we make sure the TCPClientHandler thread associated to our conversation exists, then we observe it
         this.tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
@@ -82,12 +98,7 @@ public class ChatInterface extends Container implements Observer {
             ThreadManager.getInstance().addActiveconversation(dest,tcpClientHandler);
         }
         this.tcpClientHandler.attach(this);
-        try {
-            this.db = DatabaseManager.getInstance();
-        } catch (ConnectionError connectionError) {
-            LOGGER.error("Error connecting to the database.");
-            connectionError.printStackTrace();
-        }
+        this.db = ConversationsManager.getInstance();
         InterfaceManager IM=InterfaceManager.getInstance();
         IM.setState("ChatInterface");
         IM.setUser(dest);
@@ -201,16 +212,8 @@ public class ChatInterface extends Container implements Observer {
     private void sendMessage(String message) {
         Self selfInstance = Self.getInstance();
         Message mess= new Message(new User(selfInstance.getHostname(),selfInstance.getPseudo()), dest,message);
-        NetworkManager.SendMessageTCP(mess); //calls send: find the conversation's tcp thread or creates it
-        try {
-            db.addMessage(mess);
-        } catch (SQLException throwable) {
-            LOGGER.error("Error inserting the message in the Database.");
-            throwable.printStackTrace();
-        } catch (ConnectionError e){
-            LOGGER.error("Error connecting to the Database.");
-        }
         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
+        notifyObserver(mess);
     }
     /**Display old messages at the opening of the chat interface*/
     private void displayOldMessages() {
