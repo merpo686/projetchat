@@ -14,7 +14,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -29,6 +28,7 @@ public class ChatInterface extends Container implements Observer {
     User dest;
     DatabaseManager db;
     TCPClientHandler tcpClientHandler;
+    UDPServer udpServer;
     //menu buttons
     Action changeDiscussionButton = new AbstractAction("CHANGE DISCUSSION") {
         @Override
@@ -65,8 +65,11 @@ public class ChatInterface extends Container implements Observer {
         this.frame=frame;
         this.dest = dest;
         LOGGER.info("starting conversation with user:"+dest);
+        this.udpServer =ThreadManager.getInstance().getUdpServer();
+        this.udpServer.attach(this);
+        //here we make sure the TCPClientHandler thread associated to our conversation exists, then we observe it
         this.tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
-        if (tcpClientHandler!=null){
+        if (tcpClientHandler==null){
             Socket socket= null;
             try {
                 socket = new Socket(dest.getHostname(), Self.portTCP);
@@ -75,10 +78,10 @@ public class ChatInterface extends Container implements Observer {
                 e.printStackTrace();
             }
             tcpClientHandler = new TCPClientHandler(socket,dest);
-                tcpClientHandler.start();
-                ThreadManager.getInstance().addActiveconversation(dest,tcpClientHandler);
-            }
-        tcpClientHandler.attach(this);
+            tcpClientHandler.start();
+            ThreadManager.getInstance().addActiveconversation(dest,tcpClientHandler);
+        }
+        this.tcpClientHandler.attach(this);
         try {
             this.db = DatabaseManager.getInstance();
         } catch (ConnectionError connectionError) {
@@ -170,6 +173,26 @@ public class ChatInterface extends Container implements Observer {
     @Override
     public void update(Message mess){
         chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
+    }
+
+    /** Shows a disconnected interface if the user we were chatting with disconnected
+     * */
+    @Override
+    public void update(){
+        //if we are chatting with the user right now it shows a user-disconnected interface
+        JOptionPane.showMessageDialog(frame, "The user you were chatting with just disconnected. " +
+                        "As messages won't get through, you will get back to the choose discussion interface in 3 secs.",
+                "Warning",
+                JOptionPane.WARNING_MESSAGE);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        setVisible(false);
+        //close discussion
+        frame.setResizable(true);
+        new ChooseDiscussionInterface(frame);
     }
 
     /**Send messages to the destination user

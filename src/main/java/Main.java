@@ -15,20 +15,6 @@ public class Main {
 
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
-    /** handler for the reception of UDP messages
-     * @param notif either a Connection (boolean + user) or just a User
-     * */
-    static ThreadManager.NotifHandler handler = notif -> {
-        if (notif instanceof Connection) {
-            Connection connect =(Connection) notif;
-            NetworkManager.ProcessConnection(connect);
-        }
-        else if (notif instanceof User) {
-            User user = (User)notif;
-            NetworkManager.ProcessPseudo(user);
-        }
-    };
-
     public static void main(String[] args) {
         LOGGER.info("Starting chat application. port UDP=12340; port TCP=12341");
         Launcher();
@@ -38,7 +24,7 @@ public class Main {
         LOGGER.debug("Launching application.");
         ActiveUserManager.getInstance(); //initalise the active user list
         start_GraphicInterface(); //crystal clear
-        ThreadManager.StartRcvThread(handler); //starts the thread which receives non-stop on UDP
+        ThreadManager.getInstance(); //starts the thread which receives non-stop on UDP
         NetworkManager.SendConnection(); //sends a boolean (true) on broadcast to notify our connection
         ThreadManager.StartTCPServer(); //Start the TCP server waiting to open conversations
     }

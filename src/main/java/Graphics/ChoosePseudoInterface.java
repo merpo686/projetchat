@@ -54,8 +54,8 @@ public class ChoosePseudoInterface extends Container {
                     e.printStackTrace();
                 }
                 String pseudoChosen = connection.getText();
-                if (pseudoChosen.equals("")){
-                    JOptionPane.showMessageDialog(frame, "Pseudo can't be null",
+                if (pseudoChosen.equals("")||pseudoChosen.equals("true")||pseudoChosen.equals("false")){
+                    JOptionPane.showMessageDialog(frame, "Pseudo can't be null, or true/false",
                             "Warning",
                             JOptionPane.WARNING_MESSAGE);
                 }
@@ -96,8 +96,8 @@ public class ChoosePseudoInterface extends Container {
                         exc.printStackTrace();
                     }
                     String pseudoChosen = connection.getText();
-                    if (pseudoChosen.equals("")){
-                        JOptionPane.showMessageDialog(frame, "Pseudo can't be null",
+                    if (pseudoChosen.equals("")||pseudoChosen.equals("true")||pseudoChosen.equals("false")){
+                        JOptionPane.showMessageDialog(frame, "Pseudo can't be null, or true/false",
                                 "Warning",
                                 JOptionPane.WARNING_MESSAGE);
                     }

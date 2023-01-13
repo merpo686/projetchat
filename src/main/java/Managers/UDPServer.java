@@ -1,24 +1,31 @@
 package Managers;
 
+import Graphics.InterfaceManager;
 import Models.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.lang.*;
 import java.io.IOException;
 import java.net.*;
 /** Class responsible for receiving UDP messages -  a thread receiving full time on a UDP socket,
  *  calling the subconsequent handler when there is a message */
-public class ThreadRcvUDP extends Thread {
-    private static final Logger LOGGER = LogManager.getLogger(ThreadRcvUDP.class);
-    private final ThreadManager.NotifHandler notifHandler;
+public class UDPServer extends Thread {
+    private static final Logger LOGGER = LogManager.getLogger(UDPServer.class);
+
+    private Observer observer;
+    public void attach(Observer observer){
+        this.observer= observer;
+    }
+    public void notifyObserver(){
+        observer.update();
+    }
 
     /**
      * Constructor
-     * @param handler
      */
-    public ThreadRcvUDP(ThreadManager.NotifHandler handler) {
-        this.notifHandler=handler;
+    public UDPServer(){
     }
 
     public void run() {
@@ -48,13 +55,36 @@ public class ThreadRcvUDP extends Thread {
                     Connection connect;
                     connect = new Connection(rcvNotif.getAddress().getHostName(), Boolean.parseBoolean(rcvData));
                     LOGGER.trace("We received a connection/deconnection notification "+rcvData);
-                    this.notifHandler.handler(connect);
+                    ProcessConnection(connect);
                 } else {
                     User user = new User(rcvNotif.getAddress().getHostName(), rcvData);
                     LOGGER.trace("We received a username/pseudo "+rcvData);
-                    this.notifHandler.handler(user);
+                    ProcessPseudo(user);
                 }
             }
         }
+    }
+    /**Process boolean received on udp : either a connection(true) or a disconnection (false)
+     * @param connect the Connection containing the boolean to send and the user whom sent
+     * */
+    public void ProcessConnection(Connection connect){
+        if (connect.getValid() && Self.getInstance().getPseudo()!=null){
+            NetworkManager.SendPseudoUnicast(connect.getHostname()); //we received a connection notification, we respond our pseudo if we chose it
+        }
+        else {
+            ActiveUserManager.getInstance().removeListActiveUser(connect.getHostname()); //we remove the user from the list of active user
+            if (InterfaceManager.getInstance().getState().equals("ChatInterface") &&
+                    InterfaceManager.getInstance().getUser().getHostname().equals(connect.getHostname())){
+                notifyObserver();
+            }
+            //delete the user from active conversations
+            ThreadManager.getInstance().delActiveconversation(ActiveUserManager.getInstance().get_User(connect.getHostname()));
+        }
+    }
+    /**Process a pseudo received on UDP
+     * @param user we received the pseudo from
+     * */
+    public void ProcessPseudo(User user) {
+        ActiveUserManager.getInstance().changeListActiveUser(user);
     }
 }
