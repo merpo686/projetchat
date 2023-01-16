@@ -44,12 +44,12 @@ public class ThreadManager implements Observers.ObserverReception {
      * @param dest
      * @param thread
      */
-    public void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
+    public synchronized void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
     /**
      * Delete a thread to the list of active conversation threads
      * @param dest
      */
-    public void delActiveconversation(User dest){
+    public synchronized void delActiveconversation(User dest){
         TCPClientHandler thread = map_active_conversations.remove(dest);
         if (thread!=null){
             thread.interrupt();
@@ -59,17 +59,22 @@ public class ThreadManager implements Observers.ObserverReception {
      * @param dest
      * @return the conversation thread corresponding to the user, null if not exist
      */
-    public TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
+    public synchronized TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
     /** Closes all threads, active conversation and recv servers*/
-    public void deleteAllThreads(){
+    public synchronized void deleteAllThreads(){
         //close active conversations threads
         for (User dest : map_active_conversations.keySet()){
             delActiveconversation(dest);
         }
     }
     /**Start TCP server for accepting new conversations*/
+<<<<<<< HEAD
     public void StartTCPServer() {
         TCPServer tcpServer= new TCPServer(Self.portTCP);
+=======
+    private void StartTCPServer() {
+        TCPServer tcpServer= new TCPServer();
+>>>>>>> 73244c0dad6d38c64cb622d9c009914c8e4b703d
         tcpServer.setDaemon(true);
         tcpServer.start();
     }

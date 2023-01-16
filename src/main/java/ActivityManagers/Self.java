@@ -41,16 +41,16 @@ public class Self {
     /**
      * @return our hostname
      */
-    public String getHostname(){return this.hostname;}
+    public synchronized String getHostname(){return this.hostname;}
     /**
      * @return our pseudo
      */
-    public String getPseudo(){ return this.pseudoSelf;}
+    public synchronized String getPseudo(){ return this.pseudoSelf;}
     /**
      * To modify our pseudo
      * @param pseudo
      */
-    public void setPseudo(String pseudo) {
+    public synchronized void setPseudo(String pseudo) {
         this.pseudoSelf =pseudo;
         LOGGER.debug("Setting our pseudo to: "+pseudo);
     }

@@ -204,6 +204,7 @@ public class Interface extends JFrame {
                 }
             };
             add(new UserButton(userButton,user));
+            frame.revalidate();
             frame.repaint();
         }
         /**
@@ -219,6 +220,7 @@ public class Interface extends JFrame {
                 }
             }
             frame.repaint();
+            frame.revalidate();
         }
 
         /**Constructor
