@@ -6,25 +6,26 @@ import Models.User;
 import Threads.TCPClientHandler;
 import Threads.TCPServer;
 import Threads.ThreadManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.Socket;
 
 public class TCPTest {
+    private static final Logger LOGGER = LogManager.getLogger(UDPTest.class);
+    private int testPort = 12342;
+
     @Test
     public void TCPConnectionTest() {
         Self self = Self.getInstance();
-        ThreadManager.getInstance();
         User user =new User(self.getHostname(),self.getPseudo());
-        try{
-            Socket socket = new Socket(self.getHostname(),12342);
-            TCPClientHandler tcpClientHandlerTest = new TCPClientHandler(socket, user);
-            tcpClientHandlerTest.start();
-        } catch (IOException e) {
-            System.out.println("Unable to create TCP socket. Hostname: "+ self.getHostname()+" Port TCP: "+Self.portTCP);
-            e.printStackTrace();
-        }
+
+        TCPServer tcpServer= new TCPServer(testPort);
+        tcpServer.setDaemon(true);
+        tcpServer.start();
+
         assert (ThreadManager.getInstance().getActiveconversation(user))!=null;
     }
 }

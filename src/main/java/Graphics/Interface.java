@@ -269,6 +269,7 @@ public class Interface extends JFrame {
         public void notifyObserver(Message mess){
             for (Observers.ObserverReception observer: observers){
                 observer.messageReceived(mess);
+                observer.messageReceived(mess);
             }
         }
 

@@ -13,16 +13,21 @@ import java.net.Socket;
  * also adds them to the list of active conversation */
 public class TCPServer extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPServer.class);
+    private int portTCP;
+    public TCPServer(int portTCP){
+        this.portTCP = portTCP;
+    }
+
     public void run(){
         //creation du server socket
         ServerSocket socket = null;
         try {
-            socket = new ServerSocket(Self.portTCP);
+            socket = new ServerSocket(portTCP);
         } catch (IOException e) {
-            LOGGER.error("Failed to create a new ServerSocket on port "+Self.portTCP);
+            LOGGER.error("Failed to create a new ServerSocket on port "+portTCP);
             e.printStackTrace();
         }
-        //Server is running full time while the app is active if there is no exceptions
+        //Server is running full time while the app is active if there are no exceptions
         while(true) {
             LOGGER.debug("Waiting for TCP connection");
             Socket link = null;
