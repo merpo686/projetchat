@@ -11,7 +11,6 @@ import java.util.*;
 
 /**This class contains all the managing-thread related functions */
 public class ThreadManager implements Observers.ObserverReception {
-
     private static final Logger LOGGER = LogManager.getLogger(ThreadManager.class);
     private final Map<User,TCPClientHandler> map_active_conversations; //list of active conversations (active TCP threads)
     static ThreadManager instance;
@@ -21,7 +20,7 @@ public class ThreadManager implements Observers.ObserverReception {
      */
     private ThreadManager() {
         map_active_conversations = new HashMap<>();
-        udpServer = new UDPServer();
+        udpServer = new UDPServer(Self.portUDP, true);
         udpServer.setDaemon(true);
         udpServer.start();
         StartTCPServer();
@@ -79,11 +78,11 @@ public class ThreadManager implements Observers.ObserverReception {
      *
      * Sends true on Broadcast */
     public void SendConnection() {
-        SendUDPBC("true");
+        SendUDPBC("true", Self.portUDP);
     }
     /**Sends false on Broadcast */
     public static void SendDisconnection() {
-        SendUDPBC("false");
+        SendUDPBC("false", Self.portUDP);
         ThreadManager.getInstance().deleteAllThreads();
         try {
             Thread.sleep(1000);
@@ -94,13 +93,13 @@ public class ThreadManager implements Observers.ObserverReception {
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo()  {
-        SendUDPBC(Self.getInstance().getPseudo());
+        SendUDPBC(Self.getInstance().getPseudo(), Self.portUDP);
     }
     /**
      * Function to send messages in broadcast UDP
      * @param messageToSend
      */
-    public static void SendUDPBC(String messageToSend){
+    public static void SendUDPBC(String messageToSend, int portUDP){
         byte [] pseudoData = messageToSend.getBytes();
         LOGGER.debug("[ThreadSendBC] Sending "+messageToSend+" in SendThread");
         DatagramSocket socket;
@@ -109,26 +108,26 @@ public class ThreadManager implements Observers.ObserverReception {
             socket.setBroadcast(true);
             DatagramPacket sendNotif;
             sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
-                    InetAddress.getByName("255.255.255.255"), Self.portUDP);
+                    InetAddress.getByName("255.255.255.255"), portUDP);
             socket.send(sendNotif);
             socket.close();
         } catch (IOException e) {
             LOGGER.error("Failed to send broadcast message. Error with DatagramSoccket. Parameters: " +
-                    "PortUDP="+Self.portUDP+" Destination: 255.255.255.255");
+                    "PortUDP="+portUDP+" Destination: 255.255.255.255");
             e.printStackTrace();
         }
     }
     /** Sends a username on UDP (non-broadcast)
      * @param hostname to send to
      * */
-    static public void SendPseudoUnicast(String hostname) {
+    static public void SendPseudoUnicast(String hostname, int portUDP) {
         byte[] pseudoData = (Self.getInstance().getPseudo()).getBytes();
         DatagramPacket sendNotif;
         DatagramSocket socket;
         try {
             socket = new DatagramSocket();
             sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
-                    InetAddress.getByName(hostname), Self.portUDP);
+                    InetAddress.getByName(hostname), portUDP);
             socket.send(sendNotif);
             socket.close();
         } catch (SocketException e){
