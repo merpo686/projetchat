@@ -38,8 +38,13 @@ public class ActiveUserManager {
 /** removes a user
  * @param hostname of the user to remove
  * */
-    public void removeListActiveUser(String hostname){
-        listActiveUsers.removeIf(u -> u.isEquals(hostname));
+    public User removeListActiveUser(String hostname){
+        for (User user: listActiveUsers){
+            if (user.isEquals(hostname)){
+                return listActiveUsers.remove(listActiveUsers.indexOf(user));
+            }
+        }
+        return null;
     }
 /**returns the list*/
     public ArrayList<User> getListActiveUser() {

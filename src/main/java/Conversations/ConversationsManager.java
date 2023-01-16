@@ -1,6 +1,6 @@
 package Conversations;
 import Models.Message;
-import Models.ObserverReception;
+import Models.Observers;
 import Models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,15 +10,11 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.nio.file.*;
-
-
-//add logger and update method
-public class ConversationsManager implements ObserverReception {
+public class ConversationsManager implements Observers.ObserverReception {
     private Connection co;
     private final String databaseName = "messages.sqlite";
     static ConversationsManager instance;
     private static final Logger LOGGER = LogManager.getLogger(ConversationsManager.class);
-
     /**
      * Constructor
      */
@@ -30,7 +26,6 @@ public class ConversationsManager implements ObserverReception {
             connectionError.printStackTrace();
         }
     }
-
     /**the get instance() for the database manager, as we want to be able to access it at any time from any function*/
     public static ConversationsManager getInstance() {
         if (instance == null) {
@@ -38,7 +33,6 @@ public class ConversationsManager implements ObserverReception {
         }
         return instance;
     }
-
     /**
      * Connects to database
      * @param databaseName the database to connect to
@@ -66,7 +60,6 @@ public class ConversationsManager implements ObserverReception {
             throw new ConnectionError(url);
         }
     }
-
     /**
      * creates a table for the conversations to be stored
      * @throws SQLException
@@ -79,7 +72,6 @@ public class ConversationsManager implements ObserverReception {
         ps.executeUpdate();
         ps.clearParameters();
     }
-
     /**
      * creates a table for the messages to be stored in a specific conversation identified by hostname,
      * which corresponds to the hostname of the receiver
@@ -106,7 +98,6 @@ public class ConversationsManager implements ObserverReception {
         PreparedStatement ps = co.prepareStatement(sql);
         ps.executeUpdate();
     }
-
     /**
      * adds a conversation identified by the hostname of the receiver in the conversations table
      * @param hostname
@@ -121,7 +112,6 @@ public class ConversationsManager implements ObserverReception {
         ps.executeUpdate();
         ps.clearParameters();
     }
-
     /**
      * adds a message in the messages table
      * @param message
@@ -166,7 +156,6 @@ public class ConversationsManager implements ObserverReception {
         ps2.clearParameters();
         System.out.println("Message added to the database to designated user " + hostname);
     }
-
     /**
      * gets the last message sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
      * @param hostname
@@ -195,7 +184,6 @@ public class ConversationsManager implements ObserverReception {
         }
         return null;
     }
-
     /**
      * gets all messages sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
      * @param hostname
@@ -233,7 +221,6 @@ public class ConversationsManager implements ObserverReception {
             throw new MessageAccessProblem(hostname);
         }
     }
-
     /**
      * checks if the entire conversations table exists
      * @return
@@ -249,7 +236,6 @@ public class ConversationsManager implements ObserverReception {
         }
         return count == 1;
     }
-
     /**
      * checks if a specific conversation exists inside the conversations table
      * @param hostname
@@ -276,7 +262,6 @@ public class ConversationsManager implements ObserverReception {
             return false;
         }
     }
-
     /**
      * checks if the entire messages table exists
      * @return
@@ -293,7 +278,6 @@ public class ConversationsManager implements ObserverReception {
         }
         return count == 1;
     }
-
     /**
      * clears the database specified
      * @param databaseName of the database to clear
@@ -312,13 +296,12 @@ public class ConversationsManager implements ObserverReception {
         }
         System.out.println("File deleted successfully: " + path);
     }
-
     /**Update method which appends new received messages when TCPClient says he received some
      * or when ChatInterface sends one
      * @param mess Message the TCPClientHandler received
      * */
     @Override
-    public void update(Message mess){
+    public void messageReceived(Message mess){
         try {
             this.addMessage(mess);
         } catch (SQLException | ConnectionError throwables) {

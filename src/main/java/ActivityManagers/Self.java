@@ -15,7 +15,6 @@ public class Self {
     static public final int portTCP=12341;
     static public final int portUDP=12340;
     private final String hostname;
-
     /**
      * Constructor
      * @throws UnknownHostException
@@ -23,7 +22,6 @@ public class Self {
     private Self() throws UnknownHostException {
         hostname = InetAddress.getLocalHost().getHostName();
     }
-
     /**
      * @return instance of Self
      */
@@ -40,22 +38,20 @@ public class Self {
         }
         return instance;
     }
-
     /**
      * @return our hostname
      */
     public String getHostname(){return this.hostname;}
-
     /**
      * @return our pseudo
      */
     public String getPseudo(){ return this.pseudoSelf;}
-
     /**
      * To modify our pseudo
      * @param pseudo
      */
     public void setPseudo(String pseudo) {
         this.pseudoSelf =pseudo;
+        LOGGER.debug("Setting our pseudo to: "+pseudo);
     }
 }

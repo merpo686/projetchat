@@ -1,11 +1,12 @@
-package ActivityManagers;
+package Graphics;
 
+import ActivityManagers.ActiveUserManager;
+import ActivityManagers.Self;
 import Conversations.ConversationsManager;
 import Conversations.MessageAccessProblem;
 import Models.*;
 import Threads.TCPClientHandler;
 import Threads.ThreadManager;
-import Threads.UDPServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,22 +24,19 @@ public class Interface extends JFrame {
     private static final Color foregroundColor = new Color(252,210,28);
     private static final Logger LOGGER = LogManager.getLogger(Interface.class);
     private final JFrame frame;
-
-    //menu buttons
+    /**Actions independents from their container, which will be put in the menu bar*/
     Action changeDiscussionButton = new AbstractAction("CHANGE DISCUSSION") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             new ChooseDiscussionInterface(frame);
         }
     };
-
     Action changePseudoButton = new AbstractAction("CHANGE PSEUDO") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             new ChoosePseudoInterface(frame);
         }
     };
-
     Action disconnectionButton = new AbstractAction("DISCONNECTION") {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -47,7 +45,7 @@ public class Interface extends JFrame {
             dispose();
         }
     };
-
+    /** Sets up the original frame, and start the first interface*/
     public Interface(){
         super();
         LOGGER.debug("Launching interface");
@@ -97,8 +95,8 @@ public class Interface extends JFrame {
                 e.printStackTrace();
             }
             String pseudoChosen = connection.getText();
-            if (pseudoChosen.equals("")||pseudoChosen.equals("true")||pseudoChosen.equals("false")){
-                JOptionPane.showMessageDialog(frame, "Pseudo can't be null, or true/false",
+            if (pseudoChosen.equals("")||pseudoChosen.equals("true")||pseudoChosen.equals("false")||pseudoChosen.length()>20){
+                JOptionPane.showMessageDialog(frame, "Pseudo can't be null, true/false or longer then 20 characters",
                         "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
@@ -167,10 +165,10 @@ public class Interface extends JFrame {
             frame.setContentPane(this);
         }
     }
-
     /**Interface on which the user chooses who to chat with, refreshable*/
-    public class ChooseDiscussionInterface extends Container implements Observers.ObserverConnection {
+    public class ChooseDiscussionInterface extends Container implements Observers.ObserverConnection,Observers.ObserverDisconnection {
         JFrame frame;
+        ArrayList<User> activeusers;
 
         @Override
         public void userConnected(User user) {
@@ -184,19 +182,23 @@ public class Interface extends JFrame {
             add(new JButton(userButton));
         }
 
+        @Override
+        public void userDisconnected(User user){
+            for (Component c : this.getComponents()){
+                if (c instanceof JButton && c.getName().equals(user.getPseudo())){
+                    this.remove(c);
+                }
+            }
+        }
+
         /**Constructor
          * @param frame in activity
          * */
         public ChooseDiscussionInterface(JFrame frame) {
             this.frame=frame;
-            refreshDisplay();
-        }
-
-        /**The core of the interface is defined here, to make it refreshable*/
-        public void refreshDisplay(){
-            ArrayList<User> activeusers= ActiveUserManager.getInstance().getListActiveUser();
+            activeusers = ActiveUserManager.getInstance().getListActiveUser();
             //gridlayout, maybe not the best
-            setLayout(  new GridLayout(activeusers.size(),1));
+            setLayout( new GridLayout(activeusers.size(),1));
             //creates buttons for each users
             for (User user: activeusers){
                 Action userButton = new AbstractAction(user.getPseudo()) {
@@ -217,9 +219,10 @@ public class Interface extends JFrame {
             frame.setJMenuBar(bar);
             frame.setResizable(true);
             frame.setContentPane(this);
+            ThreadManager.getInstance().getUdpServer().attachConnection(this);
+            ThreadManager.getInstance().getUdpServer().attachDisconnection(this);
         }
     }
-
     /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
     public class ChatInterface extends Container implements Observers.ObserverReception, Observers.ObserverDisconnection {
         JTextArea chatArea;
@@ -227,13 +230,12 @@ public class Interface extends JFrame {
         JFrame frame;
         User dest;
         ConversationsManager db;
-        TCPClientHandler tcpClientHandler;
-        UDPServer udpServer;
 
         private final ArrayList<Observers.ObserverReception> observers = new ArrayList<>();
         public void attach(Observers.ObserverReception observer){
             this.observers.add(observer);
         }
+
         public void notifyObserver(Message mess){
             for (Observers.ObserverReception observer: observers){
                 observer.messageReceived(mess);
@@ -247,12 +249,15 @@ public class Interface extends JFrame {
         public ChatInterface(JFrame frame, User dest){
             this.frame=frame;
             this.dest = dest;
+            LOGGER.info("starting conversation with user:"+dest);
+            this.db = ConversationsManager.getInstance();
+            initComponents(); //specify interface components
+            displayOldMessages(); //crystal clear
             this.attach(ConversationsManager.getInstance());
             this.attach(ThreadManager.getInstance());
-            this.udpServer = ThreadManager.getInstance().getUdpServer();
-            this.udpServer.attachDisconnection(this);
+            ThreadManager.getInstance().getUdpServer().attachDisconnection(this);
             //here we make sure the TCPClientHandler thread associated to our conversation exists, then we observe it
-            this.tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
+            TCPClientHandler tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
             if (tcpClientHandler==null){
                 Socket socket= null;
                 try {
@@ -265,11 +270,7 @@ public class Interface extends JFrame {
                 tcpClientHandler.start();
                 ThreadManager.getInstance().addActiveconversation(dest,tcpClientHandler);
             }
-            this.tcpClientHandler.attach(this);
-            LOGGER.info("starting conversation with user:"+dest);
-            this.db = ConversationsManager.getInstance();
-            initComponents(); //specify interface components
-            displayOldMessages(); //crystal clear
+            tcpClientHandler.attach(this);
             frame.setContentPane(this);
             frame.setSize(new java.awt.Dimension(510, 470));
         }
@@ -312,7 +313,10 @@ public class Interface extends JFrame {
             chatArea.setColumns(20);
             chatArea.setRows(5);
             chatArea.setEditable(false);
+            chatArea.setWrapStyleWord(true);
+            chatArea.setLineWrap(true);
             jScrollPane1.setViewportView(chatArea);
+
 
             //discussionName specify
             discussionName.setFont(new Font("Myriad Pro", Font.PLAIN, 30)); // NOI18N
@@ -355,8 +359,8 @@ public class Interface extends JFrame {
         /** Shows a disconnected interface if the user we were chatting with disconnected
          * */
         @Override
-        public void userDisconnected(String hostname){
-            if (dest.isEquals(hostname)){
+        public void userDisconnected(User user){
+            if (dest.isEquals(user.getHostname())){
                 //if we are chatting with the user right now it shows a user-disconnected interface
                 JOptionPane.showMessageDialog(frame, "The user you were chatting with just disconnected. " +
                                 "As messages won't get through, you will get back to the choose discussion interface in 3 secs.",

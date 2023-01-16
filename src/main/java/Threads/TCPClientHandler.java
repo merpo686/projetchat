@@ -2,7 +2,6 @@ package Threads;
 
 import Models.*;
 import Conversations.ConversationsManager;
-import Models.ObserverReception;
 import ActivityManagers.Self;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,20 +10,17 @@ import java.io.*;
 import java.net.Socket;
 
 
-public class TCPClientHandler extends Thread implements ObserverDisconnection{
+public class TCPClientHandler extends Thread implements Observers.ObserverDisconnection {
     private static final Logger LOGGER = LogManager.getLogger(TCPClientHandler.class);
     private final Socket socket;
     private final User dest;
     DataInputStream inputStream;
-
-    private ObserverReception observer;
-
-    public void attach(ObserverReception observer){
+    private Observers.ObserverReception observer;
+    public void attach(Observers.ObserverReception observer){
         this.observer= observer;
     }
-
     public void notifyObserver(Message mess){
-        observer.update(mess);
+        observer.messageReceived(mess);
     }
     /**
      * Constructor
@@ -54,7 +50,6 @@ public class TCPClientHandler extends Thread implements ObserverDisconnection{
             e.printStackTrace();
         }
     }
-
     /** Run method of thread*/
     public void run(){
         try{
@@ -91,15 +86,18 @@ public class TCPClientHandler extends Thread implements ObserverDisconnection{
             }
         }
     }
+    /** To close the thread if the user disconnected*/
     @Override
-    public void update(){
-        try {
-            socket.close();
-        } catch (IOException ioException) {
-            LOGGER.error("Failed closing socket when interrupting the thread.");
-            ioException.printStackTrace();
+    public void userDisconnected(User user){
+        if(dest.isEquals(user.getHostname())) {
+            try {
+                socket.close();
+            } catch (IOException ioException) {
+                LOGGER.error("Failed closing socket when interrupting the thread.");
+                ioException.printStackTrace();
+            }
+            ThreadManager.getInstance().delActiveconversation(dest);
+            this.interrupt();
         }
-        ThreadManager.getInstance().delActiveconversation(dest);
-        this.interrupt();
     }
 }

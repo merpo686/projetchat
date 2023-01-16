@@ -10,13 +10,12 @@ import java.net.*;
 import java.util.*;
 
 /**This class contains all the managing-thread related functions */
-public class ThreadManager implements ObserverReception{
+public class ThreadManager implements Observers.ObserverReception {
 
     private static final Logger LOGGER = LogManager.getLogger(ThreadManager.class);
     private final Map<User,TCPClientHandler> map_active_conversations; //list of active conversations (active TCP threads)
     static ThreadManager instance;
     private final UDPServer udpServer;
-
     /**
      * Constructor
      */
@@ -28,7 +27,6 @@ public class ThreadManager implements ObserverReception{
         StartTCPServer();
         SendConnection();
     }
-
     /**
      * @return the instance of ThreadManager
      */
@@ -38,7 +36,6 @@ public class ThreadManager implements ObserverReception{
         }
         return instance;
     }
-
     /**
      * @return the active ThreadRecvUDP
      */
@@ -49,7 +46,6 @@ public class ThreadManager implements ObserverReception{
      * @param thread
      */
     public void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
-
     /**
      * Delete a thread to the list of active conversation threads
      * @param dest
@@ -60,13 +56,11 @@ public class ThreadManager implements ObserverReception{
             thread.interrupt();
         }
     }
-
     /**
      * @param dest
      * @return the conversation thread corresponding to the user, null if not exist
      */
     public TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
-
     /** Closes all threads, active conversation and recv servers*/
     public void deleteAllThreads(){
         //close active conversations threads
@@ -80,7 +74,6 @@ public class ThreadManager implements ObserverReception{
         tcpServer.setDaemon(true);
         tcpServer.start();
     }
-
     /***
      * Functions for Sending on UDP
      *
@@ -149,12 +142,11 @@ public class ThreadManager implements ObserverReception{
             e.printStackTrace();
         }
     }
-
     /** Sends a message on TCP
      * @param mess to send, containing who to send to and the message
      * */
     @Override
-    public void update(Message mess){
+    public void messageReceived(Message mess){
         TCPClientHandler thread=ThreadManager.getInstance().getActiveconversation(mess.getReceiver());
         Socket socket;
         try {

@@ -3,7 +3,6 @@ package Models;
 public class User {
     private final String hostname;
     private final String Pseudo;
-
     /**Constructor
      *
      * @param hostname
@@ -13,7 +12,6 @@ public class User {
         this.hostname=hostname;
         this.Pseudo=Pseudo;
     }
-
     /**
      *
      * @return Pseudo
@@ -21,7 +19,6 @@ public class User {
     public String getPseudo(){
         return this.Pseudo;
     }
-
     /**
      *
      * @return Hostname
@@ -29,14 +26,12 @@ public class User {
     public String getHostname(){
         return this.hostname;
     }
-
     /**
      * Check if the hostname is the same
      * @param hostname
      * @return true if isEquals
      */
     public Boolean isEquals(String hostname){return (this.getHostname()).equals(hostname);}
-
     /**
      *
      * @return String value of User (pseudo and hostname)

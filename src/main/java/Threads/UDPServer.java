@@ -1,9 +1,7 @@
 package Threads;
 
-import Graphics.InterfaceManager;
 import Models.*;
 import ActivityManagers.ActiveUserManager;
-import Models.ObserverDisconnection;
 import ActivityManagers.Self;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,17 +15,22 @@ import java.util.ArrayList;
  *  calling the subconsequent handler when there is a message */
 public class UDPServer extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(UDPServer.class);
-
-    private ArrayList<ObserverDisconnection> observers = new ArrayList<>();
-    public void attach(ObserverDisconnection observer){
+    private final ArrayList<Observers.ObserverDisconnection> observers = new ArrayList<>();
+    public void attachDisconnection(Observers.ObserverDisconnection observer){
         this.observers.add(observer);
     }
-    public void notifyObserver(){
-        for(ObserverDisconnection observer :observers){
-            observer.update();
+    public void notifyObserverDisconnection(User user){
+        for(Observers.ObserverDisconnection observer :observers){
+            observer.userDisconnected(user);
         }
     }
-
+    private Observers.ObserverConnection observer;
+    public void attachConnection(Observers.ObserverConnection observer){
+        this.observer= observer;
+    }
+    public void notifyObserverConnection(User user){
+        observer.userConnected(user);
+    }
     public void run() {
         byte[] data = new byte[1024];
         DatagramSocket socket = null;
@@ -70,13 +73,8 @@ public class UDPServer extends Thread {
             ThreadManager.SendPseudoUnicast(hostname); //we received a connection notification, we respond our pseudo if we chose it
         }
         else {
-            ActiveUserManager.getInstance().removeListActiveUser(hostname); //we remove the user from the list of active user
-            if (InterfaceManager.getInstance().getState().equals("ChatInterface") &&
-                    InterfaceManager.getInstance().getUser().getHostname().equals(hostname)){
-                notifyObserver();
-            }
-            //delete the user from active conversations
-            ThreadManager.getInstance().delActiveconversation(ActiveUserManager.getInstance().get_User(hostname));
+            User user = ActiveUserManager.getInstance().removeListActiveUser(hostname); //we remove the user from the list of active user
+            notifyObserverDisconnection(user);
         }
     }
     /**Process a pseudo received on UDP
@@ -84,5 +82,6 @@ public class UDPServer extends Thread {
      * */
     public void ProcessPseudo(User user) {
         ActiveUserManager.getInstance().changeListActiveUser(user);
+        notifyObserverConnection(user);
     }
 }
