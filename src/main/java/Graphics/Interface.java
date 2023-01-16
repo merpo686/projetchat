@@ -170,10 +170,25 @@ public class Interface extends JFrame {
         JFrame frame;
         ArrayList<User> activeusers;
 
+        public class UserButton extends JButton {
+            public User user;
+            public UserButton(User user){
+                super(user.getPseudo());
+                this.user=user;
+            }
+            public UserButton(Action a,User user){
+                super(a);
+                this.user=user;
+            }
+            public User getUser(){
+                return user;
+            }
+        }
+
         @Override
         public void userConnected(User user) {
             for (Component c : this.getComponents()){
-                if (c instanceof JButton && c.getName().contains(user.getHostname())){
+                if (c instanceof UserButton && ((UserButton) c).getUser().equals(user)){
                     this.remove(c);
                 }
             }
@@ -184,16 +199,18 @@ public class Interface extends JFrame {
                     new ChatInterface(frame,user);
                 }
             };
-            add(new JButton(userButton));
+            add(new UserButton(userButton,user));
+            frame.repaint();
         }
 
         @Override
         public void userDisconnected(User user){
             for (Component c : this.getComponents()){
-                if (c instanceof JButton && c.getName().equals(user.toString())){
+                if (c instanceof JButton && ((UserButton) c).getUser().equals(user)){
                     this.remove(c);
                 }
             }
+            frame.repaint();
         }
 
         /**Constructor
@@ -215,7 +232,7 @@ public class Interface extends JFrame {
                         new ChatInterface(frame,user);
                     }
                 };
-                add(new JButton(userButton));
+                add(new UserButton(userButton,user));
             }
             //create menu
             JMenuBar bar = new JMenuBar();

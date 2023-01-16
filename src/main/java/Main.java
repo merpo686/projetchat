@@ -1,13 +1,10 @@
 import Graphics.Interface;
 import ActivityManagers.*;
 import Threads.ThreadManager;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import org.apache.logging.log4j.core.config.Configurator;
 
 public class Main {
 
@@ -20,6 +17,7 @@ public class Main {
     /** Start the background components in charge of running the application */
     public static void Launcher() {
         LOGGER.debug("Launching application.");
+        Configurator.setRootLevel(Level.INFO);
         ActiveUserManager.getInstance(); //initalise the active user list
         //start_GraphicInterface(); //crystal clear
         new Interface();

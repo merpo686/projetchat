@@ -29,7 +29,12 @@ public class UDPServer extends Thread {
         this.observer= observer;
     }
     public void notifyObserverConnection(User user){
-        observer.userConnected(user);
+        try{
+            observer.userConnected(user);
+        }
+        catch (NullPointerException e){
+            LOGGER.debug("Not on the change discussion interface.");
+        }
     }
     public void run() {
         byte[] data = new byte[1024];
@@ -74,6 +79,7 @@ public class UDPServer extends Thread {
         }
         else {
             User user = ActiveUserManager.getInstance().removeListActiveUser(hostname); //we remove the user from the list of active user
+            System.out.println(user);
             notifyObserverDisconnection(user);
         }
     }

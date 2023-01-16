@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class DatabaseTest {
 
     @Test
-    public void DBTest() throws ConnectionError, SQLException, UnknownHostException, MessageAccessProblem {
+    public void DBTest() throws ConnectionError, SQLException, MessageAccessProblem {
         String myPseudo = "Tim";
         Self.getInstance().setPseudo(myPseudo);
         String TestDBName = "test.sqlite";
@@ -43,8 +43,5 @@ public class DatabaseTest {
         myDB.getAllMessages(testUser.getHostname());
         Message lastMessage = myDB.getLastMessage(testUser.getHostname());
         System.out.println(lastMessage);
-        /*myDB.showConversations();
-        myDB.showMessages(testUser.getHostname());
-        myDB.showTables();*/
     }
 }
