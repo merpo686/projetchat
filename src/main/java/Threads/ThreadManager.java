@@ -68,13 +68,9 @@ public class ThreadManager implements Observers.ObserverReception {
         }
     }
     /**Start TCP server for accepting new conversations*/
-<<<<<<< HEAD
+
     public void StartTCPServer() {
         TCPServer tcpServer= new TCPServer(Self.portTCP);
-=======
-    private void StartTCPServer() {
-        TCPServer tcpServer= new TCPServer();
->>>>>>> 73244c0dad6d38c64cb622d9c009914c8e4b703d
         tcpServer.setDaemon(true);
         tcpServer.start();
     }
