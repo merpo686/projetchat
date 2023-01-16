@@ -38,7 +38,7 @@ public class ConversationsManager implements Observers.ObserverReception {
      * @param databaseName the database to connect to
      * @throws ConnectionError if connection fails
      */
-    public void connectDB(String databaseName) throws ConnectionError {
+    public synchronized void connectDB(String databaseName) throws ConnectionError {
         String url = "jdbc:sqlite:" + databaseName;
         //the driver automatically creates a new database when the database does not already exist
         try {
@@ -64,7 +64,7 @@ public class ConversationsManager implements Observers.ObserverReception {
      * creates a table for the conversations to be stored
      * @throws SQLException
      */
-    public void createTableConversations() throws SQLException {
+    public synchronized void createTableConversations() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
                 "IdConv INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                 "Hostname STRING NOT NULL);";
@@ -78,7 +78,7 @@ public class ConversationsManager implements Observers.ObserverReception {
      * @param hostname
      * @throws SQLException
      */
-    public void createTableMessages(String hostname) throws SQLException {
+    public synchronized void createTableMessages(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
@@ -103,7 +103,7 @@ public class ConversationsManager implements Observers.ObserverReception {
      * @param hostname
      * @throws SQLException
      */
-    public void addConversation(String hostname) throws SQLException {
+    public synchronized void addConversation(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
             createTableConversations();
         }
@@ -118,7 +118,7 @@ public class ConversationsManager implements Observers.ObserverReception {
      * @throws SQLException
      * @throws ConnectionError
      */
-    public void addMessage(Message message) throws SQLException, ConnectionError {
+    public synchronized void addMessage(Message message) throws SQLException, ConnectionError {
         int idConv = 0;
         String stringMessage = message.getMessage();
         LocalDateTime date = message.getDate();
@@ -282,7 +282,7 @@ public class ConversationsManager implements Observers.ObserverReception {
      * clears the database specified
      * @param databaseName of the database to clear
      */
-    public void clearDB(String databaseName) {
+    public synchronized void clearDB(String databaseName) {
         Path path = Path.of(databaseName);
         System.out.println(path.toAbsolutePath());
         try {

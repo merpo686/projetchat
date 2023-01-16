@@ -23,13 +23,13 @@ public class ActiveUserManager {
     /**to add a user to the list
      * @param U - user to add
      * */
-    public void addListActiveUser(User U){
+    public synchronized void addListActiveUser(User U){
         listActiveUsers.add(U);
     }
     /**removes and add a user who changed pseudo
      * @param U - user to change
      */
-    public void changeListActiveUser(User U){
+    public synchronized void changeListActiveUser(User U){
         if (IsinActiveListUser(U.getHostname())){
             removeListActiveUser(U.getHostname());
         }
@@ -38,7 +38,7 @@ public class ActiveUserManager {
 /** removes a user
  * @param hostname of the user to remove
  * */
-    public User removeListActiveUser(String hostname){
+    public synchronized User removeListActiveUser(String hostname){
         for (User user: listActiveUsers){
             if (user.equals(hostname)){
                 return listActiveUsers.remove(listActiveUsers.indexOf(user));
