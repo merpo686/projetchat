@@ -79,7 +79,6 @@ public class UDPServer extends Thread {
         }
         else {
             User user = ActiveUserManager.getInstance().removeListActiveUser(hostname); //we remove the user from the list of active user
-            System.out.println(user);
             notifyObserverDisconnection(user);
         }
     }

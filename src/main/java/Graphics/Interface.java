@@ -170,12 +170,11 @@ public class Interface extends JFrame {
         JFrame frame;
         ArrayList<User> activeusers;
 
+        /**
+         * new JButton containing a user to be able to find and modify a Button
+         */
         public class UserButton extends JButton {
             public User user;
-            public UserButton(User user){
-                super(user.getPseudo());
-                this.user=user;
-            }
             public UserButton(Action a,User user){
                 super(a);
                 this.user=user;
@@ -185,14 +184,19 @@ public class Interface extends JFrame {
             }
         }
 
+        /**
+         * Observer function to change/add a button when a user changes its pseudo/ connects
+         * @param user who's concerned
+         */
         @Override
         public void userConnected(User user) {
+            LOGGER.debug("New user or user pseudo changed, updating buttons.");
             for (Component c : this.getComponents()){
-                if (c instanceof UserButton && ((UserButton) c).getUser().equals(user)){
+                if (c instanceof UserButton && ((UserButton) c).getUser().equals(user.getHostname())){
                     this.remove(c);
                 }
             }
-            Action userButton = new AbstractAction(user.toString()) {
+            Action userButton = new AbstractAction(user.getPseudo() ){
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     setVisible(false);
@@ -202,11 +206,15 @@ public class Interface extends JFrame {
             add(new UserButton(userButton,user));
             frame.repaint();
         }
-
+        /**
+         * Observer removing button when user disconnects
+         * @param user who's concerned
+         */
         @Override
         public void userDisconnected(User user){
+            LOGGER.debug("User disconnected "+user.getHostname());
             for (Component c : this.getComponents()){
-                if (c instanceof JButton && ((UserButton) c).getUser().equals(user)){
+                if (c instanceof UserButton && ((UserButton) c).getUser().equals(user.getHostname())){
                     this.remove(c);
                 }
             }
@@ -225,7 +233,7 @@ public class Interface extends JFrame {
             setLayout( new GridLayout(activeusers.size(),1));
             //creates buttons for each users
             for (User user: activeusers){
-                Action userButton = new AbstractAction(user.toString()) {
+                Action userButton = new AbstractAction(user.getPseudo()) {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
                         setVisible(false);
@@ -287,6 +295,7 @@ public class Interface extends JFrame {
                 } catch (IOException e) {
                     LOGGER.error("Unable to create TCP socket. Hostname: "+ dest.getHostname()+" Port TCP: "+Self.portTCP);
                     e.printStackTrace();
+                    new ChooseDiscussionInterface(frame);
                 }
                 tcpClientHandler = new TCPClientHandler(socket,dest);
                 tcpClientHandler.start();
@@ -382,7 +391,7 @@ public class Interface extends JFrame {
          * */
         @Override
         public void userDisconnected(User user){
-            if (dest.isEquals(user.getHostname())){
+            if (dest.equals(user.getHostname())){
                 //if we are chatting with the user right now it shows a user-disconnected interface
                 JOptionPane.showMessageDialog(frame, "The user you were chatting with just disconnected. " +
                                 "As messages won't get through, you will get back to the choose discussion interface in 3 secs.",

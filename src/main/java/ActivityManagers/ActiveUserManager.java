@@ -40,7 +40,7 @@ public class ActiveUserManager {
  * */
     public User removeListActiveUser(String hostname){
         for (User user: listActiveUsers){
-            if (user.isEquals(hostname)){
+            if (user.equals(hostname)){
                 return listActiveUsers.remove(listActiveUsers.indexOf(user));
             }
         }
@@ -56,7 +56,7 @@ public class ActiveUserManager {
     public boolean IsinActiveListUser(String hostname){
         try {
             for (User user: listActiveUsers){
-                if (user.isEquals(hostname)){
+                if (user.equals(hostname)){
                     return true;
                 }
             }
@@ -72,7 +72,7 @@ public class ActiveUserManager {
     public User get_User(String hostname){
         try {
             for (User user: listActiveUsers){
-                if (user.isEquals(hostname)){
+                if (user.equals(hostname)){
                     return user;
                 }
             }

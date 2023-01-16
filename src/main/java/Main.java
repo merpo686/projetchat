@@ -1,10 +1,10 @@
 import Graphics.Interface;
 import ActivityManagers.*;
 import Threads.ThreadManager;
-import org.apache.logging.log4j.Level;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
+
 
 public class Main {
 
@@ -16,10 +16,8 @@ public class Main {
     }
     /** Start the background components in charge of running the application */
     public static void Launcher() {
-        LOGGER.debug("Launching application.");
-        Configurator.setRootLevel(Level.INFO);
+        //Configurator.setRootLevel(Level.INFO);
         ActiveUserManager.getInstance(); //initalise the active user list
-        //start_GraphicInterface(); //crystal clear
         new Interface();
         ThreadManager.getInstance(); //starts all reception threads, and send true (connected) to others
     }

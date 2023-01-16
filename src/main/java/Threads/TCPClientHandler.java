@@ -84,7 +84,7 @@ public class TCPClientHandler extends Thread implements Observers.ObserverDiscon
     /** To close the thread if the user disconnected*/
     @Override
     public void userDisconnected(User user){
-        if(dest.isEquals(user.getHostname())) {
+        if(dest.equals(user.getHostname())) {
             try {
                 socket.close();
             } catch (IOException ioException) {
