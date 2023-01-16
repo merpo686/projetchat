@@ -36,5 +36,5 @@ public class User {
      *
      * @return String value of User (pseudo and hostname)
      */
-    public String toString(){return "User: "+this.getPseudo()+" Hostname:"+this.getHostname();}
+    public String toString(){return "User: "+this.getPseudo()+" \nHostname:"+this.getHostname();}
 }

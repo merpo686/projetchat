@@ -172,7 +172,12 @@ public class Interface extends JFrame {
 
         @Override
         public void userConnected(User user) {
-            Action userButton = new AbstractAction(user.getPseudo()) {
+            for (Component c : this.getComponents()){
+                if (c instanceof JButton && c.getName().contains(user.getHostname())){
+                    this.remove(c);
+                }
+            }
+            Action userButton = new AbstractAction(user.toString()) {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     setVisible(false);
@@ -185,7 +190,7 @@ public class Interface extends JFrame {
         @Override
         public void userDisconnected(User user){
             for (Component c : this.getComponents()){
-                if (c instanceof JButton && c.getName().equals(user.getPseudo())){
+                if (c instanceof JButton && c.getName().equals(user.toString())){
                     this.remove(c);
                 }
             }
@@ -196,12 +201,14 @@ public class Interface extends JFrame {
          * */
         public ChooseDiscussionInterface(JFrame frame) {
             this.frame=frame;
+            ThreadManager.getInstance().getUdpServer().attachConnection(this);
+            ThreadManager.getInstance().getUdpServer().attachDisconnection(this);
             activeusers = ActiveUserManager.getInstance().getListActiveUser();
             //gridlayout, maybe not the best
             setLayout( new GridLayout(activeusers.size(),1));
             //creates buttons for each users
             for (User user: activeusers){
-                Action userButton = new AbstractAction(user.getPseudo()) {
+                Action userButton = new AbstractAction(user.toString()) {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
                         setVisible(false);
@@ -219,8 +226,6 @@ public class Interface extends JFrame {
             frame.setJMenuBar(bar);
             frame.setResizable(true);
             frame.setContentPane(this);
-            ThreadManager.getInstance().getUdpServer().attachConnection(this);
-            ThreadManager.getInstance().getUdpServer().attachDisconnection(this);
         }
     }
     /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
@@ -394,7 +399,7 @@ public class Interface extends JFrame {
                 for (Message message: conv){
                     if ((message.getSender().getHostname()).equals(Self.getInstance().getHostname()))
                     {
-                        chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
+                        chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message.getMessage());
                     }
                     else {
                         chatArea.append("\n("+message.getSender()+") - "+message.getMessage());

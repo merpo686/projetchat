@@ -72,18 +72,13 @@ public class TCPClientHandler extends Thread implements Observers.ObserverDiscon
             Thread.currentThread().interrupt();
             LOGGER.debug("Interrupted with InterruptedIOException.");
         } catch (IOException e) {
-            if (!isInterrupted()) {
-                LOGGER.error("Exception other than interruption while running.");
-                e.printStackTrace();
-            } else { //interrupted but InterruptedIOException wasn't triggered
-                try {
-                    socket.close();
-                } catch (IOException ioException) {
-                    LOGGER.error("Failed closing socket when interrupting the thread.");
-                    ioException.printStackTrace();
-                }
-                LOGGER.debug("Interrupted.");
+            try {
+                socket.close();
+            } catch (IOException ioException) {
+                LOGGER.error("Failed closing socket when interrupting the thread.");
+                ioException.printStackTrace();
             }
+            LOGGER.debug("Interrupted.");
         }
     }
     /** To close the thread if the user disconnected*/
