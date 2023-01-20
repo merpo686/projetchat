@@ -263,6 +263,13 @@ public class Interface extends JFrame {
         User dest;
         ConversationsManager db;
 
+        Action clearConversationButton = new AbstractAction("CLEAR CONVERSATION"){
+            @Override
+            public void actionPerformed(ActionEvent actionEvent){
+                ConversationsManager.getInstance().clearConversation(dest.getHostname());
+            }
+        };
+
         private final ArrayList<Observers.ObserverReception> observers = new ArrayList<>();
         public void attach(Observers.ObserverReception observer){
             this.observers.add(observer);
@@ -270,7 +277,6 @@ public class Interface extends JFrame {
 
         public void notifyObserver(Message mess){
             for (Observers.ObserverReception observer: observers){
-                observer.messageReceived(mess);
                 observer.messageReceived(mess);
             }
         }
@@ -377,6 +383,7 @@ public class Interface extends JFrame {
             file.add(changeDiscussionButton);
             file.add(changePseudoButton);
             file.add(disconnectionButton);
+            file.add(clearConversationButton);
             bar.add(file);
             frame.setJMenuBar(bar);
             frame.setResizable(false);

@@ -13,7 +13,7 @@ This repository implements a chat-system, with the following features:
 Left to check:
 
 - **code organization**: code is organized in loosely coupled packages. For instance, the packages `chatsystem.network` and `chatsystem.users` are completely independent of each other and only combined in the main class.
-- **error handling**: custom error types (e.g. `chatsystem.users.ContactALreadyExists`), and explicit handling of unrecoverable error (error raised higher the chain of responsibility) or recoverable error (handled locally and continue processing)
+- **error handling**: custom error types (e.g. `chatsystem.users.ContactAlreadyExists`), and explicit handling of unrecoverable error (error raised higher the chain of responsibility) or recoverable error (handled locally and continue processing)
 
 ## Usage
 
@@ -26,4 +26,7 @@ mvn compile
 mvn test
 # Run main program (which will simply wait for connection messages)
 mvn exec:java -Dexec.mainClass="chatsystem.Main" 
+# Clear database
+mvn exec:java -Dexec.clearDatabaseClass=""
 ```
+
