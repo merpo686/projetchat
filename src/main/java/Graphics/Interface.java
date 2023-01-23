@@ -271,7 +271,6 @@ public class Interface extends JFrame {
         public void notifyObserver(Message mess){
             for (Observers.ObserverReception observer: observers){
                 observer.messageReceived(mess);
-                observer.messageReceived(mess);
             }
         }
 
@@ -431,7 +430,7 @@ public class Interface extends JFrame {
                         chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message.getMessage());
                     }
                     else {
-                        chatArea.append("\n("+message.getSender()+") - "+message.getMessage());
+                        chatArea.append("\n("+message.getSender().getPseudo()+") - "+message.getMessage());
                     }
                 }
             }catch(MessageAccessProblem e){

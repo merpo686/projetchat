@@ -1,4 +1,5 @@
 package Conversations;
+import ActivityManagers.Self;
 import Models.Message;
 import Models.Observers;
 import Models.User;
@@ -124,8 +125,13 @@ public class ConversationsManager implements Observers.ObserverReception {
         LocalDateTime date = message.getDate();
         String senderID = message.getSender().getHostname();
         String senderPseudo = message.getSender().getPseudo();
-        String hostname = message.getReceiver().getHostname(); //hostname == receiverID
+        String receiverID = message.getReceiver().getHostname();
         String receiverPseudo = message.getReceiver().getPseudo();
+        //we store messages with the hostname of the other user as a key
+        String hostname = receiverID;
+        if (hostname.equals(Self.getInstance().getHostname())){
+            hostname=senderID;
+        }
         //check if the tables and corresponding conversation exist
         if(!checkExistTableConversations()){
             createTableConversations();
@@ -147,7 +153,7 @@ public class ConversationsManager implements Observers.ObserverReception {
         ps2.setString(2, String.valueOf(date));
         ps2.setString(3, senderID);
         ps2.setString(4, senderPseudo);
-        ps2.setString(5, hostname);
+        ps2.setString(5, receiverID);
         ps2.setString(6, receiverPseudo);
         ps2.setString(7, stringMessage);
         assert idConv != 0;
@@ -202,9 +208,10 @@ public class ConversationsManager implements Observers.ObserverReception {
                 createTableMessages(hostname);
             }
             ArrayList<Message> listMessages = new ArrayList<>();
-            String sql = "SELECT * FROM Messages WHERE (ReceiverID = ?);";
+            String sql = "SELECT * FROM Messages WHERE (ReceiverID = ?) OR (SenderID = ?);";
             PreparedStatement ps = co.prepareStatement(sql);
             ps.setString(1, hostname);
+            ps.setString(2,hostname);
             ResultSet rs = ps.executeQuery();
 
             while(rs.next()) {

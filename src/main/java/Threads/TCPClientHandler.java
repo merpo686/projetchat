@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 
 public class TCPClientHandler extends Thread implements Observers.ObserverDisconnection {
@@ -15,12 +16,14 @@ public class TCPClientHandler extends Thread implements Observers.ObserverDiscon
     private final Socket socket;
     private final User dest;
     DataInputStream inputStream;
-    private Observers.ObserverReception observer;
+    private ArrayList<Observers.ObserverReception> observer;
     public void attach(Observers.ObserverReception observer){
-        this.observer= observer;
+        this.observer.add(observer);
     }
     public void notifyObserver(Message mess){
-        observer.messageReceived(mess);
+        for (Observers.ObserverReception observerReception:observer){
+            observerReception.messageReceived(mess);
+        }
     }
     /**
      * Constructor
@@ -31,6 +34,7 @@ public class TCPClientHandler extends Thread implements Observers.ObserverDiscon
         this.setDaemon(true);
         this.socket = link;
         this.dest=dest;
+        this.observer = new ArrayList<>();
         this.attach(ConversationsManager.getInstance());
     }
     /**returns the socket of the conversation
