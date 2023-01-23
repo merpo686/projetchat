@@ -303,6 +303,17 @@ public class ConversationsManager implements Observers.ObserverReception {
         }
         System.out.println("File deleted successfully: " + path);
     }
+    public void clearConversation(String hostname){
+        try{
+            String sql = "DELETE FROM Messages WHERE (idConv = ?);";
+            PreparedStatement ps = co.prepareStatement(sql);
+            ps.setString(1, hostname);
+            ps.executeQuery();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
     /**Update method which appends new received messages when TCPClient says he received some
      * or when ChatInterface sends one
      * @param mess Message the TCPClientHandler received
