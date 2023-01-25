@@ -5,7 +5,6 @@ import ActivityManagers.Self;
 import Conversations.ConversationsManager;
 import Conversations.MessageAccessProblem;
 import Models.*;
-import Threads.TCPClientHandler;
 import Threads.ThreadManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,17 +12,49 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.net.Socket;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Interface extends JFrame {
+public class Interface extends JFrame implements Observers.ObserverConnection,
+        Observers.ObserverDisconnection, Observers.ObserverMessage {
     private static final Color backgroundColor = new Color(15,5, 107); //colors by default of the interface
     private static final Color foregroundColor = new Color(252,210,28);
     private static final Logger LOGGER = LogManager.getLogger(Interface.class);
     private final JFrame frame;
+    protected int state;
+    protected ArrayList<Observers.ObserverMessage> observerMessages;
+
+    public void attachMess(Observers.ObserverMessage observerMessage){
+        observerMessages.add(observerMessage);
+    }
+    private void notifyMessage(Message mess){
+        for (Observers.ObserverMessage observerMessage:observerMessages){
+            observerMessage.messageHandler(mess);
+        }
+    }
+
+    protected ArrayList<Observers.ObserverConnection> observerConnections;
+
+    public void attachConnection(Observers.ObserverConnection observerConnection){
+        observerConnections.add(observerConnection);
+    }
+    private void notifyPseudo(String pseudo){
+        for (Observers.ObserverConnection observerConnection: observerConnections){
+            observerConnection.userConnected(new User(Self.getInstance().getHostname(), pseudo));
+        }
+    }
+
+    protected ArrayList<Observers.ObserverDisconnection> observerDisconnections;
+
+    public void attachDisconnection(Observers.ObserverDisconnection observerDisconnection){
+        observerDisconnections.add(observerDisconnection);
+    }
+    private void notifyDisconnection(){
+        for (Observers.ObserverDisconnection observerDisconnection: observerDisconnections){
+            observerDisconnection.userDisconnected(new User("", ""));
+        }
+    }
     /**Actions independents from their container, which will be put in the menu bar*/
     Action changeDiscussionButton = new AbstractAction("CHANGE DISCUSSION") {
         @Override
@@ -41,13 +72,16 @@ public class Interface extends JFrame {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             setVisible(false);
-            ThreadManager.SendDisconnection();
+            notifyDisconnection();
             dispose();
         }
     };
     /** Sets up the original frame, and start the first interface*/
     public Interface(){
         super();
+        this.observerMessages = new ArrayList<>();
+        this.observerConnections = new ArrayList<>();
+        this.observerDisconnections= new ArrayList<>();
         LOGGER.debug("Launching interface");
         //Set the look and feel.
         String lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
@@ -67,7 +101,7 @@ public class Interface extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
-                ThreadManager.SendDisconnection();
+                notifyDisconnection();
                 dispose();
             }
         });
@@ -80,6 +114,35 @@ public class Interface extends JFrame {
         new ChoosePseudoInterface(this); //first interface displayed
         setVisible(true);
     }
+
+    @Override
+    public void messageHandler(Message mess) {
+        if (state == 3) {
+            ChatInterface ch = (ChatInterface) this.getContentPane();
+            ch.messageReceived(mess);
+        }
+    }
+
+    @Override
+    public void userDisconnected(User user) {
+        switch(state){
+            case 2: ChooseDiscussionInterface ch = (ChooseDiscussionInterface) this.getContentPane();
+                    ch.userDisconnected(user); break;
+            case 3: ChatInterface ch1 = (ChatInterface) this.getContentPane();
+                    ch1.userDisconnected(user); break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void userConnected(User user) {
+        if (state == 2) {
+            ChooseDiscussionInterface ch = (ChooseDiscussionInterface) this.getContentPane();
+            ch.userConnected(user);
+        }
+    }
+
     /** Implements the interface on which the user chooses his pseudo */
     public class ChoosePseudoInterface extends Container {
         JFormattedTextField connection;
@@ -106,8 +169,7 @@ public class Interface extends JFrame {
                         JOptionPane.WARNING_MESSAGE);
             }
             else {
-                Self.getInstance().setPseudo(pseudoChosen);
-                ThreadManager.SendPseudo();
+                notifyPseudo(pseudoChosen);
                 setVisible(false);
                 new ChooseDiscussionInterface(frame);
             }
@@ -118,6 +180,7 @@ public class Interface extends JFrame {
          * */
         public ChoosePseudoInterface(JFrame frame){
             this.frame=frame;
+            state = 1;
             //GridBagLayout, maybe not the best either but I found it smooth
             setLayout(new GridBagLayout());
             cons= new GridBagConstraints();
@@ -166,7 +229,7 @@ public class Interface extends JFrame {
         }
     }
     /**Interface on which the user chooses who to chat with, refreshable*/
-    public class ChooseDiscussionInterface extends Container implements Observers.ObserverConnection,Observers.ObserverDisconnection {
+    public class ChooseDiscussionInterface extends Container {
         JFrame frame;
         ArrayList<User> activeusers;
 
@@ -188,7 +251,6 @@ public class Interface extends JFrame {
          * Observer function to change/add a button when a user changes its pseudo/ connects
          * @param user who's concerned
          */
-        @Override
         public void userConnected(User user) {
             LOGGER.debug("New user or user pseudo changed, updating buttons.");
             for (Component c : this.getComponents()){
@@ -211,7 +273,6 @@ public class Interface extends JFrame {
          * Observer removing button when user disconnects
          * @param user who's concerned
          */
-        @Override
         public void userDisconnected(User user){
             LOGGER.debug("User disconnected "+user.getHostname());
             for (Component c : this.getComponents()){
@@ -228,8 +289,7 @@ public class Interface extends JFrame {
          * */
         public ChooseDiscussionInterface(JFrame frame) {
             this.frame=frame;
-            ThreadManager.getInstance().getUdpServer().attachConnection(this);
-            ThreadManager.getInstance().getUdpServer().attachDisconnection(this);
+            state = 2;
             activeusers = ActiveUserManager.getInstance().getListActiveUser();
             //gridlayout, maybe not the best
             setLayout( new GridLayout(activeusers.size(),1));
@@ -256,7 +316,7 @@ public class Interface extends JFrame {
         }
     }
     /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
-    public class ChatInterface extends Container implements Observers.ObserverReception, Observers.ObserverDisconnection {
+    public class ChatInterface extends Container{
         JTextArea chatArea;
         JTextField inputArea;
         JFrame frame;
@@ -270,17 +330,6 @@ public class Interface extends JFrame {
             }
         };
 
-        private final ArrayList<Observers.ObserverReception> observers = new ArrayList<>();
-        public void attach(Observers.ObserverReception observer){
-            this.observers.add(observer);
-        }
-
-        public void notifyObserver(Message mess){
-            for (Observers.ObserverReception observer: observers){
-                observer.messageReceived(mess);
-            }
-        }
-
         /**Constructor, same as ChooseDiscussionInterface, the core of the interface is specified in initComponents
          * @param dest User to discuss with
          * @param frame - frame in activity
@@ -288,29 +337,11 @@ public class Interface extends JFrame {
         public ChatInterface(JFrame frame, User dest){
             this.frame=frame;
             this.dest = dest;
+            state = 3;
             LOGGER.info("starting conversation with user:"+dest);
             this.db = ConversationsManager.getInstance();
             initComponents(); //specify interface components
             displayOldMessages(); //crystal clear
-            this.attach(ConversationsManager.getInstance());
-            this.attach(ThreadManager.getInstance());
-            ThreadManager.getInstance().getUdpServer().attachDisconnection(this);
-            //here we make sure the TCPClientHandler thread associated to our conversation exists, then we observe it
-            TCPClientHandler tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
-            if (tcpClientHandler==null){
-                Socket socket= null;
-                try {
-                    socket = new Socket(dest.getHostname(), Self.portTCP);
-                } catch (IOException e) {
-                    LOGGER.error("Unable to create TCP socket. Hostname: "+ dest.getHostname()+" Port TCP: "+Self.portTCP);
-                    e.printStackTrace();
-                    new ChooseDiscussionInterface(frame);
-                }
-                tcpClientHandler = new TCPClientHandler(socket,dest);
-                tcpClientHandler.start();
-                ThreadManager.getInstance().addActiveconversation(dest,tcpClientHandler);
-            }
-            tcpClientHandler.attach(this);
             frame.setContentPane(this);
             frame.setSize(new java.awt.Dimension(510, 470));
         }
@@ -392,14 +423,12 @@ public class Interface extends JFrame {
         /**Update method which appends new received messsages when TCPClient says he received some
          * @param mess Message the tcpclienthanlder received
          * */
-        @Override
         public void messageReceived(Message mess){
             chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
         }
 
         /** Shows a disconnected interface if the user we were chatting with disconnected
          * */
-        @Override
         public void userDisconnected(User user){
             if (dest.equals(user.getHostname())){
                 //if we are chatting with the user right now it shows a user-disconnected interface
@@ -426,8 +455,9 @@ public class Interface extends JFrame {
             Self selfInstance = Self.getInstance();
             Message mess= new Message(new User(selfInstance.getHostname(),selfInstance.getPseudo()), dest,message);
             chatArea.append("\nME("+ Self.getInstance().getPseudo()+") - "+message);
-            notifyObserver(mess);
+            notifyMessage(mess);
         }
+
         /**Display old messages at the opening of the chat interface*/
         private void displayOldMessages() {
             try {

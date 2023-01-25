@@ -1,12 +1,12 @@
 package Models;
 
 public class Observers {
-    public interface ObserverReception {
+    public interface ObserverMessage {
         /**
          * Observer for the reception of messages (as in conversation messages)
          * @param mess - messsage received
          */
-        void messageReceived(Message mess);
+        void messageHandler(Message mess);
     }
     public interface ObserverDisconnection{
         /**

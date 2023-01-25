@@ -11,7 +11,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.nio.file.*;
-public class ConversationsManager implements Observers.ObserverReception {
+public class ConversationsManager implements Observers.ObserverMessage {
     private Connection co;
     private final String databaseName = "messages.sqlite";
     static ConversationsManager instance;
@@ -319,7 +319,7 @@ public class ConversationsManager implements Observers.ObserverReception {
      * @param mess Message the TCPClientHandler received
      * */
     @Override
-    public void messageReceived(Message mess){
+    public void messageHandler(Message mess){
         try {
             this.addMessage(mess);
         } catch (SQLException | ConnectionError throwables) {

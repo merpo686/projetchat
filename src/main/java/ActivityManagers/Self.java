@@ -1,4 +1,6 @@
 package ActivityManagers;
+import Models.Observers;
+import Models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,7 +10,7 @@ import java.net.UnknownHostException;
 /**
  * Represents all infos we have on ourselves
  */
-public class Self {
+public class Self implements Observers.ObserverConnection {
     private static final Logger LOGGER = LogManager.getLogger(Self.class);
     private String pseudoSelf = null;
     static Self instance;
@@ -17,7 +19,7 @@ public class Self {
     private final String hostname;
     /**
      * Constructor
-     * @throws UnknownHostException
+     * @throws UnknownHostException if host unknown
      */
     private Self() throws UnknownHostException {
         hostname = InetAddress.getLocalHost().getHostName();
@@ -48,10 +50,15 @@ public class Self {
     public synchronized String getPseudo(){ return this.pseudoSelf;}
     /**
      * To modify our pseudo
-     * @param pseudo
+     * @param pseudo pseudo to be set
      */
     public synchronized void setPseudo(String pseudo) {
         this.pseudoSelf =pseudo;
         LOGGER.debug("Setting our pseudo to: "+pseudo);
+    }
+
+    @Override
+    public void userConnected(User user) {
+        this.setPseudo(user.getPseudo());
     }
 }

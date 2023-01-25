@@ -10,20 +10,15 @@ import java.net.*;
 import java.util.*;
 
 /**This class contains all the managing-thread related functions */
-public class ThreadManager implements Observers.ObserverReception {
+public class ThreadManager implements Observers.ObserverMessage, Observers.ObserverConnection, Observers.ObserverDisconnection {
     private static final Logger LOGGER = LogManager.getLogger(ThreadManager.class);
     private final Map<User,TCPClientHandler> map_active_conversations; //list of active conversations (active TCP threads)
     static ThreadManager instance;
-    private final UDPServer udpServer;
     /**
      * Constructor
      */
     private ThreadManager() {
         map_active_conversations = new HashMap<>();
-        udpServer = new UDPServer(Self.portUDP, true);
-        udpServer.setDaemon(true);
-        udpServer.start();
-        StartTCPServer();
         SendConnection();
     }
     /**
@@ -35,10 +30,6 @@ public class ThreadManager implements Observers.ObserverReception {
         }
         return instance;
     }
-    /**
-     * @return the active ThreadRecvUDP
-     */
-    public UDPServer getUdpServer(){return udpServer;}
     /**
      * Add a thread to the list of active conversation threads
      * @param dest
@@ -67,12 +58,30 @@ public class ThreadManager implements Observers.ObserverReception {
             delActiveconversation(dest);
         }
     }
-    /**Start TCP server for accepting new conversations*/
 
-    public void StartTCPServer() {
-        TCPServer tcpServer= new TCPServer(Self.portTCP);
+    public void notifyDisconnection(User user){
+        delActiveconversation(user);
+    }
+    /**
+     * Starts the TCP server
+     * @param portTCP port of server
+     * @param handlerTCP handler when a new connection is detected
+     */
+    public static void StartTCPServer(int portTCP, HandlerTCP handlerTCP) {
+        TCPServer tcpServer= new TCPServer(portTCP,handlerTCP);
         tcpServer.setDaemon(true);
         tcpServer.start();
+    }
+
+    /**
+     * Starts the UDP server
+     * @param portUDP port of server
+     * @param handlerUDP handler when a message udp is received
+     */
+    public static void StartUDPServer(int portUDP,HandlerUDP handlerUDP){
+        UDPServer udpServer = new UDPServer(portUDP, true,handlerUDP);
+        udpServer.setDaemon(true);
+        udpServer.start();
     }
     /***
      * Functions for Sending on UDP
@@ -93,8 +102,8 @@ public class ThreadManager implements Observers.ObserverReception {
         }
     }
     /**Sends our pseudo on broadcast*/
-    public static void SendPseudo()  {
-        SendUDPBC(Self.getInstance().getPseudo(), Self.portUDP);
+    public static void SendPseudo(String pseudo)  {
+        SendUDPBC(pseudo, Self.portUDP);
     }
     /**
      * Function to send messages in broadcast UDP
@@ -146,16 +155,40 @@ public class ThreadManager implements Observers.ObserverReception {
      * @param mess to send, containing who to send to and the message
      * */
     @Override
-    public void messageReceived(Message mess){
-        TCPClientHandler thread=ThreadManager.getInstance().getActiveconversation(mess.getReceiver());
-        Socket socket;
-        try {
-            socket=thread.getSocket();
-            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-            outputStream.writeUTF(mess.getMessage());
-        } catch (IOException e) {
-            LOGGER.error("Unable to write the message on the outputStream.");
-            e.printStackTrace();
+    public void messageHandler(Message mess){
+        User dest =mess.getReceiver();
+        TCPClientHandler tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
+        if (tcpClientHandler==null) {
+            Socket socket = null;
+            try {
+                socket = new Socket(dest.getHostname(), Self.portTCP);
+            } catch (IOException e) {
+                LOGGER.debug("Unable to create TCP socket. Hostname: " + dest.getHostname() + " Port TCP: " + Self.portTCP);
+                e.printStackTrace();
+                LOGGER.info("Please return to choose discussion window, user certainly disconnected.");
+            }
+            tcpClientHandler = new TCPClientHandler(socket, dest);
+            tcpClientHandler.start();
+            ThreadManager.getInstance().addActiveconversation(dest, tcpClientHandler);
+            socket = tcpClientHandler.getSocket();
+            DataOutputStream outputStream;
+            try {
+                outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF(mess.getMessage());
+            } catch (IOException e) {
+                LOGGER.debug("Unable to send the message via TCP.");
+                e.printStackTrace();
+            }
         }
+    }
+
+    @Override
+    public void userConnected(User user) {
+        SendPseudo(user.getPseudo());
+    }
+
+    @Override
+    public void userDisconnected(User user) {
+        SendDisconnection();
     }
 }

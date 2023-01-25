@@ -1,8 +1,6 @@
 package Threads;
 
-import Models.User;
-import ActivityManagers.ActiveUserManager;
-import ActivityManagers.Self;
+import Models.HandlerTCP;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,9 +11,11 @@ import java.net.Socket;
  * also adds them to the list of active conversation */
 public class TCPServer extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPServer.class);
-    private int portTCP;
-    public TCPServer(int portTCP){
+    private final int portTCP;
+    private final HandlerTCP handlerTCP;
+    public TCPServer(int portTCP,HandlerTCP handlerTCP){
         this.portTCP = portTCP;
+        this.handlerTCP = handlerTCP;
     }
 
     public void run(){
@@ -38,10 +38,7 @@ public class TCPServer extends Thread {
                 e.printStackTrace();
             }
             LOGGER.debug("A new connection identified at : " + link);
-            User dest = ActiveUserManager.getInstance().get_User(link.getInetAddress().getHostName());
-            TCPClientHandler thread = new TCPClientHandler(link,dest); //creating the conversation receiving thread
-            thread.start();
-            ThreadManager.getInstance().addActiveconversation(dest,thread); //adding the thread to the list of active conversations
+            handlerTCP.handle(link);
         }
     }
 }

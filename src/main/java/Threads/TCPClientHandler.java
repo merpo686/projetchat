@@ -1,30 +1,19 @@
 package Threads;
 
 import Models.*;
-import Conversations.ConversationsManager;
 import ActivityManagers.Self;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 
 
-public class TCPClientHandler extends Thread implements Observers.ObserverDisconnection {
+public class TCPClientHandler extends Thread {
     private static final Logger LOGGER = LogManager.getLogger(TCPClientHandler.class);
     private final Socket socket;
     private final User dest;
     DataInputStream inputStream;
-    private ArrayList<Observers.ObserverReception> observer;
-    public void attach(Observers.ObserverReception observer){
-        this.observer.add(observer);
-    }
-    public void notifyObserver(Message mess){
-        for (Observers.ObserverReception observerReception:observer){
-            observerReception.messageReceived(mess);
-        }
-    }
+    public static HandlerMessageReceived handlerMessageReceived;
     /**
      * Constructor
      * @param link
@@ -34,8 +23,6 @@ public class TCPClientHandler extends Thread implements Observers.ObserverDiscon
         this.setDaemon(true);
         this.socket = link;
         this.dest=dest;
-        this.observer = new ArrayList<>();
-        this.attach(ConversationsManager.getInstance());
     }
     /**returns the socket of the conversation
      * @return socket
@@ -64,7 +51,7 @@ public class TCPClientHandler extends Thread implements Observers.ObserverDiscon
                 String received = inputStream.readUTF();
                 LOGGER.debug("Received message TCP: "+received);
                 Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
-                notifyObserver(mess);
+                handlerMessageReceived.handle(mess);
             }
         } catch (InterruptedIOException e) { //If interrupted
             try {
@@ -83,20 +70,6 @@ public class TCPClientHandler extends Thread implements Observers.ObserverDiscon
                 ioException.printStackTrace();
             }
             LOGGER.debug("Interrupted.");
-        }
-    }
-    /** To close the thread if the user disconnected*/
-    @Override
-    public void userDisconnected(User user){
-        if(dest.equals(user.getHostname())) {
-            try {
-                socket.close();
-            } catch (IOException ioException) {
-                LOGGER.error("Failed closing socket when interrupting the thread.");
-                ioException.printStackTrace();
-            }
-            ThreadManager.getInstance().delActiveconversation(dest);
-            this.interrupt();
         }
     }
 }

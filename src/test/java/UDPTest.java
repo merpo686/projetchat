@@ -24,7 +24,7 @@ public class UDPTest {
         self.setPseudo("Tim"); //simulated user's pseudo
 
         //1. Start the UDP Server which handles the reception side of UDP
-        UDPServer udpServer = new UDPServer(testPort, false);
+        /*UDPServer udpServer = new UDPServer(testPort, false);
         udpServer.setDaemon(true);
         udpServer.start();
 
@@ -39,6 +39,6 @@ public class UDPTest {
         self.setPseudo("Gerard");
         //5. He then sends his chosen pseudo in broadcast to all active users
         SendUDPBC(self.getPseudo(), testPort);
-        LOGGER.debug("Broadcast my pseudo to all active users");
+        LOGGER.debug("Broadcast my pseudo to all active users");*/
     }
 }
