@@ -27,18 +27,23 @@ public class Main {
         @Override
         public void handle(String hostname, String message) {
             if (message.equals("true")||message.equals("false")) {
-                LOGGER.trace("We received a connection/deconnection notification "+message);
+                LOGGER.debug("We received a connection/deconnection notification "+message);
                 if (Boolean.parseBoolean(message) && Self.getInstance().getPseudo()!=null){
                     ThreadManager.SendPseudoUnicast(hostname, portUDP); //we received a connection notification, we respond our pseudo if we chose it
                 }
                 else {
                     User user = ActiveUserManager.getInstance().removeListActiveUser(hostname); //we remove the user from the list of active user
-                    graphics.userDisconnected(user);
-                    threadManager.notifyDisconnection(user);
+                    if (user == null){
+                        LOGGER.debug("we didn't knew this user was connected. His disconnection is thus irrelevant");
+                    }
+                    else{
+                        graphics.userDisconnected(user);
+                        threadManager.notifyDisconnection(user);
+                    }
                 }
             } else {
                 User user = new User(hostname, message);
-                LOGGER.trace("We received a username/pseudo "+message);
+                LOGGER.debug("We received a username/pseudo "+message);
                 ActiveUserManager.getInstance().changeListActiveUser(user);
                 graphics.userConnected(user);
             }

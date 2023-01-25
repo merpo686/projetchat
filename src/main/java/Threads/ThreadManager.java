@@ -158,8 +158,8 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     public void messageHandler(Message mess){
         User dest =mess.getReceiver();
         TCPClientHandler tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
+        Socket socket = null;
         if (tcpClientHandler==null) {
-            Socket socket = null;
             try {
                 socket = new Socket(dest.getHostname(), Self.portTCP);
             } catch (IOException e) {
@@ -170,15 +170,15 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
             tcpClientHandler = new TCPClientHandler(socket, dest);
             tcpClientHandler.start();
             ThreadManager.getInstance().addActiveconversation(dest, tcpClientHandler);
-            socket = tcpClientHandler.getSocket();
-            DataOutputStream outputStream;
-            try {
-                outputStream = new DataOutputStream(socket.getOutputStream());
-                outputStream.writeUTF(mess.getMessage());
-            } catch (IOException e) {
-                LOGGER.debug("Unable to send the message via TCP.");
-                e.printStackTrace();
-            }
+        }
+        socket = tcpClientHandler.getSocket();
+        DataOutputStream outputStream;
+        try {
+            outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF(mess.getMessage());
+        } catch (IOException e) {
+            LOGGER.debug("Unable to send the message via TCP.");
+            e.printStackTrace();
         }
     }
 

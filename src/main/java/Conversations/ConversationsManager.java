@@ -308,9 +308,10 @@ public class ConversationsManager implements Observers.ObserverMessage {
             String sql = "DELETE FROM Messages WHERE (idConv = ?);";
             PreparedStatement ps = co.prepareStatement(sql);
             ps.setString(1, hostname);
-            ps.executeQuery();
+            ps.executeUpdate();
         }
         catch (SQLException e){
+            LOGGER.debug("Failed to clear.");
             e.printStackTrace();
         }
     }

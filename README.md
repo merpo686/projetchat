@@ -10,10 +10,11 @@ This repository implements a chat-system, with the following features:
 - Old messages are kept so that past conversations are displayed when entering the chat interface;
 - Old conversations can be cleared.
 
-Left to check:
+Some issues yet to be solved:
 
-- **code organization**: code is organized in loosely coupled packages. For instance, the packages `chatsystem.network` and `chatsystem.users` are completely independent of each other and only combined in the main class.
-- **error handling**: custom error types (e.g. `chatsystem.users.ContactAlreadyExists`), and explicit handling of unrecoverable error (error raised higher the chain of responsibility) or recoverable error (handled locally and continue processing)
+- Clear conversation button in chat window doesn't clear the database - query doesn't seem to work
+- When disconnection occurs while chatting, and the user after reconnects, he can't see the former one in his active list - the former one seems to not send his pseudo ?
+- ActiveUserList and Self are used in other packages, and ConversationManager too. it could certainly be solved with again some handler/observers, but would it be worth it ?
 
 ## Usage
 

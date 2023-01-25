@@ -323,10 +323,14 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
         User dest;
         ConversationsManager db;
 
+        /**
+         * Button supposed to clear the active conversation
+         */
         Action clearConversationButton = new AbstractAction("CLEAR CONVERSATION"){
             @Override
             public void actionPerformed(ActionEvent actionEvent){
                 ConversationsManager.getInstance().clearConversation(dest.getHostname());
+                chatArea.setText("");
             }
         };
 
@@ -426,6 +430,7 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
         public void messageReceived(Message mess){
             chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());
         }
+
 
         /** Shows a disconnected interface if the user we were chatting with disconnected
          * */
