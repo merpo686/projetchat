@@ -88,11 +88,11 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
      *
      * Sends true on Broadcast */
     public void SendConnection() {
-        SendUDPBC("true", Self.portUDP);
+        SendUDPBC("true", Self.getInstance().portUDP);
     }
     /**Sends false on Broadcast */
     public static void SendDisconnection() {
-        SendUDPBC("false", Self.portUDP);
+        SendUDPBC("false", Self.getInstance().portUDP);
         ThreadManager.getInstance().deleteAllThreads();
         try {
             Thread.sleep(1000);
@@ -103,7 +103,7 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo(String pseudo)  {
-        SendUDPBC(pseudo, Self.portUDP);
+        SendUDPBC(pseudo, Self.getInstance().portUDP);
     }
     /**
      * Function to send messages in broadcast UDP
@@ -161,9 +161,9 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
         Socket socket = null;
         if (tcpClientHandler==null) {
             try {
-                socket = new Socket(dest.getHostname(), Self.portTCP);
+                socket = new Socket(dest.getHostname(), Self.getInstance().portTCP);
             } catch (IOException e) {
-                LOGGER.debug("Unable to create TCP socket. Hostname: " + dest.getHostname() + " Port TCP: " + Self.portTCP);
+                LOGGER.debug("Unable to create TCP socket. Hostname: " + dest.getHostname() + " Port TCP: " + Self.getInstance().portTCP);
                 e.printStackTrace();
                 LOGGER.info("Please return to choose discussion window, user certainly disconnected.");
             }

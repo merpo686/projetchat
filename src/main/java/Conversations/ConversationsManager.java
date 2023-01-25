@@ -305,8 +305,15 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     public void clearConversation(String hostname){
         try{
-            String sql = "DELETE FROM Messages WHERE (idConv = ?);";
-            PreparedStatement ps = co.prepareStatement(sql);
+            int idConv;
+            //we acquire the Id of the table Conversations (IdConv), which is the foreign key for the table messages
+            PreparedStatement ps1 = co.prepareStatement("SELECT IdConv FROM Conversations WHERE Conversations.Hostname == ?");
+            ps1.setString(1, hostname);
+            ResultSet rs = ps1.executeQuery();
+            while(rs.next()){
+                idConv = rs.getInt("IdConv");
+            }
+            PreparedStatement ps = co.prepareStatement("DELETE FROM Messages WHERE (IdConv = ?);");
             ps.setString(1, hostname);
             ps.executeUpdate();
         }

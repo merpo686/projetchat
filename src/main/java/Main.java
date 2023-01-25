@@ -78,6 +78,8 @@ public class Main {
         //Configurator.setRootLevel(Level.INFO);
         activeUserManager = ActiveUserManager.getInstance(); //initalise the active user list
         self =Self.getInstance();
+        self.SetTCPPort(portTCP);
+        self.SetUDPPort(portUDP);
         conversationsManager = ConversationsManager.getInstance();
         graphics = new Interface();
         threadManager = ThreadManager.getInstance(); //starts all reception threads, and send true (connected) to others
