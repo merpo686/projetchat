@@ -38,6 +38,11 @@ public class UDPTest {
         };
         //IgnoreSelf = false permits to not ignore our own udp messages, it is normally at true
         ThreadManager.StartUDPServer(testPortUDP,handlerUDP, false);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ThreadManager.SendConnection();
         try {
             Thread.sleep(50);
