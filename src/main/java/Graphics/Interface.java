@@ -5,7 +5,6 @@ import ActivityManagers.Self;
 import Conversations.ConversationsManager;
 import Conversations.MessageAccessProblem;
 import Models.*;
-import Threads.ThreadManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -163,7 +162,7 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
                         "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
-            else if (ActiveUserManager.getInstance().IsinActiveListUser(pseudoChosen)){
+            else if (ActiveUserManager.getInstance().IsInActiveListUser(pseudoChosen)){
                 JOptionPane.showMessageDialog(frame, "Pseudo taken "+pseudoChosen,
                         "Warning",
                         JOptionPane.WARNING_MESSAGE);
@@ -231,7 +230,8 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
     /**Interface on which the user chooses who to chat with, refreshable*/
     public class ChooseDiscussionInterface extends Container {
         JFrame frame;
-        ArrayList<User> activeusers;
+        ArrayList<User> activeUsers;
+
 
         /**
          * new JButton containing a user to be able to find and modify a Button
@@ -290,11 +290,11 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
         public ChooseDiscussionInterface(JFrame frame) {
             this.frame=frame;
             state = 2;
-            activeusers = ActiveUserManager.getInstance().getListActiveUser();
+            activeUsers = ActiveUserManager.getInstance().getListActiveUser();
             //gridlayout, maybe not the best
-            setLayout( new GridLayout(activeusers.size(),1));
+            setLayout( new GridLayout(activeUsers.size(),1));
             //creates buttons for each users
-            for (User user: activeusers){
+            for (User user: activeUsers){
                 Action userButton = new AbstractAction(user.getPseudo()) {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -404,7 +404,7 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
             add(jScrollPane1);
             add(discussionName);
 
-            //positionning
+            //positioning
             send.setBounds(450, 370, 40, 40);
             jScrollPane1.setBounds(10, 80, 490, 280);
             discussionName.setHorizontalAlignment(SwingConstants.CENTER);
@@ -424,8 +424,8 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
             frame.setResizable(false);
         }
 
-        /**Update method which appends new received messsages when TCPClient says he received some
-         * @param mess Message the tcpclienthanlder received
+        /**Update method which appends new received messages when TCPClient says he received some
+         * @param mess Message the TCPClient received
          * */
         public void messageReceived(Message mess){
             chatArea.append("\n("+ mess.getSender().getPseudo()+") - "+mess.getMessage());

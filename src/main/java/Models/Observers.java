@@ -4,7 +4,7 @@ public class Observers {
     public interface ObserverMessage {
         /**
          * Observer for the reception and sending of messages (as in conversation messages)
-         * @param mess - messsage received
+         * @param mess - message received
          */
         void messageHandler(Message mess);
     }

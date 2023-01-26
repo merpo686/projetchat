@@ -7,9 +7,9 @@ public class Message {
     private final String data;
     /**
      * Constructor
-     * @param sender
-     * @param receiver
-     * @param messageData
+     * @param sender user who sends the message
+     * @param receiver user who received it
+     * @param messageData content of the message
      */
     public Message(User sender, User receiver, String messageData) {
         date = LocalDateTime.now();
@@ -34,8 +34,8 @@ public class Message {
      */
     public LocalDateTime getDate(){return date;}
     /**
-     *To modify the date of a message (only used when retriving a message from database, to set the date
-     * @param date
+     *To modify the date of a message (only used when retrieving a message from database, to set the date
+     * @param date date
      */
     public void setDate(LocalDateTime date){
         this.date=date;

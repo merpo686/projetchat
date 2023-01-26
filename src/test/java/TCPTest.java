@@ -14,7 +14,7 @@ import java.net.Socket;
  * Class testing the TCP connection and the sending/receiving of a message
  */
 public class TCPTest {
-    private static final Logger LOGGER = LogManager.getLogger(UDPTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(UDPServerTest.class);
     static boolean UserConnected;
     static boolean messageReceived;
     static Socket socketServer;
@@ -27,30 +27,24 @@ public class TCPTest {
         UserConnected=false;
         messageReceived =false;
 
-        /**Handler of the TCPServer:
-         * - proves the connection occurred;
-         * - provides the socket, with which we will send a message.
+        /*Handler of the TCPServer:
+          - proves the connection occurred;
+          - provides the socket, with which we will send a message.
          */
-        HandlerTCP handlerTCP = new HandlerTCP() {
-            @Override
-            public void handle(Socket link) {
-                UserConnected = true;
-                TCPClient thread = new TCPClient(link, user); //creating the conversation receiving thread
-                thread.start();
-                socketServer = link;
-            }
+        HandlerTCP handlerTCP = link -> {
+            UserConnected = true;
+            TCPClient thread = new TCPClient(link, user); //creating the conversation receiving thread
+            thread.start();
+            socketServer = link;
         };
 
-        /**Handler of TCPClient:
-         * - proves we received a message;
-         * - prints it.
+        /*Handler of TCPClient:
+          - proves we received a message;
+          - prints it.
          */
-        TCPClient.handlerMessageReceived = new HandlerMessageReceived() {
-            @Override
-            public void handle(Message mess1) {
-                messageReceived = true;
-                LOGGER.info("Message well received. Message: "+mess1.getMessage());
-            }
+        TCPClient.handlerMessageReceived = mess1 -> {
+            messageReceived = true;
+            LOGGER.info("Message well received. Message: "+mess1.getMessage());
         };
 
         //starts TCP server on test port 1

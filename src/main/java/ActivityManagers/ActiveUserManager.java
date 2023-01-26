@@ -30,7 +30,7 @@ public class ActiveUserManager {
      * @param U - user to change
      */
     public synchronized void changeListActiveUser(User U){
-        if (IsinActiveListUser(U.getHostname())){
+        if (IsInActiveListUser(U.getHostname())){
             removeListActiveUser(U.getHostname());
         }
         addListActiveUser(U);
@@ -53,7 +53,7 @@ public class ActiveUserManager {
 /** check if a user is active
  * @param hostname of the user to check
  * */
-    public boolean IsinActiveListUser(String hostname){
+    public boolean IsInActiveListUser(String hostname){
         try {
             for (User user: listActiveUsers){
                 if (user.equals(hostname)){

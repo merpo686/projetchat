@@ -16,8 +16,8 @@ public class TCPClient extends Thread {
     public static HandlerMessageReceived handlerMessageReceived;
     /**
      * Constructor
-     * @param link
-     * @param dest
+     * @param link TCP socket opened
+     * @param dest User with whom the thread is opened
      */
     public TCPClient(Socket link, User dest){
         this.setDaemon(true);

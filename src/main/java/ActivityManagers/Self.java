@@ -8,7 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * Represents all infos we have on ourselves
+ * Represents all info we have on ourselves
  */
 public class Self implements Observers.ObserverConnection {
     private static final Logger LOGGER = LogManager.getLogger(Self.class);

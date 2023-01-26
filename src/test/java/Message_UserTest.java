@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * Tests the implementation of Message and User
  */
-public class MessageUserTest {
+public class Message_UserTest {
 
     @Test
     public void MessageUserTest() throws UnknownHostException {
@@ -31,8 +31,6 @@ public class MessageUserTest {
         assert (new User(hostname1,pseudo1).equals(hostname1 ));
         //two different users
         assert !(new User(hostname1,pseudo1).equals(hostname2 ));
-        //two same messages
-        assert (mess1.equals(mess1));
         //two different messages
         assert !( mess1.equals(mess2));
     }

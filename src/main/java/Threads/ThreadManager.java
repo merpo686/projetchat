@@ -33,35 +33,35 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     }
     /**
      * Add a thread to the list of active conversation threads
-     * @param dest
-     * @param thread
+     * @param dest User with whom the thread is opened
+     * @param thread TCPClient thread
      */
-    public synchronized void addActiveconversation(User dest, TCPClient thread){map_active_conversations.put(dest,thread);}
+    public synchronized void addActiveThread(User dest, TCPClient thread){map_active_conversations.put(dest,thread);}
     /**
      * Delete a thread to the list of active conversation threads
-     * @param dest
+     * @param dest User with whom the thread is opened
      */
-    public synchronized void delActiveconversation(User dest){
+    public synchronized void delActiveThread(User dest){
         TCPClient thread = map_active_conversations.remove(dest);
         if (thread!=null){
             thread.interrupt();
         }
     }
     /**
-     * @param dest
+     * @param dest User with whom the thread is opened
      * @return the conversation thread corresponding to the user, null if not exist
      */
-    public synchronized TCPClient getActiveconversation(User dest){return map_active_conversations.get(dest);}
-    /** Closes all threads, active conversation and recv servers*/
+    public synchronized TCPClient getActiveThread(User dest){return map_active_conversations.get(dest);}
+    /** Closes all threads, active conversation and receiving servers*/
     public synchronized void deleteAllThreads(){
         //close active conversations threads
         for (User dest : map_active_conversations.keySet()){
-            delActiveconversation(dest);
+            delActiveThread(dest);
         }
     }
 
     public void notifyDisconnection(User user){
-        delActiveconversation(user);
+        delActiveThread(user);
     }
     /**
      * Starts the TCP server
@@ -108,7 +108,7 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     }
     /**
      * Function to send messages in broadcast UDP
-     * @param messageToSend
+     * @param messageToSend String to be sent - either true,false, or a pseudo in our app
      */
     public static void SendUDPBC(String messageToSend, int portUDP){
         byte [] pseudoData = messageToSend.getBytes();
@@ -117,13 +117,13 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
         try {
             socket = new DatagramSocket();
             socket.setBroadcast(true);
-            DatagramPacket sendNotif;
-            sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
+            DatagramPacket sendPacket;
+            sendPacket = new DatagramPacket(pseudoData, pseudoData.length,
                     InetAddress.getByName("255.255.255.255"), portUDP);
-            socket.send(sendNotif);
+            socket.send(sendPacket);
             socket.close();
         } catch (IOException e) {
-            LOGGER.error("Failed to send broadcast message. Error with DatagramSoccket. Parameters: " +
+            LOGGER.error("Failed to send broadcast message. Error with DatagramSocket. Parameters: " +
                     "PortUDP="+portUDP+" Destination: 255.255.255.255");
             e.printStackTrace();
         }
@@ -133,13 +133,13 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
      * */
     static public void SendPseudoUnicast(String hostname, int portUDP) {
         byte[] pseudoData = (Self.getInstance().getPseudo()).getBytes();
-        DatagramPacket sendNotif;
+        DatagramPacket sendPacket;
         DatagramSocket socket;
         try {
             socket = new DatagramSocket();
-            sendNotif = new DatagramPacket(pseudoData, pseudoData.length,
+            sendPacket = new DatagramPacket(pseudoData, pseudoData.length,
                     InetAddress.getByName(hostname), portUDP);
-            socket.send(sendNotif);
+            socket.send(sendPacket);
             socket.close();
         } catch (SocketException e){
             LOGGER.error("Failed to create a DatagramSocket.");
@@ -158,7 +158,7 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     @Override
     public void messageHandler(Message mess){
         User dest =mess.getReceiver();
-        TCPClient tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
+        TCPClient tcpClientHandler  = ThreadManager.getInstance().getActiveThread(dest);
         Socket socket = null;
         if (tcpClientHandler==null) {
             try {
@@ -170,7 +170,7 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
             }
             tcpClientHandler = new TCPClient(socket, dest);
             tcpClientHandler.start();
-            ThreadManager.getInstance().addActiveconversation(dest, tcpClientHandler);
+            ThreadManager.getInstance().addActiveThread(dest, tcpClientHandler);
         }
         socket = tcpClientHandler.getSocket();
         DataOutputStream outputStream;

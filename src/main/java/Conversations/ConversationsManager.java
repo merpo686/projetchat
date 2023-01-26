@@ -63,7 +63,7 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * creates a table for the conversations to be stored
-     * @throws SQLException
+     * @throws SQLException if error while accessing Database
      */
     public synchronized void createTableConversations() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS Conversations (\n" +
@@ -76,8 +76,8 @@ public class ConversationsManager implements Observers.ObserverMessage {
     /**
      * creates a table for the messages to be stored in a specific conversation identified by hostname,
      * which corresponds to the hostname of the receiver
-     * @param hostname
-     * @throws SQLException
+     * @param hostname of the user
+     * @throws SQLException if error while accessing Database
      */
     public synchronized void createTableMessages(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
@@ -101,8 +101,8 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * adds a conversation identified by the hostname of the receiver in the conversations table
-     * @param hostname
-     * @throws SQLException
+     * @param hostname of the user
+     * @throws SQLException if error while accessing Database
      */
     public synchronized void addConversation(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
@@ -115,9 +115,9 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * adds a message in the messages table
-     * @param message
-     * @throws SQLException
-     * @throws ConnectionError
+     * @param message to be added
+     * @throws SQLException if error while accessing Database
+     * @throws ConnectionError if error while connecting to Database
      */
     public synchronized void addMessage(Message message) throws SQLException, ConnectionError {
         int idConv = 0;
@@ -164,7 +164,7 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * gets the last message sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
-     * @param hostname
+     * @param hostname of the user
      * */
     public Message getLastMessage(String hostname) throws SQLException {
         if(!checkExistTableConversations()){
@@ -192,9 +192,9 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * gets all messages sent by the sender in a specific conversation identified by hostname, which corresponds to the hostname of the receiver
-     * @param hostname
+     * @param hostname of the user
      * @return an array list of messages corresponding to the conversation
-     * @throws MessageAccessProblem
+     * @throws MessageAccessProblem if error while accessing specified message
      */
     public ArrayList<Message> getAllMessages(String hostname) throws  MessageAccessProblem {
         try{
@@ -230,8 +230,8 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * checks if the entire conversations table exists
-     * @return
-     * @throws SQLException
+     * @return boolean
+     * @throws SQLException if error while accessing Database
      */
     public boolean checkExistTableConversations() throws SQLException {
         int count=0;
@@ -245,8 +245,8 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * checks if a specific conversation exists inside the conversations table
-     * @param hostname
-     * @return
+     * @param hostname of the user with whom we're trying to check the existence of conversation
+     * @return boolean
      */
     public boolean checkExistConversation(String hostname) {
         try {
@@ -271,8 +271,8 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**
      * checks if the entire messages table exists
-     * @return
-     * @throws SQLException
+     * @return boolean
+     * @throws SQLException if error while accessing Database
      */
     public boolean checkExistTableMessages() throws SQLException {
         int count=0;

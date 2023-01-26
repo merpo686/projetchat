@@ -32,7 +32,9 @@ public class TCPServer extends Thread {
             LOGGER.debug("Waiting for TCP connection");
             Socket link = null;
             try {
-                link = socket.accept();
+                if (socket != null) {
+                    link = socket.accept();
+                }
             } catch (IOException e) {
                 LOGGER.error("Socket accept() returned an error.");
                 e.printStackTrace();

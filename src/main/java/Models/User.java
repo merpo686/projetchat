@@ -5,8 +5,8 @@ public class User {
     private final String Pseudo;
     /**Constructor
      *
-     * @param hostname
-     * @param Pseudo
+     * @param hostname hostname of the user
+     * @param Pseudo pseudo of the user
      */
     public User(String hostname,String Pseudo){
         this.hostname=hostname;
@@ -28,7 +28,7 @@ public class User {
     }
     /**
      * Check if the hostname is the same
-     * @param hostname
+     * @param hostname hostname of the user
      * @return true if equals
      */
     public Boolean equals(String hostname){return (this.getHostname()).equals(hostname);}
