@@ -19,21 +19,19 @@ public class UDPTest {
     public void UDPTest() {
 
         ThreadManager.portUDP = testPortUDP;
-
         HandlerUDP handlerUDP = new HandlerUDP() {
             @Override
             public void handle(String hostname, String message) {
                 if (message.equals("true")||message.equals("false")) {
                     LOGGER.debug("We received a Boolean: "+message);
-                    if (Boolean.parseBoolean(message) && Self.getInstance().getPseudo()!=null){ //Boolean=True: connection
-                        ThreadManager.SendPseudoUnicast(hostname, testPortUDP); //we received a connection notification, we respond our pseudo if we chose it
+                    if (Boolean.parseBoolean(message)){ //Boolean=True: connection
                         connected = true;
                     }
                     else { //Boolean=False: disconnection
                         connected = false;
                     }
                 } else {
-                    LOGGER.debug("We received a pseudo "+message);
+                    LOGGER.debug("We received a pseudo: "+message);
                     pseudo = message;
                 }
             }
@@ -42,7 +40,7 @@ public class UDPTest {
         ThreadManager.StartUDPServer(testPortUDP,handlerUDP, false);
         ThreadManager.SendConnection();
         try {
-            Thread.sleep(100);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -50,7 +48,7 @@ public class UDPTest {
 
         ThreadManager.SendPseudo("Test");
         try {
-            Thread.sleep(100);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -58,7 +56,7 @@ public class UDPTest {
 
         ThreadManager.SendDisconnection();
         try {
-            Thread.sleep(100);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
