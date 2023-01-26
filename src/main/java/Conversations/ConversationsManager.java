@@ -305,17 +305,28 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     public void clearConversation(String hostname){
         try{
-            int idConv;
-            //we acquire the Id of the table Conversations (IdConv), which is the foreign key for the table messages
-            PreparedStatement ps1 = co.prepareStatement("SELECT IdConv FROM Conversations WHERE Conversations.Hostname == ?");
-            ps1.setString(1, hostname);
-            ResultSet rs = ps1.executeQuery();
-            while(rs.next()){
-                idConv = rs.getInt("IdConv");
+            if(!checkExistTableConversations()) {
+                createTableConversations();
             }
-            PreparedStatement ps = co.prepareStatement("DELETE FROM Messages WHERE (IdConv = ?);");
-            ps.setString(1, hostname);
-            ps.executeUpdate();
+            if(!checkExistConversation(hostname)) {
+                LOGGER.debug("Indicated conversation with " + hostname + " does not exist");
+            } else {
+                int idConv = 0;
+                //we acquire the Id of the table Conversations (IdConv), which is the foreign key for the table messages
+                PreparedStatement ps1 = co.prepareStatement("SELECT IdConv FROM Conversations WHERE (Conversations.Hostname == ?);");
+                ps1.setString(1, hostname);
+                ResultSet rs = ps1.executeQuery();
+                while (rs.next()) {
+                    idConv = rs.getInt("IdConv");
+                }
+                if(!checkExistTableMessages()){
+                    LOGGER.debug("Messages table does not exist.");
+                } else{
+                    PreparedStatement ps = co.prepareStatement("DELETE FROM Messages WHERE (IdConv = ?);");
+                    ps.setInt(1, idConv);
+                    ps.executeUpdate();
+                }
+            }
         }
         catch (SQLException e){
             LOGGER.debug("Failed to clear.");

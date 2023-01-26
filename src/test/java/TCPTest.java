@@ -33,9 +33,9 @@ public class TCPTest {
          */
         HandlerTCP handlerTCP = link -> {
             UserConnected = true;
+            socketServer = link;
             TCPClient thread = new TCPClient(link, user); //creating the conversation receiving thread
             thread.start();
-            socketServer = link;
         };
 
         /*Handler of TCPClient:

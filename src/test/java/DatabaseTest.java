@@ -42,8 +42,10 @@ public class DatabaseTest {
         System.out.println("Messages table created");
         myDB.addMessage(mess);
         System.out.println("Message added for the conversation with "+testUser.getHostname());
+        myDB.clearConversation(testUser.getHostname());
         myDB.getAllMessages(testUser.getHostname());
         Message lastMessage = myDB.getLastMessage(testUser.getHostname());
         System.out.println(lastMessage);
+
     }
 }
