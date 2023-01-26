@@ -22,38 +22,63 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
     private static final Logger LOGGER = LogManager.getLogger(Interface.class);
     private final JFrame frame;
     protected int state;
-    protected ArrayList<Observers.ObserverMessage> observerMessages;
 
+    //Observers
+    protected ArrayList<Observers.ObserverMessage> observerMessages;
+    /**
+     * To attach observers to Interface - when sending messages
+     * @param observerMessage observers
+     */
     public void attachMess(Observers.ObserverMessage observerMessage){
         observerMessages.add(observerMessage);
     }
+    /**
+     * Notify the sending of a message
+     * @param mess message to be sent
+     */
     private void notifyMessage(Message mess){
         for (Observers.ObserverMessage observerMessage:observerMessages){
             observerMessage.messageHandler(mess);
         }
     }
-
     protected ArrayList<Observers.ObserverConnection> observerConnections;
 
+    /**
+     * To attach observers to Interface - when choosing a pseudo
+     * @param observerConnection observers
+     */
     public void attachConnection(Observers.ObserverConnection observerConnection){
         observerConnections.add(observerConnection);
     }
+
+    /**
+     * Notify observers of a pseudo chosen
+     * @param pseudo pseudo
+     */
     private void notifyPseudo(String pseudo){
         for (Observers.ObserverConnection observerConnection: observerConnections){
             observerConnection.userConnected(new User(Self.getInstance().getHostname(), pseudo));
         }
     }
-
     protected ArrayList<Observers.ObserverDisconnection> observerDisconnections;
 
+    /**
+     * To attach observers to Interface - when disconnecting
+     * @param observerDisconnection observers
+     */
     public void attachDisconnection(Observers.ObserverDisconnection observerDisconnection){
         observerDisconnections.add(observerDisconnection);
     }
+
+    /**
+     * Notify observers of the disconnection
+     */
     private void notifyDisconnection(){
         for (Observers.ObserverDisconnection observerDisconnection: observerDisconnections){
             observerDisconnection.userDisconnected(new User("", ""));
         }
     }
+
     /**Actions independents from their container, which will be put in the menu bar*/
     Action changeDiscussionButton = new AbstractAction("CHANGE DISCUSSION") {
         @Override
