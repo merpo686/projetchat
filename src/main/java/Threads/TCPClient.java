@@ -8,8 +8,8 @@ import java.io.*;
 import java.net.Socket;
 
 
-public class TCPClientHandler extends Thread {
-    private static final Logger LOGGER = LogManager.getLogger(TCPClientHandler.class);
+public class TCPClient extends Thread {
+    private static final Logger LOGGER = LogManager.getLogger(TCPClient.class);
     private final Socket socket;
     private final User dest;
     DataInputStream inputStream;
@@ -19,7 +19,7 @@ public class TCPClientHandler extends Thread {
      * @param link
      * @param dest
      */
-    public TCPClientHandler(Socket link,User dest){
+    public TCPClient(Socket link, User dest){
         this.setDaemon(true);
         this.socket = link;
         this.dest=dest;

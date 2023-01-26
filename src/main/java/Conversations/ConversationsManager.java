@@ -324,7 +324,7 @@ public class ConversationsManager implements Observers.ObserverMessage {
     }
     /**Update method which appends new received messages when TCPClient says he received some
      * or when ChatInterface sends one
-     * @param mess Message the TCPClientHandler received
+     * @param mess Message the TCPClient received
      * */
     @Override
     public void messageHandler(Message mess){

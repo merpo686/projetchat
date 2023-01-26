@@ -1,8 +1,6 @@
 import ActivityManagers.Self;
-import Graphics.Interface;
 import Models.*;
-import Threads.TCPClientHandler;
-import Threads.TCPServer;
+import Threads.TCPClient;
 import Threads.ThreadManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,85 +10,91 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Class testing the TCP connection and the sending/receiving of a message
+ */
 public class TCPTest {
     private static final Logger LOGGER = LogManager.getLogger(UDPTest.class);
-    private int testPort = 12342;
-    static boolean UserConnected = false;
-    static boolean messageReceived = false;
-
+    static boolean UserConnected;
+    static boolean messageReceived;
+    static Socket socketServer;
     @Test
     public void TCPConnectionTest() {
         Self self = Self.getInstance();
-        self.SetTCPPort(testPort);
-        self.SetUDPPort(5732);
         self.setPseudo("Mario&Luigi at the Winter Olympics");
-        User user =new User(self.getHostname(),self.getPseudo());
-        Message mess = new Message(user, user, "We will win YIHAH!");
+        User user = new User(self.getHostname(), self.getPseudo()); //here the send and receiver are the same sine we have only one hostname
+        Message mess = new Message(user, user, "This message is a test of TCP connection.");
+        UserConnected=false;
+        messageReceived =false;
 
+        /**Handler of the TCPServer:
+         * - proves the connection occurred;
+         * - provides the socket, with which we will send a message.
+         */
         HandlerTCP handlerTCP = new HandlerTCP() {
             @Override
             public void handle(Socket link) {
-                UserConnected =true;
+                UserConnected = true;
+                TCPClient thread = new TCPClient(link, user); //creating the conversation receiving thread
+                thread.start();
+                socketServer = link;
             }
         };
 
-        HandlerMessageReceived handlerMessageReceived = new HandlerMessageReceived() {
+        /**Handler of TCPClient:
+         * - proves we received a message;
+         * - prints it.
+         */
+        TCPClient.handlerMessageReceived = new HandlerMessageReceived() {
             @Override
-            public void handle(Message mess) {
-                //blbla message bien recu
+            public void handle(Message mess1) {
                 messageReceived = true;
+                LOGGER.info("Message well received. Message: "+mess1.getMessage());
             }
         };
-        TCPClientHandler.handlerMessageReceived =handlerMessageReceived;
-        //getting socket
-        User dest =mess.getReceiver();
-        TCPClientHandler tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
-        Socket socket = null;
-        if (tcpClientHandler==null) {
-            try {
-                socket = new Socket(dest.getHostname(), Self.getInstance().portTCP);
-            } catch (IOException e) {
-                LOGGER.debug("Unable to create TCP socket. Hostname: " + dest.getHostname() + " Port TCP: " + Self.getInstance().portTCP);
-                e.printStackTrace();
-                LOGGER.info("Please return to choose discussion window, user certainly disconnected.");
-            }
-            tcpClientHandler = new TCPClientHandler(socket, dest);
-            tcpClientHandler.start();
-            ThreadManager.getInstance().addActiveconversation(dest, tcpClientHandler);
+
+        //starts TCP server on test port 1
+        //sender
+        int testPort1 = 12342;
+        ThreadManager.StartTCPServer(testPort1, handlerTCP);
+        LOGGER.debug("TCPServer started.");
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        socket = tcpClientHandler.getSocket();
 
+        //getting socket to connect to ServerSocket
+        Socket socket = null;
+        try {
+            socket = new Socket(user.getHostname(), testPort1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assert (UserConnected); //should be true if socket connected well
 
-        TCPServer tcpServer= new TCPServer(testPort,handlerTCP);
-        tcpServer.setDaemon(true);
-        tcpServer.start();
-        assert(UserConnected);
+        TCPClient tcpClientHandler = new TCPClient(socket, user); //will receive and print the message
+        tcpClientHandler.start();
 
         //sending message
         DataOutputStream outputStream;
         try {
-            outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream = new DataOutputStream(socketServer.getOutputStream());
             outputStream.writeUTF(mess.getMessage());
         } catch (IOException e) {
             LOGGER.debug("Unable to send the message via TCP.");
             e.printStackTrace();
         }
-        assert(messageReceived);
-
-
-        /*
-        //tester ici la reception/envoi de message
-        TCPClientHandler tcpClientHandler = new TCPClientHandler(socket, user);
-        tcpClientHandler.start();
-        socket = tcpClientHandler.getSocket();
-        DataOutputStream outputStream;
-        try{
-            outputStream = new DataOutputStream(socket.getOutputStream());
-            outputStream.writeUTF(mess.getMessage());
-        }
-        catch(Exception e){
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        */
+        assert (messageReceived);
     }
 }

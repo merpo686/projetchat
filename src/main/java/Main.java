@@ -2,7 +2,7 @@ import Conversations.ConversationsManager;
 import Graphics.Interface;
 import ActivityManagers.*;
 import Models.*;
-import Threads.TCPClientHandler;
+import Threads.TCPClient;
 import Threads.ThreadManager;
 
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +54,7 @@ public class Main {
      */
     static HandlerTCP handlerTCP = link -> {
         User dest = ActiveUserManager.getInstance().get_User(link.getInetAddress().getHostName());
-        TCPClientHandler thread = new TCPClientHandler(link,dest); //creating the conversation receiving thread
+        TCPClient thread = new TCPClient(link,dest); //creating the conversation receiving thread
         thread.start();
         ThreadManager.getInstance().addActiveconversation(dest,thread); //adding the thread to the list of active conversations
     };
@@ -78,19 +78,21 @@ public class Main {
         //Configurator.setRootLevel(Level.INFO);
         activeUserManager = ActiveUserManager.getInstance(); //initalise the active user list
         self =Self.getInstance();
-        self.SetTCPPort(portTCP);
-        self.SetUDPPort(portUDP);
+        ThreadManager.portUDP =portUDP;
+        ThreadManager.portTCP= portTCP;
         conversationsManager = ConversationsManager.getInstance();
         graphics = new Interface();
         threadManager = ThreadManager.getInstance(); //starts all reception threads, and send true (connected) to others
         ThreadManager.StartUDPServer(portUDP,handlerUDP, true);
         ThreadManager.StartTCPServer(portTCP,handlerTCP);
-        TCPClientHandler.handlerMessageReceived = handlerMessageReceived;
+        TCPClient.handlerMessageReceived = handlerMessageReceived;
         graphics.attachMess(threadManager);
         graphics.attachMess(conversationsManager);
         graphics.attachConnection(threadManager);
         graphics.attachConnection(self);
         graphics.attachDisconnection(threadManager);
+
+        ThreadManager.SendConnection();
     }
 
 }

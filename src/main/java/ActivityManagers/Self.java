@@ -14,8 +14,6 @@ public class Self implements Observers.ObserverConnection {
     private static final Logger LOGGER = LogManager.getLogger(Self.class);
     private String pseudoSelf = null;
     static Self instance;
-    public int portTCP;
-    public int portUDP;
     private final String hostname;
     /**
      * Constructor
@@ -56,8 +54,6 @@ public class Self implements Observers.ObserverConnection {
         this.pseudoSelf =pseudo;
         LOGGER.debug("Setting our pseudo to: "+pseudo);
     }
-    public synchronized void SetTCPPort(int portTCP){this.portTCP =portTCP;}
-    public synchronized void SetUDPPort(int portUDP){this.portUDP =portUDP;}
     @Override
     public void userConnected(User user) {
         this.setPseudo(user.getPseudo());

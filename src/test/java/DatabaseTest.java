@@ -5,10 +5,12 @@ import Conversations.ConnectionError;
 import Conversations.ConversationsManager;
 import Conversations.MessageAccessProblem;
 import org.junit.Test;
-
-import java.net.UnknownHostException;
 import java.sql.SQLException;
 
+
+/**
+ * Tests the implementation of the Database
+ */
 public class DatabaseTest {
 
     @Test

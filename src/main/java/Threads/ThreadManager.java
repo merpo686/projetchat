@@ -12,14 +12,15 @@ import java.util.*;
 /**This class contains all the managing-thread related functions */
 public class ThreadManager implements Observers.ObserverMessage, Observers.ObserverConnection, Observers.ObserverDisconnection {
     private static final Logger LOGGER = LogManager.getLogger(ThreadManager.class);
-    private final Map<User,TCPClientHandler> map_active_conversations; //list of active conversations (active TCP threads)
+    private final Map<User, TCPClient> map_active_conversations; //list of active conversations (active TCP threads)
     static ThreadManager instance;
+    public static int portUDP;
+    public static int portTCP;
     /**
      * Constructor
      */
     private ThreadManager() {
         map_active_conversations = new HashMap<>();
-        SendConnection();
     }
     /**
      * @return the instance of ThreadManager
@@ -35,13 +36,13 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
      * @param dest
      * @param thread
      */
-    public synchronized void addActiveconversation(User dest, TCPClientHandler thread){map_active_conversations.put(dest,thread);}
+    public synchronized void addActiveconversation(User dest, TCPClient thread){map_active_conversations.put(dest,thread);}
     /**
      * Delete a thread to the list of active conversation threads
      * @param dest
      */
     public synchronized void delActiveconversation(User dest){
-        TCPClientHandler thread = map_active_conversations.remove(dest);
+        TCPClient thread = map_active_conversations.remove(dest);
         if (thread!=null){
             thread.interrupt();
         }
@@ -50,7 +51,7 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
      * @param dest
      * @return the conversation thread corresponding to the user, null if not exist
      */
-    public synchronized TCPClientHandler getActiveconversation(User dest){return map_active_conversations.get(dest);}
+    public synchronized TCPClient getActiveconversation(User dest){return map_active_conversations.get(dest);}
     /** Closes all threads, active conversation and recv servers*/
     public synchronized void deleteAllThreads(){
         //close active conversations threads
@@ -87,12 +88,12 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
      * Functions for Sending on UDP
      *
      * Sends true on Broadcast */
-    public void SendConnection() {
-        SendUDPBC("true", Self.getInstance().portUDP);
+    public static void SendConnection() {
+        SendUDPBC("true", portUDP);
     }
     /**Sends false on Broadcast */
     public static void SendDisconnection() {
-        SendUDPBC("false", Self.getInstance().portUDP);
+        SendUDPBC("false", portUDP);
         ThreadManager.getInstance().deleteAllThreads();
         try {
             Thread.sleep(1000);
@@ -103,7 +104,7 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo(String pseudo)  {
-        SendUDPBC(pseudo, Self.getInstance().portUDP);
+        SendUDPBC(pseudo,portUDP);
     }
     /**
      * Function to send messages in broadcast UDP
@@ -157,17 +158,17 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     @Override
     public void messageHandler(Message mess){
         User dest =mess.getReceiver();
-        TCPClientHandler tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
+        TCPClient tcpClientHandler  = ThreadManager.getInstance().getActiveconversation(dest);
         Socket socket = null;
         if (tcpClientHandler==null) {
             try {
-                socket = new Socket(dest.getHostname(), Self.getInstance().portTCP);
+                socket = new Socket(dest.getHostname(),portTCP);
             } catch (IOException e) {
-                LOGGER.debug("Unable to create TCP socket. Hostname: " + dest.getHostname() + " Port TCP: " + Self.getInstance().portTCP);
+                LOGGER.debug("Unable to create TCP socket. Hostname: " + dest.getHostname() + " Port TCP: " + portTCP);
                 e.printStackTrace();
                 LOGGER.info("Please return to choose discussion window, user certainly disconnected.");
             }
-            tcpClientHandler = new TCPClientHandler(socket, dest);
+            tcpClientHandler = new TCPClient(socket, dest);
             tcpClientHandler.start();
             ThreadManager.getInstance().addActiveconversation(dest, tcpClientHandler);
         }

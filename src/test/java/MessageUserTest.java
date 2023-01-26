@@ -8,6 +8,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
+/**
+ * Tests the implementation of Message and User
+ */
 public class MessageUserTest {
 
     @Test
