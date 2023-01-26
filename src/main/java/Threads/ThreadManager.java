@@ -78,8 +78,8 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
      * @param portUDP port of server
      * @param handlerUDP handler when a message udp is received
      */
-    public static void StartUDPServer(int portUDP,HandlerUDP handlerUDP){
-        UDPServer udpServer = new UDPServer(portUDP, true,handlerUDP);
+    public static void StartUDPServer(int portUDP,HandlerUDP handlerUDP, boolean ignoreSelf){
+        UDPServer udpServer = new UDPServer(portUDP, ignoreSelf, handlerUDP);
         udpServer.setDaemon(true);
         udpServer.start();
     }

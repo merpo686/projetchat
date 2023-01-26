@@ -83,7 +83,7 @@ public class Main {
         conversationsManager = ConversationsManager.getInstance();
         graphics = new Interface();
         threadManager = ThreadManager.getInstance(); //starts all reception threads, and send true (connected) to others
-        ThreadManager.StartUDPServer(portUDP,handlerUDP);
+        ThreadManager.StartUDPServer(portUDP,handlerUDP, true);
         ThreadManager.StartTCPServer(portTCP,handlerTCP);
         TCPClientHandler.handlerMessageReceived = handlerMessageReceived;
         graphics.attachMess(threadManager);

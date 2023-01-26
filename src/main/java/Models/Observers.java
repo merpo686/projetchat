@@ -3,7 +3,7 @@ package Models;
 public class Observers {
     public interface ObserverMessage {
         /**
-         * Observer for the reception of messages (as in conversation messages)
+         * Observer for the reception and sending of messages (as in conversation messages)
          * @param mess - messsage received
          */
         void messageHandler(Message mess);
