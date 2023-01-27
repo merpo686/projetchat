@@ -49,7 +49,7 @@ public class TCPClient extends Thread {
             while(true) {
                 //getting message
                 String received = inputStream.readUTF();
-                LOGGER.debug("Received message TCP: "+received);
+                LOGGER.info("Received message: "+received);
                 Message mess = new Message(dest,new User(Self.getInstance().getHostname(),Self.getInstance().getPseudo()), received);
                 handlerMessageReceived.handle(mess);
             }
