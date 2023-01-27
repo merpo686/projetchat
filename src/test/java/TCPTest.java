@@ -2,8 +2,10 @@ import ActivityManagers.Self;
 import Models.*;
 import Threads.TCPClient;
 import Threads.ThreadManager;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.Test;
 
 import java.io.DataOutputStream;
@@ -11,7 +13,11 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * Class testing the TCP connection and the sending/receiving of a message
+ * Class testing the TCP connection and the sending/receiving of a message:
+ * -the server is started
+ * -client connects to server
+ * -server sends a message to client
+ * -client sends a message to server
  */
 public class TCPTest {
     private static final Logger LOGGER = LogManager.getLogger(UDPServerTest.class);
@@ -20,10 +26,12 @@ public class TCPTest {
     static Socket socketServer;
     @Test
     public void TCPConnectionTest() {
+        Configurator.setRootLevel(Level.INFO);
         Self self = Self.getInstance();
         self.setPseudo("Mario&Luigi at the Winter Olympics");
         User user = new User(self.getHostname(), self.getPseudo()); //here the send and receiver are the same sine we have only one hostname
         Message mess = new Message(user, user, "This message is a test of TCP connection.");
+        Message mess2 = new Message(user,user,"Second message");
         UserConnected=false;
         messageReceived =false;
 
@@ -33,6 +41,7 @@ public class TCPTest {
          */
         HandlerTCP handlerTCP = link -> {
             UserConnected = true;
+            LOGGER.info("Connection received");
             socketServer = link;
             TCPClient thread = new TCPClient(link, user); //creating the conversation receiving thread
             thread.start();
@@ -75,11 +84,28 @@ public class TCPTest {
         TCPClient tcpClientHandler = new TCPClient(socket, user); //will receive and print the message
         tcpClientHandler.start();
 
-        //sending message
+        //sending message from server to client
         DataOutputStream outputStream;
         try {
             outputStream = new DataOutputStream(socketServer.getOutputStream());
             outputStream.writeUTF(mess.getMessage());
+        } catch (IOException e) {
+            LOGGER.debug("Unable to send the message via TCP.");
+            e.printStackTrace();
+        }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assert (messageReceived);
+
+        messageReceived=false;
+        //sending message from client to server
+        DataOutputStream outputStream2;
+        try {
+            outputStream2 = new DataOutputStream(socket.getOutputStream());
+            outputStream2.writeUTF(mess2.getMessage());
         } catch (IOException e) {
             LOGGER.debug("Unable to send the message via TCP.");
             e.printStackTrace();
