@@ -91,8 +91,12 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
     public static void SendConnection() {
         SendUDPBC("true", portUDP);
     }
-    /**Sends false on Broadcast */
-    public static void SendDisconnection() {
+
+    /**
+     * Sends false on Broadcast
+     * @param context - if 0, we are in the main program, so we exit. Else, we are in test mode so we don't exit
+     */
+    public static void SendDisconnection(int context) {
         SendUDPBC("false", portUDP);
         ThreadManager.getInstance().deleteAllThreads();
         try {
@@ -101,7 +105,9 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
             LOGGER.debug("Error putting the thread to sleep in disconnection.");
             e.printStackTrace();
         }
-        System.exit(0);
+        if (context == 0){
+            System.exit(0);
+        }
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo(String pseudo)  {
@@ -191,6 +197,6 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
 
     @Override
     public void userDisconnected(User user) {
-        SendDisconnection();
+        SendDisconnection(0);
     }
 }

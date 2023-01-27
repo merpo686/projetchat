@@ -53,7 +53,7 @@ public class UDPServerTest {
         }
         assert (pseudo.equals("Test"));
 
-        ThreadManager.SendDisconnection();
+        ThreadManager.SendDisconnection(1);
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
