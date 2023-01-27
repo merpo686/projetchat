@@ -12,7 +12,6 @@ This repository implements a chat-system, with the following features:
 
 Some issues yet to be solved:
 
-- Clear conversation button in chat window doesn't clear the database - query doesn't seem to work.
 - When disconnection occurs while chatting, and the user after reconnects, he can't see the former one in his active list - the former one seems to not send his pseudo ?
 - ActiveUserList and Self are used in other packages, and ConversationManager too. it could certainly be solved with again some handler/observers, but would it be worth it ?
 
