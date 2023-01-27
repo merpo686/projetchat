@@ -51,11 +51,11 @@ public class ConversationsManager implements Observers.ObserverMessage {
             while(rs.next()){
                 String catalog = rs.getString(1); //retrieves the first column of the result set corresponding to the catalogs which stores the names of all the databases
                 if(!catalog.equals(databaseName)){ //check if the database exists already
-                    System.out.println("Creating a new database...");
+                    LOGGER.debug("Creating a new database...");
                 }
             }
-            System.out.println("A connection has been established");
-            System.out.println("The driver name is " + meta.getDriverName());
+            LOGGER.debug("A connection has been established");
+            LOGGER.debug("The driver name is " + meta.getDriverName());
         } catch (SQLException throwables1) {
             throwables1.printStackTrace();
             throw new ConnectionError(url);

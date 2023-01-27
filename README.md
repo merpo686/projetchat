@@ -8,11 +8,11 @@ This repository implements a chat-system, with the following features:
 - At any given moment, the user can change pseudo, change discussion, or disconnect;
 - User is always open to receiving messages from the start of the app to the disconnection, even if not on the conversation interface;
 - Old messages are kept so that past conversations are displayed when entering the chat interface;
-- Old conversations can be cleared.
+- Old conversations (whole database) can be cleared, active conversation too (when on the chat window).
 
 Some issues yet to be solved:
 
-- Clear conversation button in chat window doesn't clear the database - query doesn't seem to work
+- Clear conversation button in chat window doesn't clear the database - query doesn't seem to work.
 - When disconnection occurs while chatting, and the user after reconnects, he can't see the former one in his active list - the former one seems to not send his pseudo ?
 - ActiveUserList and Self are used in other packages, and ConversationManager too. it could certainly be solved with again some handler/observers, but would it be worth it ?
 
@@ -25,9 +25,9 @@ Building the program from source requires `maven` to be installed.
 mvn compile
 # run tests
 mvn test
-# Run main program (which will simply wait for connection messages)
-mvn exec:java -Dexec.mainClass="chatsystem.Main" 
+# Run main program 
+mvn exec:java -Dexec.mainClass="Main" 
 # Clear database
-mvn exec:java -Dexec.clearDatabaseClass=""
+mvn exec:java -Dexec.mainClass="ClearDatabase"
 ```
 

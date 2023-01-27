@@ -250,6 +250,7 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
             frame.setJMenuBar(bar);
             frame.setResizable(true);
             frame.setContentPane(this);
+            LOGGER.info("Please choose a pseudo.");
         }
     }
     /**Interface on which the user chooses who to chat with, refreshable*/
@@ -338,6 +339,7 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
             frame.setJMenuBar(bar);
             frame.setResizable(true);
             frame.setContentPane(this);
+            LOGGER.info("Other active user's pseudos are displayed here. If you click on one it will start a discussion.");
         }
     }
     /**Chat Interface: send messages, append received ones, interact with the user, Highly smooth*/
@@ -367,7 +369,7 @@ public class Interface extends JFrame implements Observers.ObserverConnection,
             this.frame=frame;
             this.dest = dest;
             state = 3;
-            LOGGER.info("starting conversation with user:"+dest);
+            LOGGER.info("starting conversation with user: "+dest.getPseudo());
             this.db = ConversationsManager.getInstance();
             initComponents(); //specify interface components
             displayOldMessages(); //crystal clear

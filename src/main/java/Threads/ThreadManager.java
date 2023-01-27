@@ -101,6 +101,7 @@ public class ThreadManager implements Observers.ObserverMessage, Observers.Obser
             LOGGER.debug("Error putting the thread to sleep in disconnection.");
             e.printStackTrace();
         }
+        System.exit(0);
     }
     /**Sends our pseudo on broadcast*/
     public static void SendPseudo(String pseudo)  {
